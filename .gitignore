@@ -17,3 +17,6 @@ results/*.png
 
 # OS
 .DS_Store
+
+task/
+rajnish_help/
