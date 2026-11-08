@@ -38,7 +38,7 @@ def test_wall_lengthens_path():
     assert path0[-1][0] == 0
     assert has_path(s_wall, 0) is True
 
-    assert shortest_path_length(s_wall, 1) == 8
+    assert shortest_path_length(s_wall, 1) == 9
 
 
 def test_pawn_already_on_goal_row():

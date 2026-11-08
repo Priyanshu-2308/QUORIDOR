@@ -9,7 +9,6 @@ from .types import Move, PawnMove, WallMove
 
 def legal_pawn_moves(state: GameState) -> list[PawnMove]:
     """Legal pawn moves for state.current, including jumps and diagonals."""
-    # raise NotImplementedError("owner: Rajnish")
     if state.is_terminal():
         return []
     curr = state.current
@@ -38,7 +37,6 @@ def legal_pawn_moves(state: GameState) -> list[PawnMove]:
 
 def is_wall_legal(state: GameState, wall: WallMove) -> bool:
     """Whether ``wall`` is legal for state.current."""
-    # raise NotImplementedError("owner: Rajnish")
     if state.is_terminal():
         return False
     if not isinstance(wall, WallMove):
@@ -64,7 +62,6 @@ def is_wall_legal(state: GameState, wall: WallMove) -> bool:
 
 def legal_wall_moves(state: GameState) -> list[WallMove]:
     """All legal walls; [] if the current player has none left."""
-    # raise NotImplementedError("owner: Rajnish")
     if state.is_terminal() or state.walls_left[state.current] <= 0:
         return []
     walls: list[WallMove] = []
@@ -79,7 +76,6 @@ def legal_wall_moves(state: GameState) -> list[WallMove]:
 
 def legal_moves(state: GameState) -> list[Move]:
     """Pawn moves first, then walls, in deterministic order."""
-    # raise NotImplementedError("owner: Rajnish")
     if state.is_terminal():
         return []
     pawn_moves: list[Move] = list(legal_pawn_moves(state))
@@ -89,7 +85,6 @@ def legal_moves(state: GameState) -> list[Move]:
 
 def is_legal(state: GameState, move: Move) -> bool:
     """Whether ``move`` is legal in ``state``."""
-    # raise NotImplementedError("owner: Rajnish")
     if state.is_terminal():
         return False
     if isinstance(move, PawnMove):

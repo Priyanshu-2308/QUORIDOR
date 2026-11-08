@@ -59,13 +59,13 @@ def test_pawn_moves_plain_blocked_and_edges():
     assert [m.to for m in legal_pawn_moves(s_wall)] == [(5, 4), (4, 3), (4, 5)]
 
     s_corner = GameState(
-        pawns=((0, 0), (8, 8)),
+        pawns=((8, 0), (0, 4)),
         walls_left=(10, 10),
         h_walls=frozenset(),
         v_walls=frozenset(),
         current=0,
     )
-    assert [m.to for m in legal_pawn_moves(s_corner)] == [(1, 0), (0, 1)]
+    assert [m.to for m in legal_pawn_moves(s_corner)] == [(7, 0), (8, 1)]
 
 
 def test_jumping_straight_jump():
