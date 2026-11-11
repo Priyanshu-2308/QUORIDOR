@@ -162,6 +162,7 @@ class MonolithApp {
         await this.triggerAiMove();
       }
     } catch (err) {
+      console.error(`Failed to start game: ${err.message}`);
       alert(`Failed to start game: ${err.message}`);
     }
   }
