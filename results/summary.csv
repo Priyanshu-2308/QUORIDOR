@@ -1,0 +1,8 @@
+pair,agent_a,agent_b,games,wins_a,wins_b,draws,win_rate_a,mean_plies,nodes_per_move_a,ms_per_move_a,nodes_per_move_b,ms_per_move_b
+Greedy vs Random,greedy,random,20,20,0,0,1.0,15.2,3.8,0.8,32.6,11.2
+AlphaBeta(d=2) vs Greedy,alphabeta:depth=2,greedy,20,20,0,0,1.0,19.1,36.2,140.5,3.6,0.9
+AlphaBeta(d=3) vs Greedy,alphabeta:depth=3,greedy,20,20,0,0,1.0,26.6,247.7,467.1,3.3,1.0
+MCTS(500) vs Greedy,mcts:iterations=500,greedy,20,18,2,0,0.9,38.2,486.3,2037.6,3.3,1.0
+MCTS(1000) vs Greedy,mcts:iterations=1000,greedy,20,20,0,0,1.0,31.7,976.3,3735.0,3.4,1.2
+AlphaBeta(d=3) vs MCTS(1000),alphabeta:depth=3,mcts:iterations=1000,20,12,8,0,0.6,66.8,179.3,617.0,956.7,4746.7
+AlphaBeta(d=2) vs AlphaBeta(d=3),alphabeta:depth=2,alphabeta:depth=3,20,6,14,0,0.3,62.0,35.1,185.6,189.8,726.3

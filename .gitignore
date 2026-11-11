@@ -12,8 +12,5 @@ env/
 # Node
 node_modules/
 
-# Generated results
-results/*.png
-
 # OS
 .DS_Store

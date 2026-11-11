@@ -1,0 +1,303 @@
+:root {
+  --bone: #EDE7DA;
+  --ink: #121212;
+  --vermilion: #E8452C;
+  --cobalt: #2441D6;
+  --ochre: #D9A441;
+  --font-family: 'Archivo Black', Impact, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--font-family);
+  background-color: var(--bone);
+  color: var(--ink);
+}
+
+#canvas-container {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+#screen-container {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Full-bleed color wipe overlay */
+#wipe-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  background-color: var(--ink);
+  transform: translateX(-100%);
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+#wipe-overlay.wiping-in {
+  transform: translateX(0%);
+}
+
+#wipe-overlay.wiping-out {
+  transform: translateX(100%);
+}
+
+/* Base screen container */
+.screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(24px, 5vw, 64px);
+  box-sizing: border-box;
+  pointer-events: none;
+  transition: background-color 0.2s ease;
+}
+
+.screen * {
+  pointer-events: auto;
+}
+
+/* Screen Themes (Pure Flat Color Fields) */
+.screen-title {
+  background-color: var(--vermilion);
+  color: var(--bone);
+}
+
+.screen-setup {
+  background-color: var(--cobalt);
+  color: var(--bone);
+}
+
+.screen-game {
+  background-color: var(--bone);
+  color: var(--ink);
+}
+
+.screen-stats {
+  background-color: var(--ink);
+  color: var(--bone);
+}
+
+.screen-result-p0 {
+  background-color: var(--cobalt);
+  color: var(--bone);
+}
+
+.screen-result-p1 {
+  background-color: var(--vermilion);
+  color: var(--bone);
+}
+
+.screen-result-draw {
+  background-color: var(--ochre);
+  color: var(--ink);
+}
+
+/* Giant Typography */
+.giant-title {
+  font-size: clamp(64px, 14vw, 220px);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.giant-number {
+  font-size: clamp(56px, 12vw, 180px);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.giant-label {
+  font-size: clamp(32px, 6vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.sub-label {
+  font-size: clamp(14px, 1.6vw, 22px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.shortcuts-hint {
+  font-size: clamp(12px, 1.2vw, 16px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* Minimalist Monolith Controls */
+button.monolith-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: var(--font-family);
+  font-size: clamp(36px, 7vw, 110px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+  display: inline-block;
+}
+
+button.monolith-btn:hover {
+  opacity: 0.85;
+  transform: translateX(10px);
+}
+
+button.monolith-btn:active {
+  transform: translateX(5px) scale(0.98);
+}
+
+.row-controls {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 48px);
+}
+
+.chevron-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: var(--font-family);
+  font-size: clamp(36px, 7vw, 100px);
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 clamp(8px, 1.5vw, 24px);
+  transition: transform 0.1s ease;
+}
+
+.chevron-btn:hover {
+  transform: scale(1.15);
+}
+
+.toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Game HUD */
+.game-hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.turn-indicator {
+  font-size: clamp(32px, 6vw, 90px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.turn-indicator.human-turn {
+  color: var(--cobalt);
+}
+
+.turn-indicator.ai-turn {
+  color: var(--vermilion);
+}
+
+.turn-indicator.terminal {
+  color: var(--ochre);
+}
+
+.wall-stacks {
+  display: flex;
+  gap: 32px;
+  text-align: right;
+}
+
+.wall-stack-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.wall-count {
+  font-size: clamp(28px, 4.5vw, 64px);
+  line-height: 0.95;
+}
+
+.wall-bars {
+  display: flex;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+.wall-bar-pip {
+  width: 6px;
+  height: 14px;
+  background-color: var(--ochre);
+}
+
+.wall-bar-pip.spent {
+  background-color: rgba(18, 18, 18, 0.15);
+}
+
+.game-hud-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+}
+
+/* Stats Screen Layout */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+  margin-top: clamp(16px, 2vw, 32px);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: clamp(40px, 8vw, 120px);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+}
+
+/* Result Screen Buttons */
+.result-buttons {
+  display: flex;
+  gap: clamp(32px, 6vw, 96px);
+}
+

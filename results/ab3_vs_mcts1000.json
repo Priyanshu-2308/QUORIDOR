@@ -1,0 +1,379 @@
+{
+  "spec_a": "alphabeta:depth=3",
+  "spec_b": "mcts:iterations=1000",
+  "games_count": 20,
+  "seed": 0,
+  "summary": {
+    "wins_a": 12,
+    "wins_b": 8,
+    "draws": 0,
+    "win_rate_a": 0.6,
+    "mean_plies": 66.8,
+    "mean_nodes_per_move_a": 179.27653213751867,
+    "mean_ms_per_move_a": 616.989792825132,
+    "mean_nodes_per_move_b": 956.6746626686656,
+    "mean_ms_per_move_b": 4746.667193703413
+  },
+  "games": [
+    {
+      "game_idx": 0,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 59,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 30,
+        "total_nodes": 4971,
+        "total_time_s": 14.955297500033339
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 29,
+        "total_nodes": 28085,
+        "total_time_s": 117.21260260000417
+      }
+    },
+    {
+      "game_idx": 1,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 56,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 28,
+        "total_nodes": 6002,
+        "total_time_s": 15.172152200007986
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 28,
+        "total_nodes": 26730,
+        "total_time_s": 114.51208380000025
+      }
+    },
+    {
+      "game_idx": 2,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 79,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 40,
+        "total_nodes": 5899,
+        "total_time_s": 17.933645000004617
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 39,
+        "total_nodes": 38393,
+        "total_time_s": 186.20267659999809
+      }
+    },
+    {
+      "game_idx": 3,
+      "a_player": 1,
+      "winner": "B",
+      "plies": 75,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 37,
+        "total_nodes": 5288,
+        "total_time_s": 13.938078999992285
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 38,
+        "total_nodes": 36836,
+        "total_time_s": 171.9752671000315
+      }
+    },
+    {
+      "game_idx": 4,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 69,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 35,
+        "total_nodes": 6788,
+        "total_time_s": 21.09878910000407
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 34,
+        "total_nodes": 32813,
+        "total_time_s": 148.54184300000634
+      }
+    },
+    {
+      "game_idx": 5,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 70,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 35,
+        "total_nodes": 5806,
+        "total_time_s": 26.131500199990114
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 35,
+        "total_nodes": 32100,
+        "total_time_s": 187.85699880000902
+      }
+    },
+    {
+      "game_idx": 6,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 63,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 32,
+        "total_nodes": 5461,
+        "total_time_s": 22.47120859999268
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 31,
+        "total_nodes": 30567,
+        "total_time_s": 158.34582610000507
+      }
+    },
+    {
+      "game_idx": 7,
+      "a_player": 1,
+      "winner": "B",
+      "plies": 79,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 39,
+        "total_nodes": 4414,
+        "total_time_s": 15.409946499959915
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 40,
+        "total_nodes": 38685,
+        "total_time_s": 182.39818420000665
+      }
+    },
+    {
+      "game_idx": 8,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 65,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 33,
+        "total_nodes": 5146,
+        "total_time_s": 14.27151460004825
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 32,
+        "total_nodes": 29556,
+        "total_time_s": 135.16200939999544
+      }
+    },
+    {
+      "game_idx": 9,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 64,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 32,
+        "total_nodes": 6000,
+        "total_time_s": 24.999076700012665
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 32,
+        "total_nodes": 29719,
+        "total_time_s": 185.0786903000335
+      }
+    },
+    {
+      "game_idx": 10,
+      "a_player": 0,
+      "winner": "B",
+      "plies": 62,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 31,
+        "total_nodes": 7121,
+        "total_time_s": 26.923855099994398
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 31,
+        "total_nodes": 28104,
+        "total_time_s": 155.73117540002568
+      }
+    },
+    {
+      "game_idx": 11,
+      "a_player": 1,
+      "winner": "B",
+      "plies": 67,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 33,
+        "total_nodes": 6504,
+        "total_time_s": 28.18120499997167
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 34,
+        "total_nodes": 33441,
+        "total_time_s": 213.99583470005018
+      }
+    },
+    {
+      "game_idx": 12,
+      "a_player": 0,
+      "winner": "B",
+      "plies": 64,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 32,
+        "total_nodes": 5277,
+        "total_time_s": 22.851694000011776
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 32,
+        "total_nodes": 30750,
+        "total_time_s": 174.36685169998236
+      }
+    },
+    {
+      "game_idx": 13,
+      "a_player": 1,
+      "winner": "B",
+      "plies": 63,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 31,
+        "total_nodes": 5880,
+        "total_time_s": 24.328496800007997
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 32,
+        "total_nodes": 29768,
+        "total_time_s": 195.1129651000083
+      }
+    },
+    {
+      "game_idx": 14,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 67,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 34,
+        "total_nodes": 5812,
+        "total_time_s": 19.2891548000116
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 33,
+        "total_nodes": 32053,
+        "total_time_s": 155.97998419998476
+      }
+    },
+    {
+      "game_idx": 15,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 68,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 34,
+        "total_nodes": 5738,
+        "total_time_s": 21.76084749999427
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 34,
+        "total_nodes": 32012,
+        "total_time_s": 143.5036304000023
+      }
+    },
+    {
+      "game_idx": 16,
+      "a_player": 0,
+      "winner": "B",
+      "plies": 64,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 32,
+        "total_nodes": 7212,
+        "total_time_s": 31.238260099984473
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 32,
+        "total_nodes": 30287,
+        "total_time_s": 139.2082610000216
+      }
+    },
+    {
+      "game_idx": 17,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 70,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 35,
+        "total_nodes": 8358,
+        "total_time_s": 19.90597969997907
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 35,
+        "total_nodes": 33950,
+        "total_time_s": 160.24535749998904
+      }
+    },
+    {
+      "game_idx": 18,
+      "a_player": 0,
+      "winner": "B",
+      "plies": 68,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 34,
+        "total_nodes": 6757,
+        "total_time_s": 18.28161750001891
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 34,
+        "total_nodes": 33076,
+        "total_time_s": 118.69836180001585
+      }
+    },
+    {
+      "game_idx": 19,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 64,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 32,
+        "total_nodes": 5502,
+        "total_time_s": 13.62385149999318
+      },
+      "stats_b": {
+        "name": "mcts",
+        "moves": 32,
+        "total_nodes": 31177,
+        "total_time_s": 121.89841450000677
+      }
+    }
+  ]
+}

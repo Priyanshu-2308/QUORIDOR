@@ -1,0 +1,379 @@
+{
+  "spec_a": "mcts:iterations=500",
+  "spec_b": "greedy",
+  "games_count": 20,
+  "seed": 0,
+  "summary": {
+    "wins_a": 18,
+    "wins_b": 2,
+    "draws": 0,
+    "win_rate_a": 0.9,
+    "mean_plies": 38.2,
+    "mean_nodes_per_move_a": 486.26683937823833,
+    "mean_ms_per_move_a": 2037.5807360103797,
+    "mean_nodes_per_move_b": 3.3333333333333335,
+    "mean_ms_per_move_b": 1.033518253987293
+  },
+  "games": [
+    {
+      "game_idx": 0,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 39,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 20,
+        "total_nodes": 9830,
+        "total_time_s": 49.686075099991285
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 19,
+        "total_nodes": 64,
+        "total_time_s": 0.02928929998597596
+      }
+    },
+    {
+      "game_idx": 1,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 14,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 7,
+        "total_nodes": 3203,
+        "total_time_s": 12.413955199997872
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 7,
+        "total_nodes": 27,
+        "total_time_s": 0.004681300008087419
+      }
+    },
+    {
+      "game_idx": 2,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 43,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 22,
+        "total_nodes": 10774,
+        "total_time_s": 35.821459100006905
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 21,
+        "total_nodes": 75,
+        "total_time_s": 0.02178120001917705
+      }
+    },
+    {
+      "game_idx": 3,
+      "a_player": 1,
+      "winner": "B",
+      "plies": 45,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 22,
+        "total_nodes": 10944,
+        "total_time_s": 64.80774869999732
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 23,
+        "total_nodes": 69,
+        "total_time_s": 0.02157240000087768
+      }
+    },
+    {
+      "game_idx": 4,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 35,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 18,
+        "total_nodes": 8689,
+        "total_time_s": 31.471521100000245
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 17,
+        "total_nodes": 62,
+        "total_time_s": 0.01653049999731593
+      }
+    },
+    {
+      "game_idx": 5,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 36,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 18,
+        "total_nodes": 8702,
+        "total_time_s": 27.536202399984177
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 18,
+        "total_nodes": 63,
+        "total_time_s": 0.015396500006318092
+      }
+    },
+    {
+      "game_idx": 6,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 39,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 20,
+        "total_nodes": 9839,
+        "total_time_s": 35.10468829999445
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 19,
+        "total_nodes": 57,
+        "total_time_s": 0.01834239999880083
+      }
+    },
+    {
+      "game_idx": 7,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 42,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 21,
+        "total_nodes": 10089,
+        "total_time_s": 51.336650700017344
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 21,
+        "total_nodes": 69,
+        "total_time_s": 0.02093129999411758
+      }
+    },
+    {
+      "game_idx": 8,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 43,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 22,
+        "total_nodes": 10838,
+        "total_time_s": 50.35564359999262
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 21,
+        "total_nodes": 73,
+        "total_time_s": 0.02383840000402415
+      }
+    },
+    {
+      "game_idx": 9,
+      "a_player": 1,
+      "winner": "B",
+      "plies": 53,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 26,
+        "total_nodes": 12875,
+        "total_time_s": 75.27255790002528
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 27,
+        "total_nodes": 82,
+        "total_time_s": 0.022354900029313285
+      }
+    },
+    {
+      "game_idx": 10,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 53,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 27,
+        "total_nodes": 13041,
+        "total_time_s": 77.476951500008
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 26,
+        "total_nodes": 67,
+        "total_time_s": 0.021059399980003946
+      }
+    },
+    {
+      "game_idx": 11,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 22,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 11,
+        "total_nodes": 5468,
+        "total_time_s": 21.137054100006935
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 11,
+        "total_nodes": 40,
+        "total_time_s": 0.009558099991409108
+      }
+    },
+    {
+      "game_idx": 12,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 43,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 22,
+        "total_nodes": 10849,
+        "total_time_s": 44.015816099985386
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 21,
+        "total_nodes": 76,
+        "total_time_s": 0.03538660001504468
+      }
+    },
+    {
+      "game_idx": 13,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 14,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 7,
+        "total_nodes": 3190,
+        "total_time_s": 12.549757399996452
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 7,
+        "total_nodes": 27,
+        "total_time_s": 0.007812499985448085
+      }
+    },
+    {
+      "game_idx": 14,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 43,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 22,
+        "total_nodes": 10837,
+        "total_time_s": 43.34557909999421
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 21,
+        "total_nodes": 72,
+        "total_time_s": 0.02845480001269607
+      }
+    },
+    {
+      "game_idx": 15,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 38,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 19,
+        "total_nodes": 9432,
+        "total_time_s": 32.33356990000175
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 19,
+        "total_nodes": 61,
+        "total_time_s": 0.026103199998033233
+      }
+    },
+    {
+      "game_idx": 16,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 23,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 12,
+        "total_nodes": 5950,
+        "total_time_s": 34.494593599993095
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 11,
+        "total_nodes": 43,
+        "total_time_s": 0.016831200002343394
+      }
+    },
+    {
+      "game_idx": 17,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 52,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 26,
+        "total_nodes": 12658,
+        "total_time_s": 29.036557200015523
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 26,
+        "total_nodes": 88,
+        "total_time_s": 0.02186009999422822
+      }
+    },
+    {
+      "game_idx": 18,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 51,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 26,
+        "total_nodes": 11651,
+        "total_time_s": 32.351762999998755
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 25,
+        "total_nodes": 89,
+        "total_time_s": 0.015203199989628047
+      }
+    },
+    {
+      "game_idx": 19,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 36,
+      "stats_a": {
+        "name": "mcts",
+        "moves": 18,
+        "total_nodes": 8840,
+        "total_time_s": 25.958020099998976
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 18,
+        "total_nodes": 56,
+        "total_time_s": 0.01368259999435395
+      }
+    }
+  ]
+}

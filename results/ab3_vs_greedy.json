@@ -1,0 +1,379 @@
+{
+  "spec_a": "alphabeta:depth=3",
+  "spec_b": "greedy",
+  "games_count": 20,
+  "seed": 0,
+  "summary": {
+    "wins_a": 20,
+    "wins_b": 0,
+    "draws": 0,
+    "win_rate_a": 1.0,
+    "mean_plies": 26.6,
+    "mean_nodes_per_move_a": 247.69372693726936,
+    "mean_ms_per_move_a": 467.06968007380067,
+    "mean_nodes_per_move_b": 3.2528735632183907,
+    "mean_ms_per_move_b": 0.9693574713756262
+  },
+  "games": [
+    {
+      "game_idx": 0,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 33,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 4077,
+        "total_time_s": 8.196342099989124
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 16,
+        "total_nodes": 53,
+        "total_time_s": 0.018785400010528974
+      }
+    },
+    {
+      "game_idx": 1,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 14,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 7,
+        "total_nodes": 1257,
+        "total_time_s": 2.7467398999942816
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 7,
+        "total_nodes": 27,
+        "total_time_s": 0.005788500013295561
+      }
+    },
+    {
+      "game_idx": 2,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 21,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 11,
+        "total_nodes": 3183,
+        "total_time_s": 5.758969400005299
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 10,
+        "total_nodes": 33,
+        "total_time_s": 0.009713300001749303
+      }
+    },
+    {
+      "game_idx": 3,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 14,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 7,
+        "total_nodes": 1257,
+        "total_time_s": 2.6972445999854244
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 7,
+        "total_nodes": 27,
+        "total_time_s": 0.005252099988865666
+      }
+    },
+    {
+      "game_idx": 4,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 21,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 11,
+        "total_nodes": 3064,
+        "total_time_s": 5.705238899987307
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 10,
+        "total_nodes": 33,
+        "total_time_s": 0.010416000004624948
+      }
+    },
+    {
+      "game_idx": 5,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 34,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 3899,
+        "total_time_s": 7.625815399987914
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 17,
+        "total_nodes": 55,
+        "total_time_s": 0.019305500012706034
+      }
+    },
+    {
+      "game_idx": 6,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 15,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 8,
+        "total_nodes": 1819,
+        "total_time_s": 4.445657700001902
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 7,
+        "total_nodes": 27,
+        "total_time_s": 0.006018499982019421
+      }
+    },
+    {
+      "game_idx": 7,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 34,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 3915,
+        "total_time_s": 7.362596400023904
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 17,
+        "total_nodes": 49,
+        "total_time_s": 0.018422899993311148
+      }
+    },
+    {
+      "game_idx": 8,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 27,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 14,
+        "total_nodes": 4379,
+        "total_time_s": 9.036720300020534
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 13,
+        "total_nodes": 39,
+        "total_time_s": 0.014019900016137399
+      }
+    },
+    {
+      "game_idx": 9,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 32,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 16,
+        "total_nodes": 4220,
+        "total_time_s": 8.004049199982546
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 16,
+        "total_nodes": 52,
+        "total_time_s": 0.01724729998386465
+      }
+    },
+    {
+      "game_idx": 10,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 15,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 8,
+        "total_nodes": 1816,
+        "total_time_s": 3.9434593000041787
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 7,
+        "total_nodes": 27,
+        "total_time_s": 0.006600299995625392
+      }
+    },
+    {
+      "game_idx": 11,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 32,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 16,
+        "total_nodes": 4220,
+        "total_time_s": 8.14276269999391
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 16,
+        "total_nodes": 52,
+        "total_time_s": 0.017358199998852797
+      }
+    },
+    {
+      "game_idx": 12,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 33,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 4077,
+        "total_time_s": 7.96994690001884
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 16,
+        "total_nodes": 53,
+        "total_time_s": 0.018770100010442548
+      }
+    },
+    {
+      "game_idx": 13,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 34,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 3915,
+        "total_time_s": 7.418315700000676
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 17,
+        "total_nodes": 49,
+        "total_time_s": 0.01555240000016056
+      }
+    },
+    {
+      "game_idx": 14,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 33,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 4689,
+        "total_time_s": 8.606715899986739
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 16,
+        "total_nodes": 47,
+        "total_time_s": 0.017166300000099
+      }
+    },
+    {
+      "game_idx": 15,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 14,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 7,
+        "total_nodes": 1257,
+        "total_time_s": 3.234629299993685
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 7,
+        "total_nodes": 27,
+        "total_time_s": 0.005778200000349898
+      }
+    },
+    {
+      "game_idx": 16,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 31,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 16,
+        "total_nodes": 4073,
+        "total_time_s": 7.021757099988463
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 15,
+        "total_nodes": 52,
+        "total_time_s": 0.014148000009299722
+      }
+    },
+    {
+      "game_idx": 17,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 34,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 3901,
+        "total_time_s": 6.290155400020012
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 17,
+        "total_nodes": 56,
+        "total_time_s": 0.0128673999934108
+      }
+    },
+    {
+      "game_idx": 18,
+      "a_player": 0,
+      "winner": "A",
+      "plies": 27,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 14,
+        "total_nodes": 4379,
+        "total_time_s": 6.999673000005714
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 13,
+        "total_nodes": 39,
+        "total_time_s": 0.0086660000088159
+      }
+    },
+    {
+      "game_idx": 19,
+      "a_player": 1,
+      "winner": "A",
+      "plies": 34,
+      "stats_a": {
+        "name": "alphabeta",
+        "moves": 17,
+        "total_nodes": 3728,
+        "total_time_s": 5.369094100009534
+      },
+      "stats_b": {
+        "name": "greedy",
+        "moves": 17,
+        "total_nodes": 52,
+        "total_time_s": 0.011126000004878733
+      }
+    }
+  ]
+}
