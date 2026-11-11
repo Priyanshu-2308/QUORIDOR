@@ -1,4 +1,4 @@
-"""Agent registry and factory (owner: Siddhesh)."""
+"""Agent registry and factory."""
 from __future__ import annotations
 
 import ast

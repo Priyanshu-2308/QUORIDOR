@@ -1,4 +1,4 @@
-"""Random baseline agent (owner: Siddhesh)."""
+"""Random baseline agent."""
 from __future__ import annotations
 
 import random as _random

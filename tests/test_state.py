@@ -1,4 +1,4 @@
-"""Tests for quoridor.types and quoridor.state (owner: Shubham)."""
+"""Tests for quoridor.types and quoridor.state."""
 import pytest
 
 from quoridor.state import GameState

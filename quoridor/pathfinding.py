@@ -1,4 +1,4 @@
-"""BFS path utilities over cells; walls only, the other pawn is ignored. (owner: Rajnish)"""
+"""BFS path utilities over cells; walls only, the other pawn is ignored."""
 from __future__ import annotations
 
 from collections import deque

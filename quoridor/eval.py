@@ -1,4 +1,4 @@
-"""Static evaluation (owner: Siddhesh)."""
+"""Static evaluation."""
 from __future__ import annotations
 
 from .pathfinding import distances

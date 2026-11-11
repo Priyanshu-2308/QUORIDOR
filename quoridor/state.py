@@ -1,4 +1,4 @@
-"""Immutable game state (owner: Shubham)."""
+"""Immutable game state."""
 from __future__ import annotations
 
 from dataclasses import dataclass, replace

@@ -1,4 +1,4 @@
-"""Pruned move generation for search agents (owner: Siddhesh)."""
+"""Pruned move generation for search agents."""
 from __future__ import annotations
 
 from . import pathfinding, rules

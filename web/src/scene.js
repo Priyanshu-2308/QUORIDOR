@@ -1,5 +1,5 @@
 /**
- * Three.js 3D Scene and Monolith Visualizer (owner: Priyanshu).
+ * Three.js 3D Scene and Monolith Visualizer.
  */
 import * as THREE from 'three';
 
@@ -89,9 +89,7 @@ export class QuoridorScene {
     requestAnimationFrame(this._animate);
   }
 
-  /* -------------------------------------------------------------
-   * 1. TITLE SCREEN: Giant rotating pawn monolith
-   * ------------------------------------------------------------- */
+  // 1. TITLE SCREEN: Giant rotating pawn monolith
   _initTitleScene() {
     const group = this.groups.title;
 
@@ -123,9 +121,7 @@ export class QuoridorScene {
     group.add(monolith);
   }
 
-  /* -------------------------------------------------------------
-   * 2. SETUP SCREEN: Reactive height/color difficulty monolith
-   * ------------------------------------------------------------- */
+  // 2. SETUP SCREEN: Reactive height/color difficulty monolith
   _initSetupScene() {
     const group = this.groups.setup;
 
@@ -156,9 +152,7 @@ export class QuoridorScene {
     this.setupMonolithMat.color.setHex(color);
   }
 
-  /* -------------------------------------------------------------
-   * 3. GAME SCREEN: 9x9 Board with grooves, pawns, walls, markers
-   * ------------------------------------------------------------- */
+  // 3. GAME SCREEN: 9x9 Board with grooves, pawns, walls, markers
   _initGameScene() {
     const group = this.groups.game;
 
@@ -235,9 +229,7 @@ export class QuoridorScene {
     group.add(this.interactPlane);
   }
 
-  /* -------------------------------------------------------------
-   * 4. STATS SCREEN: 3D Log10(nodes) Column Visualizer
-   * ------------------------------------------------------------- */
+  // 4. STATS SCREEN: 3D Log10(nodes) Column Visualizer
   _initStatsScene() {
     const group = this.groups.stats;
     group.position.x = 2.0;
@@ -281,9 +273,7 @@ export class QuoridorScene {
     });
   }
 
-  /* -------------------------------------------------------------
-   * 5. RESULT SCREEN: Spinning/rising winning pawn monolith
-   * ------------------------------------------------------------- */
+  // 5. RESULT SCREEN: Spinning/rising winning pawn monolith
   _initResultScene() {
     const group = this.groups.result;
     group.position.x = 1.8;
@@ -305,9 +295,7 @@ export class QuoridorScene {
     this.winMonolith.position.set(0, -0.2, 0);
   }
 
-  /* -------------------------------------------------------------
-   * Screen Management & Camera Framing
-   * ------------------------------------------------------------- */
+  // Screen Management & Camera Framing
   setScreen(screenName) {
     this.currentScreen = screenName;
     for (const [key, group] of Object.entries(this.groups)) {
@@ -333,9 +321,7 @@ export class QuoridorScene {
     }
   }
 
-  /* -------------------------------------------------------------
-   * Game State Synchronization
-   * ------------------------------------------------------------- */
+  // Game State Synchronization
   syncGameState(state, legalMoves = []) {
     // 1. Update Pawns
     const [p0, p1] = state.pawns;
@@ -465,9 +451,7 @@ export class QuoridorScene {
     this._updateGhostWall();
   }
 
-  /* -------------------------------------------------------------
-   * Pointer Events & Raycasting Interactions
-   * ------------------------------------------------------------- */
+  // Pointer Events & Raycasting Interactions
   _onPointerMove(event) {
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;

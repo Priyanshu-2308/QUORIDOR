@@ -171,7 +171,6 @@ button.monolith-btn {
   line-height: 0.9;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  cursor: pointer;
   padding: 0;
   text-align: left;
   transition: transform 0.1s ease, opacity 0.15s ease;
@@ -200,7 +199,6 @@ button.monolith-btn:active {
   font-family: var(--font-family);
   font-size: clamp(36px, 7vw, 100px);
   line-height: 1;
-  cursor: pointer;
   padding: 0 clamp(8px, 1.5vw, 24px);
   transition: transform 0.1s ease;
 }

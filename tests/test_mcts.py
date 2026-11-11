@@ -1,4 +1,4 @@
-"""Tests for MCTSAgent (owner: Shivam / Priyanshu)."""
+"""Tests for MCTSAgent."""
 from __future__ import annotations
 
 from concurrent.futures import ProcessPoolExecutor

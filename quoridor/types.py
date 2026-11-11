@@ -1,4 +1,4 @@
-"""Move types and (de)serialisation helpers (owner: Shubham)."""
+"""Move types and (de)serialisation helpers."""
 from __future__ import annotations
 
 from dataclasses import dataclass

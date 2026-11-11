@@ -1,4 +1,4 @@
-"""Tests for quoridor.rules (owner: Rajnish)."""
+"""Tests for quoridor.rules."""
 import random
 import pytest
 

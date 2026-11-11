@@ -1,5 +1,5 @@
 /**
- * Title Screen (owner: Priyanshu).
+ * Title Screen.
  * Vermilion field, giant "QUORIDOR", rotating monolith, button "PLAY".
  */
 export function createTitleScreen({ onPlay }) {

@@ -1,4 +1,4 @@
-"""Shared constants for Quoridor (owner: Shubham)."""
+"""Shared constants for Quoridor."""
 
 BOARD_SIZE = 9
 WALLS_PER_PLAYER = 10

@@ -1,4 +1,4 @@
-"""Tournament CLI and experiment harness (owner: Priyanshu)."""
+"""Tournament CLI and experiment harness."""
 from __future__ import annotations
 
 import argparse

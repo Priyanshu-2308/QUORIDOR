@@ -1,4 +1,4 @@
-"""Tests for tournament harness (owner: Priyanshu)."""
+"""Tests for tournament harness."""
 from __future__ import annotations
 
 import json

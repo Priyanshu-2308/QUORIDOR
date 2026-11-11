@@ -1,4 +1,4 @@
-"""Move legality (owner: Rajnish)."""
+"""Move legality."""
 from __future__ import annotations
 
 from .constants import DIRECTIONS, DOWN, H, LEFT, RIGHT, UP, V

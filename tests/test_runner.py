@@ -1,4 +1,4 @@
-"""Tests for quoridor/runner.py (owner: Siddhesh)."""
+"""Tests for quoridor/runner.py."""
 from __future__ import annotations
 
 import pytest

@@ -1,11 +1,4 @@
-"""Monte Carlo tree search agent (owner: Shivam / Priyanshu).
-
-Benchmark timings (typical move):
-  - iterations=500: initial ~2.2s, after 20 plies ~2.5s
-  - iterations=1000: initial ~4.8s, after 20 plies ~4.7s
-  - iterations=2000: initial ~9.2s, after 20 plies ~9.0s
-Recommended UI difficulty: Quick = iterations 200, Medium = iterations 500, Strong = iterations 1000, Deep = iterations 2000.
-"""
+"""Monte Carlo tree search agent."""
 from __future__ import annotations
 
 from collections import deque
@@ -204,8 +197,7 @@ class MCTSAgent(Agent):
                 d_curr = d0 if curr_p == 0 else d1
 
                 if self.rollout_policy == "path_biased":
-                    # Tuned rollout: 0.95 pawn step probability ensures robust goal convergence
-                    # against random wall placements, meeting >= 9/10 wins vs Random and >= 6/10 vs Greedy.
+                    # 0.95 chosen by trial against the greedy agent
                     if self._rng.random() < 0.95:
                         p_moves = rules.legal_pawn_moves(sim_state)
                         if p_moves:
