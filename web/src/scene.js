@@ -117,6 +117,7 @@ export class QuoridorScene {
     monolith.add(baseMesh);
     monolith.add(bodyMesh);
     monolith.add(crownMesh);
+    monolith.position.set(2.5, 0, 0);
     this.titleMonolith = monolith;
 
     group.add(monolith);
@@ -140,6 +141,7 @@ export class QuoridorScene {
     const container = new THREE.Group();
     container.add(base);
     container.add(this.setupMonolithMesh);
+    container.position.set(1.8, 0, 0);
     this.setupContainer = container;
 
     group.add(container);
@@ -238,6 +240,7 @@ export class QuoridorScene {
    * ------------------------------------------------------------- */
   _initStatsScene() {
     const group = this.groups.stats;
+    group.position.x = 2.0;
 
     this.statsColumns = new THREE.Group();
     group.add(this.statsColumns);
@@ -283,6 +286,7 @@ export class QuoridorScene {
    * ------------------------------------------------------------- */
   _initResultScene() {
     const group = this.groups.result;
+    group.position.x = 1.8;
 
     const winGeo = new THREE.BoxGeometry(1.2, 3.6, 1.2);
     this.winMat = new THREE.MeshLambertMaterial({ color: PALETTE.COBALT });

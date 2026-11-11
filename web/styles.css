@@ -22,6 +22,7 @@ html, body {
   font-family: var(--font-family);
   background-color: var(--bone);
   color: var(--ink);
+  transition: background-color 0.2s ease;
 }
 
 #canvas-container {
@@ -75,46 +76,51 @@ html, body {
   padding: clamp(24px, 5vw, 64px);
   box-sizing: border-box;
   pointer-events: none;
-  transition: background-color 0.2s ease;
+  background-color: transparent;
 }
 
 .screen * {
+  pointer-events: none;
+}
+
+button, a, input, select, textarea, .monolith-btn, .chevron-btn {
   pointer-events: auto;
 }
 
-/* Screen Themes (Pure Flat Color Fields) */
+/* Screen Themes (Pure Flat Color Fields on Body) */
+body:has(.screen-title)       { background-color: var(--vermilion); }
+body:has(.screen-setup)       { background-color: var(--cobalt); }
+body:has(.screen-game)        { background-color: var(--bone); }
+body:has(.screen-stats)       { background-color: var(--ink); }
+body:has(.screen-result-p0)   { background-color: var(--cobalt); }
+body:has(.screen-result-p1)   { background-color: var(--vermilion); }
+body:has(.screen-result-draw) { background-color: var(--ochre); }
+
 .screen-title {
-  background-color: var(--vermilion);
   color: var(--bone);
 }
 
 .screen-setup {
-  background-color: var(--cobalt);
   color: var(--bone);
 }
 
 .screen-game {
-  background-color: var(--bone);
   color: var(--ink);
 }
 
 .screen-stats {
-  background-color: var(--ink);
   color: var(--bone);
 }
 
 .screen-result-p0 {
-  background-color: var(--cobalt);
   color: var(--bone);
 }
 
 .screen-result-p1 {
-  background-color: var(--vermilion);
   color: var(--bone);
 }
 
 .screen-result-draw {
-  background-color: var(--ochre);
   color: var(--ink);
 }
 
