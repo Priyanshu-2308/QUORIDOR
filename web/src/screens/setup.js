@@ -10,7 +10,7 @@ export function createSetupScreen({ onStart, onConfigChange }) {
 
   const opponents = [
     { id: 'alphabeta', name: 'ALPHA-BETA', levels: [2, 3, 4], defaultLevelIdx: 1 },
-    { id: 'mcts', name: 'MCTS', levels: [200, 500, 1000, 2000], defaultLevelIdx: 2 },
+    { id: 'mcts', name: 'MCTS', levels: [200, 400, 600, 1000], defaultLevelIdx: 2 },
     { id: 'greedy', name: 'GREEDY', levels: [], defaultLevelIdx: 0 },
     { id: 'random', name: 'RANDOM', levels: [], defaultLevelIdx: 0 },
   ];

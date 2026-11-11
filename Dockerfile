@@ -2,15 +2,20 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Create non-root user
+RUN useradd -m -u 1000 appuser
 
-# Copy application source code
-COPY . .
+# Dependencies
+COPY requirements-deploy.txt .
+RUN pip install --no-cache-dir -r requirements-deploy.txt
 
-# Expose standard port
-EXPOSE 8000
+# Copy only runtime application code
+COPY quoridor/ quoridor/
+COPY server/ server/
+COPY web/ web/
 
-# Start Uvicorn server
-CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "8000"]
+USER appuser
+
+EXPOSE 7860
+
+CMD ["sh", "-c", "uvicorn server.app:app --host 0.0.0.0 --port ${PORT:-7860} --workers 1"]

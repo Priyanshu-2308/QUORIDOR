@@ -1,15 +1,100 @@
-"""Tests for FastAPI backend server (owner: Priyanshu)."""
+"""Tests for FastAPI backend server."""
 from __future__ import annotations
 
+import time
 import pytest
 from fastapi.testclient import TestClient
 
-from server.app import app
+from server.app import app, sessions, MAX_SESSIONS, Session
+from quoridor.state import GameState
+from quoridor.agents.random_agent import RandomAgent
 
 
 @pytest.fixture
 def client():
     return TestClient(app)
+
+
+def test_health_endpoint(client):
+    resp = client.get("/api/health")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
+
+
+def test_allowed_opponent_specs(client):
+    valid_specs = [
+        "random",
+        "greedy",
+        "alphabeta:depth=1",
+        "alphabeta:depth=4",
+        "mcts:iterations=50",
+        "mcts:iterations=1000",
+        "alphabeta:depth=3,seed=42",
+    ]
+    for spec in valid_specs:
+        resp = client.post("/api/new", json={"opponent": spec, "human_player": 0})
+        assert resp.status_code == 200, f"Expected 200 for {spec}, got {resp.status_code}: {resp.text}"
+        assert "game_id" in resp.json()
+
+
+def test_rejected_opponent_specs(client):
+    invalid_specs = [
+        "alphabeta:depth=9",
+        "alphabeta:depth=0",
+        "mcts:iterations=100000",
+        "mcts:iterations=10",
+        "mcts:time_limit_s=100",
+        "alphabeta:unknown_key=1",
+        "greedy:depth=3",
+        "unknown_agent",
+        "",
+    ]
+    for spec in invalid_specs:
+        resp = client.post("/api/new", json={"opponent": spec, "human_player": 0})
+        assert resp.status_code == 400, f"Expected 400 for {spec}, got {resp.status_code}"
+
+
+def test_session_cap_and_eviction(client):
+    sessions.clear()
+    now = time.time()
+
+    # Pre-populate 200 sessions
+    dummy_state = GameState.initial()
+    dummy_agent = RandomAgent()
+    for i in range(MAX_SESSIONS):
+        gid = f"session_{i}"
+        sessions[gid] = Session(
+            state=dummy_state,
+            history=[dummy_state],
+            opponent=dummy_agent,
+            opponent_spec="random",
+            human_player=0,
+            last_accessed=now - (MAX_SESSIONS - i) * 10,  # session_0 is oldest
+        )
+
+    assert len(sessions) == MAX_SESSIONS
+    oldest_id = "session_0"
+    assert oldest_id in sessions
+
+    # Add 201st session via /api/new
+    resp = client.post("/api/new", json={"opponent": "random", "human_player": 0})
+    assert resp.status_code == 200
+    assert len(sessions) == MAX_SESSIONS
+    assert oldest_id not in sessions  # Oldest evicted
+
+    # Test idle timeout eviction (> 2 hours)
+    expired_id = "session_expired"
+    sessions[expired_id] = Session(
+        state=dummy_state,
+        history=[dummy_state],
+        opponent=dummy_agent,
+        opponent_spec="random",
+        human_player=0,
+        last_accessed=now - 8000,  # > 2 hours ago
+    )
+    resp = client.post("/api/new", json={"opponent": "random", "human_player": 0})
+    assert resp.status_code == 200
+    assert expired_id not in sessions
 
 
 def test_server_flow(client):
@@ -110,4 +195,3 @@ def test_static_files_served(client):
     resp_css = client.get("/styles.css")
     assert resp_css.status_code == 200
     assert "--bone" in resp_css.text
-

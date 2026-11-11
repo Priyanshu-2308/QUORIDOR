@@ -5,4 +5,7 @@ venv
 __pycache__
 *.pyc
 .pytest_cache
-results/*.json
+tests
+results
+docs
+node_modules
