@@ -8,15 +8,16 @@
 
 ## 1. Executive Summary
 
-This project implements an end-to-end, high-performance engine for the board game **Quoridor**, featuring multiple AI search strategies (Random, Greedy, Minimax with $\alpha$-$\beta$ Pruning, and Monte Carlo Tree Search), an automated tournament harness for empirical performance profiling, an ablation study on tree search optimizations, and a reactive 3D web application built with Three.js.
+This project implements an engine for the board game **Quoridor**, featuring multiple AI search strategies (Random, Greedy, Minimax with $\alpha$-$\beta$ Pruning, and Monte Carlo Tree Search), an automated tournament harness for empirical performance profiling, an ablation study on tree search optimizations, and a reactive 3D web application built with Three.js.
 
-The game engine is implemented strictly using the Python 3 standard library, with an immutable `GameState` architecture ensuring correctness, determinism, and thread/process-safe parallelization across multiple worker processes.
+The game engine is implemented strictly using the Python 3 standard library, with an immutable `GameState` architecture ensuring correctness, determinism, and process-safe parallelization across multiple worker processes.
 
 Key empirical findings from our tournament suite and ablation experiments include:
-1. **Wall Pruning Dominance:** Wall pruning via candidate selection (`moves.candidate_walls`) provides a **64.5x reduction** in nodes searched at Depth 3 (22,336 nodes down to 346 nodes) and a **46.1x speedup** in wall-clock time (14,604 ms down to 316.5 ms).
-2. **Move Ordering Trade-Off:** Dynamic move ordering cuts visited states almost in half (from 561.4 to 346.1 nodes at Depth 3, and 1,548.5 to 861.5 nodes at Depth 4). However, because evaluation-based ordering incurs breadth-first search path computations, the wall-clock execution time is slightly higher at shallow depths (316.5 ms vs 280.4 ms), becoming increasingly advantageous as depth scales.
-3. **Transposition Table Impact:** At Depth 3, transposition table hits are rare due to tree depth; at Depth 4, transposition caching achieves 52.9 hits per move, lowering visited nodes from 923.2 to 861.5.
-4. **MCTS Path-Biased Simulation:** Standard random rollouts in Quoridor suffer from excessive wandering and repetitive wall placements. Implementing a goal-directed, path-biased rollout policy (prioritizing shortest-path pawn advances with 90-95% probability) elevated MCTS win rates against baseline greedy agents from ~35% to **90.0%**.
+1. **Wall Pruning:** Candidate wall pruning (`moves.candidate_walls`) provides a **64.5x reduction** in nodes searched at Depth 3 (22,335.7 nodes down to 346.1 nodes) and a **46.1x speedup** in wall-clock time (14,604.4 ms down to 316.5 ms).
+2. **Move Ordering Trade-Off:** Move ordering cuts visited states by 38.3% at Depth 3 (561.4 to 346.1 nodes) and 44.4% at Depth 4 (1,548.5 to 861.5 nodes). Because sorting requires extra path computations at every node and caps candidate walls at 12 per node, wall-clock time is higher in both cases (316.5 ms vs 280.4 ms at Depth 3, and 1,496.2 ms vs 1,282.9 ms at Depth 4).
+3. **Transposition Table Impact:** In our sample of 15 positions with no repeats, transposition table hits averaged 0.0 at Depth 3; at Depth 4, transposition caching achieved 52.9 hits per move, lowering visited nodes from 923.2 to 861.5.
+4. **MCTS Path-Biased Simulation:** Standard random rollouts in Quoridor suffer from aimless wandering. Implementing a goal-directed, path-biased rollout policy (prioritizing shortest-path pawn advances with 95% probability, tuned by trial against the greedy baseline without systematic tuning) raised MCTS win rates against baseline greedy agents from ~35% to **90.0%** (18/20) at 500 iterations and **100.0%** (20/20) at 1000 iterations.
+5. **Headline Match:** AlphaBeta(d=3) won 12 of 20 games against MCTS(1000) (60.0%, 95% Wilson CI [38.7%, 78.1%], $p = 0.5034$). With 20 games this is not a statistically significant difference; the two agents are of similar strength under these settings. However, AlphaBeta reached this strength using roughly 8x less wall-clock time per move (0.6 s vs 4.7 s).
 
 ---
 
@@ -59,7 +60,7 @@ QUORIDOR/
       base.py                     Abstract Agent base class
       random_agent.py             Uniform random legal move selection
       greedy_agent.py             Shortest-path greedy pawn advancement
-      alphabeta_agent.py          Iterative / fixed-depth Alpha-Beta minimax search
+      alphabeta_agent.py          Fixed-depth Alpha-Beta minimax search
       mcts_agent.py               Monte Carlo Tree Search with UCT and path-biased rollouts
     tournament.py                 Multiprocessing tournament suite, ablation runner & charts
   server/
@@ -77,10 +78,10 @@ QUORIDOR/
         game.js                   Interactive 9x9 board with ghost wall and HUD
         stats.js                  3D telemetry and node visualization
         result.js                 Victory/defeat screen with rematch options
-  tests/                          Comprehensive unit and regression test suite
+  tests/                          Unit and regression test suite
   results/                        Tournament JSONs, CSV summaries, and generated PNG charts
   docs/
-    REPORT.md                     Comprehensive engineering and empirical report
+    REPORT.md                     Engineering and empirical evaluation report
 ```
 
 ---
@@ -145,10 +146,12 @@ However, walls placed far away from both pawns or far from their shortest paths 
 This reduces the active wall branching factor from 128 down to typically **12–18 candidate walls**, yielding an order-of-magnitude reduction in search space while preserving tactical relevance.
 
 ### 5.4 Minimax with $\alpha$-$\beta$ Pruning (`alphabeta_agent.py`)
-`AlphaBetaAgent` implements minimax search with $\alpha$-$\beta$ pruning enhanced by three key features:
+`AlphaBetaAgent` implements fixed-depth minimax search with $\alpha$-$\beta$ pruning. (Iterative deepening is supported in the codebase but was disabled by default (`iterative_deepening=False`) and was not used in any evaluated agents or benchmarks.)
+
+The search is enhanced by three features:
 
 1. **Move Ordering:**
-   Moves are sorted before exploration: pawn moves along the shortest path are prioritized first, followed by candidate wall placements ranked by their heuristic evaluation. Good moves trigger cutoffs early, maximizing the number of pruned branches.
+   Moves are sorted before exploration: pawn moves along the shortest path are prioritized first, followed by candidate wall placements ranked by their heuristic evaluation. Good moves trigger cutoffs early, maximizing the number of pruned branches. Note that move ordering also caps wall candidates at 12 per node.
 2. **Transposition Table (TT):**
    A hash table caches visited positions keyed by `state.key()`. Each entry stores `{depth, score, flag, best_move}`. If a previously explored state is encountered at an equal or greater depth, the stored value provides immediate cutoffs or tightens the $(\alpha, \beta)$ window.
 3. **Evaluation Function (`eval.py`):**
@@ -168,10 +171,11 @@ This reduces the active wall branching factor from 128 down to typically **12–
 2. **Expansion:**
    One unvisited candidate move from `moves.candidate_moves` is expanded per iteration.
 3. **Simulation (Rollout Policy):**
-   Uniform random rollouts in Quoridor frequently lead to aimless oscillation. We utilize a **path-biased rollout policy**:
+   Uniform random rollouts in Quoridor frequently lead to aimless wandering. We use a **path-biased rollout policy**:
    - With 95% probability, play the greedy pawn step that minimizes the mover's shortest-path distance.
    - With 5% probability, select a random candidate move.
    - Rollouts terminate upon reaching a goal row or at `rollout_depth = 60`.
+   The 95% threshold was chosen by trial against the greedy baseline without systematic parameter tuning.
 4. **Terminal Win Prioritization:**
    When an immediate winning move exists at the root, the agent prioritizes the proven winning child directly, ensuring 100% tactical precision in endgames.
 5. **Backpropagation:**
@@ -199,10 +203,20 @@ We evaluated all agent pairings using our automated tournament harness across 20
 *All results recorded in `results/summary.csv` and individual JSON logs. Visualized in `results/win_rates.png`.*
 
 ### 6.2 Analysis of Matchups
-- **Baseline Superiority:** Both AlphaBeta (depth $\ge 2$) and MCTS ($\ge 500$ iterations) decisively overcome the purely reactive `GreedyAgent` and `RandomAgent`. Greedy agents fall into simple detours because they lack adversarial lookahead and wall placement logic.
-- **The Headline Match (AlphaBeta d=3 vs MCTS 1000):**  
-  In the headline match of 20 games, **AlphaBeta(d=3) won 12 games (60.0%) while MCTS(1000) won 8 games (40.0%)**. With a mean game length of 66.8 plies, this was the most fiercely contested pairing in the tournament. AlphaBeta's ability to calculate exact wall traps provided a decisive edge in tight endgame races, while MCTS demonstrated strong positional resilience by finding creative multi-path corridors.
-- **Search Depth Scaling:** Comparing AlphaBeta(d=2) with AlphaBeta(d=3), Depth 3 achieved a 70.0% win rate (14 wins to 6), confirming that an additional ply of tactical lookahead is worth substantial playing strength in Quoridor.
+
+Every pair was played over a sample size of 20 games, with seats alternating between games to balance first-mover advantage. Below are the 95% Wilson score confidence intervals and exact two-sided binomial p-values testing the null hypothesis of equal playing strength ($p = 0.50$), computed with `results/stats.py`:
+- **Greedy vs Random:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
+- **AlphaBeta(d=2) vs Greedy:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
+- **AlphaBeta(d=3) vs Greedy:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
+- **MCTS(500) vs Greedy:** 18/20 wins (90.0%), 95% Wilson CI [69.9%, 97.2%], $p = 0.0004$.
+- **MCTS(1000) vs Greedy:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
+- **AlphaBeta(d=3) vs MCTS(1000):** 12/20 wins (60.0%), 95% Wilson CI [38.7%, 78.1%], $p = 0.5034$.
+- **AlphaBeta(d=2) vs AlphaBeta(d=3):** Depth 3 won 14 of 20 games (70.0%), 95% Wilson CI [48.1%, 85.5%], $p = 0.1153$ (Depth 2 won 6/20, 30.0%, 95% Wilson CI [14.5%, 51.9%]).
+
+Detailed findings:
+- **Baseline Performance:** Over 20 games each, both AlphaBeta (depth $\ge 2$) and MCTS ($\ge 500$ iterations) won 20 of 20 games against Greedy and Random (18 of 20 for MCTS-500 against Greedy). Purely reactive greedy agents cannot handle basic wall placements or adversarial lookahead.
+- **The Headline Match (AlphaBeta d=3 vs MCTS 1000):** AlphaBeta(d=3) won 12 of 20 games against MCTS(1000). With 20 games this is not a statistically significant difference; the two agents are of similar strength under these settings. However, MCTS used about 4.7 s per move against about 0.6 s for alpha-beta, so alpha-beta reached the same strength with roughly 8x less time.
+- **Search Depth Scaling:** Depth 3 won 14 of 20 games against depth 2 ($p = 0.12$). This is suggestive but not conclusive at this sample size.
 
 ---
 
@@ -230,35 +244,42 @@ We benchmarked 9 configurations spanning Depth 3 and Depth 4, evaluating mean no
 
 ### 7.2 Key Ablation Findings & Discussion
 
-#### 1. Wall Pruning is Indispensable
-At Depth 3, disabling candidate wall pruning (`no_pruning`) causes the search tree to blow up from **346.1 nodes** to **22,335.7 nodes** — a massive **64.5x surge in search volume**.  
-The corresponding decision latency jumps from **316.5 ms to 14,604.4 ms** (~14.6 seconds per move). Moreover, the moves selected without pruning matched the pruned baseline only 53.3% of the time, predominantly because unpruned searches waste search budget evaluating distant, irrelevantly placed walls on the perimeter. Candidate wall pruning is unquestionably the single most vital optimization in making multi-ply Quoridor search viable.
+#### 1. Wall Pruning Effect
+At Depth 3, disabling candidate wall pruning (`no_pruning`) causes the search tree to expand from **346.1 nodes** to **22,335.7 nodes** — a **64.5x increase in search volume**.  
+The corresponding decision latency increases from **316.5 ms to 14,604.4 ms** (~14.6 seconds per move). The unpruned search also chose a different move in 47% of the positions; this table does not show which choice is better. Candidate wall pruning is the largest single effect we measured in making multi-ply Quoridor search viable.
 
 #### 2. The Move Ordering Trade-Off
-Move ordering dramatically reduces tree size:
+Move ordering reduces tree size:
 - At Depth 3, ordering slashes visited states from **561.4 nodes down to 346.1 nodes** (a 38.3% reduction).
 - At Depth 4, ordering slashes visited states from **1,548.5 nodes down to 861.5 nodes** (a 44.4% reduction).
 
-However, sorting moves requires computing path distance evaluations for candidate moves at internal nodes. At shallow horizons (Depth 3), this evaluation overhead results in slightly higher CPU wall-clock time (316.5 ms vs 280.4 ms).  
-Critically, move ordering fundamentally improves move quality: moves chosen without ordering diverged in 20% of cases at Depth 3 and in **66.7% of cases at Depth 4**, because depth-limited searches without good ordering fail to resolve tactical threats near the horizon.
+However, sorting moves requires computing path evaluations for candidate moves at internal nodes. In addition, the ordering option caps wall candidates at 12 per node, so turning it off changes the set of moves searched as well as their order. As a result, ordering takes more wall-clock time in both cases (316.5 ms vs 280.4 ms at Depth 3, and 1,496.2 ms vs 1,282.9 ms at Depth 4), because sorting needs extra path computations at every node.
 
 #### 3. Transposition Table Value Scales with Depth
-- At Depth 3, transposition table hits are virtually nonexistent (0.0 average hits), because trees at depth 3 on a $9 \times 9$ board with wall branching have minimal path reconvergence.
-- At Depth 4, the transposition table becomes actively effective, averaging **52.9 hits per move**, reducing node visits from 923.2 down to 861.5, and reducing wall-clock time from 1,833.7 ms down to 1,496.2 ms (an 18.4% speedup).
+In this sample of 15 positions with no repeats:
+- At Depth 3, transposition table hits are 0.0, because trees at depth 3 on a $9 \times 9$ board have minimal path reconvergence.
+- At Depth 4, the transposition table recorded an average of **52.9 hits per move**, reducing node visits from 923.2 down to 861.5, and reducing wall-clock time from 1,833.7 ms down to 1,496.2 ms (an 18.4% speedup).
 
 ---
 
 ## 8. Strategic Discussion: Alpha-Beta vs. MCTS
 
-The comparative evaluation between **Minimax with $\alpha$-$\beta$ Pruning** and **Monte Carlo Tree Search (MCTS)** highlights classic differences in search paradigms applied to grid-based topological games:
+### 8.1 Discussion (not measured here)
+The following points reflect general domain characteristics rather than project measurements:
+- Alpha-Beta search is designed for concrete, near-term tactical lookahead. Within depth limits of 3 to 4 plies, it evaluates forced pawn moves and direct wall placements using a handcrafted evaluation function.
+- MCTS with UCT explores broader branching using randomized simulation without relying on a static evaluation function, though simulation accuracy depends on rollout policy quality and iteration budget.
 
-### 8.1 Tactical Precision vs. Strategic Intuition
-- **Alpha-Beta Search** excels in concrete, near-term tactical calculations. With iterative deepening and depth horizons of 3 to 4, it quickly detects forced wins, immediate pawn hops, and direct wall traps. When an opponent makes a suboptimal greedy advance, Alpha-Beta calculates the exact sequence of wall placements needed to lengthen the opponent's path while preserving its own.
-- **MCTS with UCT** excels in broader, long-term positional balance without relying heavily on a hand-crafted heuristic evaluation function. By simulating plausible paths to the endgame via rollouts, MCTS naturally favors board positions that retain open branching mobility and avoid closed topological dead-ends.
+### 8.2 Failure Modes
+- **Horizon Effect in Alpha-Beta:** Fixed-depth search is subject to horizon effects: a wall placement that delays an opponent within depth $d$ may be easily circumvented at ply $d+1$.
+- **Rollout Variance in MCTS:** Without path guidance, uniform random rollouts in Quoridor wander erratically. Our path-biased policy (95% greedy path steps) stabilizes simulation rollouts.
 
-### 8.2 Failure Modes and Limitations
-- **Horizon Effect in Alpha-Beta:** Fixed-depth minimax is susceptible to the horizon effect. A wall placement that delays an opponent's path by 4 plies may appear advantageous at depth 3, even if the opponent can easily circumvent it on ply 5. Increasing depth mitigates this but increases exponential latency.
-- **Rollout Variance in MCTS:** Without path-biased rollouts, standard random simulation in Quoridor is notoriously noisy. Random agents frequently place walls that fail to block anything or wander back and forth. Our path-biased policy (95% greedy path steps) successfully stabilizes rollouts, allowing MCTS to accurately evaluate positional dominance.
+### 8.3 Limitations
+We note several methodological limitations in this evaluation:
+1. **Sample Size:** Matches were run over 20 games per pair. While adequate to separate strong agents from baselines, 20 games cannot resolve small differences in strength between AlphaBeta(d=3) and MCTS(1000).
+2. **Seed Schedule:** Tournaments used a single seed schedule across pairings.
+3. **Ablation Sample:** The ablation experiment evaluated 15 middle-game positions without repeats.
+4. **Timing Variance:** Wall-clock times were measured on a single multi-core workstation with parallel worker processes running concurrently. As a result, absolute millisecond values reflect system load and are comparable only across rows of the same run.
+5. **No External Engine:** No comparisons were performed against external Quoridor engines or human players.
 
 ---
 
