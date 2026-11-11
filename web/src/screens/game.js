@@ -11,9 +11,9 @@ export function createGameScreen({
   onQuit,
 }) {
   const el = document.createElement('div');
-  el.className = 'flex flex-col min-h-screen w-full bg-surface text-on-surface';
+  el.className = 'flex flex-col min-h-screen w-full bg-surface text-on-surface font-body-md text-body-md';
 
-  // Local Arena State
+  // Arena State
   let gameState = null;
   let humanPlayer = 0;
   let opponentInfo = { name: 'Professor Prune', displayName: 'Professor Prune (Depth 3)', badge: 'P' };
@@ -25,16 +25,9 @@ export function createGameScreen({
   let isThinking = false;
   let lastStats = null;
   let moveHistory = [];
-  let toastMessage = null;
   let toastTimer = null;
   let elapsedSeconds = 0;
   let timerInterval = null;
-
-  // Geometry constants: 9 cells (36px) + 8 gaps (8px) = 388px total
-  const CELL_SIZE = 36;
-  const GAP_SIZE = 8;
-  const STEP = CELL_SIZE + GAP_SIZE; // 44px
-  const BOARD_SIZE = 9 * CELL_SIZE + 8 * GAP_SIZE; // 388px
 
   function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
@@ -68,7 +61,6 @@ export function createGameScreen({
   }
 
   function showToast(msg) {
-    toastMessage = msg;
     if (toastTimer) clearTimeout(toastTimer);
     const toastEl = el.querySelector('#illegal-toast');
     const toastMsgEl = el.querySelector('#illegal-toast-msg');
@@ -77,7 +69,6 @@ export function createGameScreen({
       toastEl.classList.remove('hidden');
       toastTimer = setTimeout(() => {
         toastEl.classList.add('hidden');
-        toastMessage = null;
       }, 3500);
     }
   }
@@ -116,8 +107,9 @@ export function createGameScreen({
     const bubbleText = el.querySelector('#rotate-bubble-text');
     const statusText = el.querySelector('#turn-status-text');
     const turnIndicator = el.querySelector('#turn-indicator');
+    const boardArena = el.querySelector('#board-arena');
 
-    if (!previewRect || !rotateBubble) return;
+    if (!previewRect || !rotateBubble || !boardArena) return;
 
     if (!hoveredSlot || isThinking || (gameState && gameState.current !== humanPlayer) || (gameState && gameState.winner !== null)) {
       previewRect.setAttribute('opacity', '0');
@@ -134,18 +126,18 @@ export function createGameScreen({
     const wallMove = { type: 'wall', r, c, o: wallOrientation };
     const legal = isMoveLegal(wallMove);
 
-    // Wall coordinates in 388x388 SVG space
+    // Wall geometry in 360x360 SVG space
     let wx, wy, ww, wh;
     if (isH) {
-      wx = c * STEP;
-      wy = r * STEP + CELL_SIZE;
-      ww = 2 * CELL_SIZE + GAP_SIZE; // 80px
-      wh = GAP_SIZE; // 8px
+      wx = c * 40 + 3;
+      wy = r * 40 + 37;
+      ww = 74;
+      wh = 6;
     } else {
-      wx = c * STEP + CELL_SIZE;
-      wy = r * STEP;
-      ww = GAP_SIZE; // 8px
-      wh = 2 * CELL_SIZE + GAP_SIZE; // 80px
+      wx = c * 40 + 37;
+      wy = r * 40 + 3;
+      ww = 6;
+      wh = 74;
     }
 
     previewRect.setAttribute('x', wx);
@@ -153,15 +145,21 @@ export function createGameScreen({
     previewRect.setAttribute('width', ww);
     previewRect.setAttribute('height', wh);
     previewRect.setAttribute('fill', legal ? '#1C1B1B' : '#BA1A1A');
-    previewRect.setAttribute('opacity', legal ? '0.45' : '0.75');
+    previewRect.setAttribute('opacity', legal ? '0.4' : '0.8');
 
     // Tooltip position in percentage
-    const boardEl = el.querySelector('#board-wrapper');
-    if (boardEl) {
-      const leftPct = ((wx + ww / 2) / BOARD_SIZE) * 100;
-      const topPct = ((wy + wh / 2) / BOARD_SIZE) * 100;
-      rotateBubble.style.left = `${leftPct}%`;
-      rotateBubble.style.top = `${topPct}%`;
+    const centerSvgX = wx + ww / 2;
+    const centerSvgY = wy + wh / 2;
+    // Map 360 SVG space into container percentage (accounting for 10px / 2.5 padding)
+    const arenaRect = boardArena.getBoundingClientRect();
+    const pad = 10;
+    const contentW = arenaRect.width - 2 * pad;
+    const contentH = arenaRect.height - 2 * pad;
+    if (contentW > 0) {
+      const leftPx = pad + (centerSvgX / 360) * contentW;
+      const topPx = pad + (centerSvgY / 360) * contentH;
+      rotateBubble.style.left = `${(leftPx / arenaRect.width) * 100}%`;
+      rotateBubble.style.top = `${(topPx / arenaRect.height) * 100}%`;
       rotateBubble.classList.remove('hidden');
       if (bubbleText) bubbleText.textContent = `R to rotate (${wallOrientation})`;
     }
@@ -179,12 +177,11 @@ export function createGameScreen({
       return;
     }
 
-    // Pair up moves by round
     const rows = [];
     for (let i = 0; i < moveHistory.length; i += 2) {
       const round = Math.floor(i / 2) + 1;
       const m1 = moveHistory[i];
-      const m2 = moveHistory[i + 1] || '';
+      const m2 = moveHistory[i + 1] || null;
       rows.push(`
         <div class="flex items-center gap-space-sm py-0.5">
           <span class="w-6 text-outline font-label-sm">${round}.</span>
@@ -227,84 +224,98 @@ export function createGameScreen({
       indicatorClass = 'bg-on-tertiary-container animate-pulse';
     }
 
-    // Distance in steps from shortest paths
+    // Distance calculation
     const p0Distance = (shortestPaths[0] && shortestPaths[0].length > 1) ? (shortestPaths[0].length - 1) : '-';
     const p1Distance = (shortestPaths[1] && shortestPaths[1].length > 1) ? (shortestPaths[1].length - 1) : '-';
     const humanDistance = (humanPlayer === 0) ? p0Distance : p1Distance;
     const oppDistance = (humanPlayer === 0) ? p1Distance : p0Distance;
 
-    // SVG paths generation
+    // SVG shortest paths
     const makeSvgPath = (pts) => {
       if (!pts || pts.length < 2) return '';
       return pts.map((pt, i) => {
-        const cx = pt[1] * STEP + CELL_SIZE / 2;
-        const cy = pt[0] * STEP + CELL_SIZE / 2;
+        const cx = pt[1] * 40 + 20;
+        const cy = pt[0] * 40 + 20;
         return `${i === 0 ? 'M' : 'L'} ${cx} ${cy}`;
       }).join(' ');
     };
     const p0PathD = makeSvgPath(shortestPaths[0]);
     const p1PathD = makeSvgPath(shortestPaths[1]);
 
-    // Committed walls in SVG (from gameState.h_walls and gameState.v_walls)
+    // Committed walls in 360x360 SVG space
     const allCommittedWalls = [
       ...(gameState.h_walls || []).map(([r, c]) => [r, c, 'H']),
       ...(gameState.v_walls || []).map(([r, c]) => [r, c, 'V']),
     ];
-    const placedWalls = allCommittedWalls.map(([r, c, o]) => {
+    const placedWallsSvg = allCommittedWalls.map(([r, c, o]) => {
       const isH = o.toUpperCase() === 'H';
       let wx, wy, ww, wh;
       if (isH) {
-        wx = c * STEP;
-        wy = r * STEP + CELL_SIZE;
-        ww = 2 * CELL_SIZE + GAP_SIZE;
-        wh = GAP_SIZE;
+        wx = c * 40 + 3;
+        wy = r * 40 + 37;
+        ww = 74;
+        wh = 6;
       } else {
-        wx = c * STEP + CELL_SIZE;
-        wy = r * STEP;
-        ww = GAP_SIZE;
-        wh = 2 * CELL_SIZE + GAP_SIZE;
+        wx = c * 40 + 37;
+        wy = r * 40 + 3;
+        ww = 6;
+        wh = 74;
       }
-      return `<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" rx="3" fill="#1C1B1B" />`;
+      return `<rect fill="#1C1B1B" height="${wh}" rx="3" width="${ww}" x="${wx}" y="${wy}"></rect>`;
     }).join('');
 
-    // Cells with legal dot highlights
-    const cellsSvg = [];
+    // 81 Grid Cells HTML
+    const cellsHtml = [];
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
-        const cx = c * STEP;
-        const cy = r * STEP;
         const isGoalRow0 = (r === 0);
         const isGoalRow8 = (r === 8);
-        const cellFill = isGoalRow0 ? 'rgba(46,75,219,0.10)' : (isGoalRow8 ? 'rgba(229,83,45,0.10)' : '#FFFFFF');
+        const isP0 = (p0Pawn[0] === r && p0Pawn[1] === c);
+        const isP1 = (p1Pawn[0] === r && p1Pawn[1] === c);
         const isLegalPawn = isHumanTurn && isMoveLegal({ type: 'pawn', to: [r, c] });
 
-        cellsSvg.push(`
-          <rect data-cell-r="${r}" data-cell-c="${c}" x="${cx}" y="${cy}" width="${CELL_SIZE}" height="${CELL_SIZE}" rx="3" fill="${cellFill}" stroke="#E5E2DB" stroke-width="1" class="board-cell cursor-pointer" />
-          ${isLegalPawn ? `
-            <g class="pointer-events-none legal-dot-pulse">
-              <circle cx="${cx + CELL_SIZE / 2}" cy="${cy + CELL_SIZE / 2}" r="8" fill="rgba(46,75,219,0.2)" />
-              <circle cx="${cx + CELL_SIZE / 2}" cy="${cy + CELL_SIZE / 2}" r="4" fill="#2E4BDB" />
-            </g>
-          ` : ''}
+        let bgClass = 'bg-surface-container-lowest';
+        if (isGoalRow0) bgClass = 'bg-secondary/10';
+        else if (isGoalRow8) bgClass = 'bg-on-tertiary-container/10';
+
+        let innerContent = '';
+        if (isP0) {
+          innerContent = `
+            <div class="w-[62%] aspect-square rounded-full bg-secondary shadow-sm flex items-center justify-center">
+              <span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest opacity-75"></span>
+            </div>
+          `;
+        } else if (isP1) {
+          innerContent = `
+            <div class="w-[62%] aspect-square rounded-full bg-on-tertiary-container shadow-sm flex items-center justify-center">
+              <span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest opacity-60"></span>
+            </div>
+          `;
+        } else if (isLegalPawn) {
+          innerContent = `
+            <div class="w-3 h-3 rounded-full bg-secondary/20 flex items-center justify-center legal-dot cursor-pointer">
+              <div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+            </div>
+          `;
+        }
+
+        cellsHtml.push(`
+          <div data-cell-r="${r}" data-cell-c="${c}" class="cell-square ${bgClass} rounded-sm flex items-center justify-center relative cursor-pointer hover:bg-surface-container transition-colors">
+            ${innerContent}
+          </div>
         `);
       }
     }
 
-    // Pawn coordinates
-    const p0Cx = p0Pawn[1] * STEP + CELL_SIZE / 2;
-    const p0Cy = p0Pawn[0] * STEP + CELL_SIZE / 2;
-    const p1Cx = p1Pawn[1] * STEP + CELL_SIZE / 2;
-    const p1Cy = p1Pawn[0] * STEP + CELL_SIZE / 2;
-
     el.innerHTML = `
       <!-- Fixed Header Bar -->
-      <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md pt-safe border-b border-surface-container-highest">
-        <div class="h-14 max-w-[480px] mx-auto px-margin flex items-center justify-between">
-          <div class="flex items-center gap-space-xs">
-            <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface font-semibold">QUORIDOR</span>
+      <header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div class="h-14 px-margin flex items-center justify-between max-w-[440px] mx-auto">
+          <div class="flex items-center">
+            <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface font-semibold">Quoridor</span>
           </div>
-          <div class="flex items-center gap-space-md">
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium tracking-wide">Move ${gameState.turn_count}</span>
+          <div class="flex items-center gap-space-sm">
+            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium tracking-wide">Move ${Math.floor(gameState.turn_count / 2) + 1}</span>
             <div class="flex items-center gap-1 font-mono text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-on-surface">
               <span class="material-symbols-outlined text-[13px] text-outline">timer</span>
               <span id="match-timer">${formatTime(elapsedSeconds)}</span>
@@ -314,11 +325,11 @@ export function createGameScreen({
       </header>
 
       <!-- Main Game Arena -->
-      <main class="flex flex-col relative w-full pt-16 bg-surface min-h-screen pb-safe">
-        <div class="w-full max-w-[440px] mx-auto px-margin py-space-xs flex flex-col gap-space-sm">
+      <main class="flex flex-col relative w-full pt-14 bg-surface min-h-screen">
+        <div class="flex flex-col w-full px-margin pb-space-xl max-w-[440px] mx-auto">
           
-          <!-- Turn Indicator & Status -->
-          <div class="w-full flex items-center justify-between py-space-xs">
+          <!-- Status & Turn Header -->
+          <div class="w-full flex items-center justify-between py-space-xs mb-space-sm">
             <div class="flex items-center gap-space-sm">
               <span class="w-2.5 h-2.5 rounded-full ${indicatorClass} transition-all" id="turn-indicator"></span>
               <span class="font-label-lg text-label-lg tracking-wider uppercase text-on-surface font-semibold" id="turn-status-text">${statusText}</span>
@@ -329,101 +340,77 @@ export function createGameScreen({
             </div>
           </div>
 
-          <!-- Illegal Warning Toast -->
-          <div class="hidden w-full bg-error-container text-on-error-container px-space-md py-space-xs rounded-lg flex items-center justify-between text-body-sm font-body-sm shadow-sm transition-all" id="illegal-toast">
-            <div class="flex items-center gap-space-xs">
+          <!-- Error / Warning Banner -->
+          <div class="hidden w-full mb-space-sm bg-error-container text-on-error-container px-space-md py-space-xs rounded flex items-center justify-between text-body-sm font-body-sm shadow-sm" id="illegal-toast">
+            <div class="flex items-center gap-space-sm">
               <span class="material-symbols-outlined text-[18px]">error</span>
-              <span id="illegal-toast-msg">Illegal wall placement!</span>
+              <span id="illegal-toast-msg">Illegal attempt</span>
             </div>
-            <button id="btn-close-toast" class="text-on-error-container hover:opacity-75 cursor-pointer">
+            <button id="btn-close-toast" class="text-on-error-container hover:opacity-75 cursor-pointer" type="button">
               <span class="material-symbols-outlined text-[16px]">close</span>
             </button>
           </div>
 
           <!-- Quoridor 9x9 Arena Matrix Canvas -->
-          <div id="board-wrapper" class="relative w-full aspect-square max-w-[420px] mx-auto select-none bg-surface-container-low rounded-xl p-2.5 shadow-sm border border-surface-container-highest">
+          <div id="board-arena" class="relative w-full aspect-square max-w-[420px] mx-auto select-none bg-surface-container-low rounded-lg p-2.5 shadow-sm">
             
-            <!-- Goal Label: Top -->
+            <!-- Goal Label: Top (Row 1) -->
             <div class="absolute top-1 left-0 right-0 flex justify-center items-center pointer-events-none z-20">
-              <span class="font-label-sm text-[9px] uppercase tracking-widest ${humanPlayer === 0 ? 'text-secondary bg-secondary-fixed/50' : 'text-on-tertiary-container bg-tertiary-fixed/50'} px-2 py-0.5 rounded-full font-semibold shadow-xs">
+              <span class="font-label-sm text-[9px] uppercase tracking-widest ${humanPlayer === 0 ? 'text-secondary' : 'text-on-tertiary-container'} font-semibold bg-surface-container-low px-1.5 py-0.2 rounded-full">
                 ${humanPlayer === 0 ? 'Your goal (Row 1)' : `${opponentInfo.name}'s goal (Row 1)`}
               </span>
             </div>
 
-            <!-- Goal Label: Bottom -->
+            <!-- Goal Label: Bottom (Row 9) -->
             <div class="absolute bottom-1 left-0 right-0 flex justify-center items-center pointer-events-none z-20">
-              <span class="font-label-sm text-[9px] uppercase tracking-widest ${humanPlayer === 1 ? 'text-secondary bg-secondary-fixed/50' : 'text-on-tertiary-container bg-tertiary-fixed/50'} px-2 py-0.5 rounded-full font-semibold shadow-xs">
+              <span class="font-label-sm text-[9px] uppercase tracking-widest ${humanPlayer === 1 ? 'text-secondary' : 'text-on-tertiary-container'} font-semibold bg-surface-container-low px-1.5 py-0.2 rounded-full">
                 ${humanPlayer === 1 ? 'Your goal (Row 9)' : `${opponentInfo.name}'s goal (Row 9)`}
               </span>
             </div>
 
+            <!-- SVG Spatial Overlay for Paths and Corridors (360x360) -->
+            <svg class="absolute inset-2.5 w-[calc(100%-20px)] h-[calc(100%-20px)] pointer-events-none z-10" id="board-svg" viewbox="0 0 360 360">
+              <!-- Shortest Paths -->
+              <g class="transition-opacity duration-300" id="shortest-paths" style="opacity: ${showPaths ? '0.85' : '0'};">
+                ${p0PathD ? `<path d="${p0PathD}" fill="none" opacity="0.85" stroke="#2E4BDB" stroke-dasharray="3 3" stroke-linecap="round" stroke-width="2"></path>` : ''}
+                ${p1PathD ? `<path d="${p1PathD}" fill="none" opacity="0.85" stroke="#E5532D" stroke-dasharray="3 3" stroke-linecap="round" stroke-width="2"></path>` : ''}
+              </g>
+
+              <!-- Placed Walls (Near-Black Rounded Bars, spanning two cells) -->
+              <g id="placed-walls-group">
+                ${placedWallsSvg}
+              </g>
+
+              <!-- Staged / Preview Wall (Toggleable state) -->
+              <g class="transition-opacity" id="wall-preview-group">
+                <rect fill="#1C1B1B" height="6" id="staged-wall" opacity="0" rx="3" width="74" x="0" y="0"></rect>
+              </g>
+            </svg>
+
             <!-- Interactive Wall Rotation Bubble Tooltip -->
-            <div id="rotate-bubble" class="hidden absolute z-30 pointer-events-auto transform -translate-x-1/2 -translate-y-full mb-1 cursor-pointer">
-              <div class="bg-primary text-on-primary px-2 py-0.5 rounded shadow-md flex items-center gap-1 font-label-sm text-[10px] uppercase tracking-wider hover:bg-neutral-800">
+            <div class="hidden absolute z-20 pointer-events-auto transform -translate-x-1/2 -translate-y-full cursor-pointer" id="rotate-bubble">
+              <div class="bg-primary text-on-primary px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1 font-label-sm text-[9px] uppercase tracking-wider hover:bg-neutral-800">
                 <span id="rotate-bubble-text">R to rotate (${wallOrientation})</span>
-                <span class="material-symbols-outlined text-[12px]">sync</span>
+                <span class="material-symbols-outlined text-[10px]">sync</span>
               </div>
             </div>
 
-            <!-- Single High-Precision SVG Board Overlay (388x388) -->
-            <svg id="board-svg" viewBox="0 0 ${BOARD_SIZE} ${BOARD_SIZE}" class="w-full h-full block">
-              
-              <!-- 81 Cells with Goal Row Washes -->
-              <g id="cells-group">
-                ${cellsSvg.join('')}
-              </g>
+            <!-- 9x9 CSS Grid Cells -->
+            <div class="grid grid-cols-9 grid-rows-9 gap-1.5 w-full h-full" id="grid-cells">
+              ${cellsHtml.join('')}
+            </div>
 
-              <!-- Shortest Paths (Dashed Trails) -->
-              <g id="shortest-paths" class="transition-opacity duration-300 pointer-events-none" style="opacity: ${showPaths ? '0.85' : '0'};">
-                ${p0PathD ? `<path d="${p0PathD}" fill="none" stroke="#2E4BDB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4" />` : ''}
-                ${p1PathD ? `<path d="${p1PathD}" fill="none" stroke="#E5532D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4" />` : ''}
-              </g>
-
-              <!-- Committed Solid Walls -->
-              <g id="committed-walls" class="pointer-events-none">
-                ${placedWalls}
-              </g>
-
-              <!-- Pawns: P0 (Cobalt) and P1 (Vermilion) -->
-              <g id="pawns-group" class="pointer-events-none">
-                <!-- P0 (Cobalt) Pawn -->
-                <circle cx="${p0Cx}" cy="${p0Cy}" r="12" fill="#2E4BDB" filter="drop-shadow(0px 2px 3px rgba(0,0,0,0.25))" />
-                <circle cx="${p0Cx}" cy="${p0Cy}" r="4" fill="#FFFFFF" opacity="0.6" />
-
-                <!-- P1 (Vermilion) Pawn -->
-                <circle cx="${p1Cx}" cy="${p1Cy}" r="12" fill="#E5532D" filter="drop-shadow(0px 2px 3px rgba(0,0,0,0.25))" />
-                <circle cx="${p1Cx}" cy="${p1Cy}" r="4" fill="#FFFFFF" opacity="0.6" />
-              </g>
-
-              <!-- Staged Ghost Wall Preview -->
-              <g id="wall-preview-group" class="pointer-events-none transition-opacity">
-                <rect id="staged-wall" x="0" y="0" width="0" height="0" rx="3" fill="#1C1B1B" opacity="0" />
-              </g>
-
-              <!-- 64 Interactive Wall Groove Intersection Hit Areas (8x8) -->
-              <g id="wall-slots-group">
-                ${Array.from({ length: 8 }).flatMap((_, r) =>
-                  Array.from({ length: 8 }).map((_, c) => {
-                    const sx = c * STEP + CELL_SIZE - 2;
-                    const sy = r * STEP + CELL_SIZE - 2;
-                    return `
-                      <rect data-slot-r="${r}" data-slot-c="${c}" x="${sx}" y="${sy}" width="${GAP_SIZE + 4}" height="${GAP_SIZE + 4}" fill="transparent" class="cursor-pointer wall-slot-intersection" />
-                    `;
-                  })
-                ).join('')}
-              </g>
-            </svg>
           </div>
 
           <!-- Board Algebraic Axis Subtitle (a - i) -->
-          <div class="w-full flex justify-between px-space-md pt-0.5 text-label-sm font-label-sm text-outline-variant max-w-[420px] mx-auto">
+          <div class="w-full flex justify-between px-space-md pt-1 text-label-sm font-label-sm text-outline-variant max-w-[420px] mx-auto">
             <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span><span>i</span>
           </div>
 
-          <!-- Editorial Hairline Divided Panels -->
-          <div class="w-full mt-space-xs flex flex-col max-w-[440px] mx-auto">
+          <!-- Stacked Panel (Clean, Hairline-Divided Editorial Sections) -->
+          <div class="w-full mt-space-md flex flex-col">
             
-            <!-- Panel 1: Wall Inventory -->
+            <!-- Section 1: Wall Inventory (Hairline divided) -->
             <div class="py-space-sm border-t border-surface-container-highest">
               <!-- You -->
               <div class="flex items-center justify-between py-1">
@@ -433,7 +420,7 @@ export function createGameScreen({
                 </div>
                 <div class="flex items-center gap-1">
                   ${Array.from({ length: 10 }).map((_, i) => `
-                    <span class="w-3.5 h-1.5 rounded-full ${i < (humanPlayer === 0 ? p0Walls : p1Walls) ? 'bg-primary' : 'bg-surface-container-highest'}"></span>
+                    <span class="w-4 h-1.5 rounded-full ${i < (humanPlayer === 0 ? p0Walls : p1Walls) ? 'bg-primary' : 'bg-surface-container-highest'}"></span>
                   `).join('')}
                 </div>
                 <span class="font-label-sm text-label-sm text-on-surface-variant w-12 text-right font-medium">
@@ -448,7 +435,7 @@ export function createGameScreen({
                 </div>
                 <div class="flex items-center gap-1">
                   ${Array.from({ length: 10 }).map((_, i) => `
-                    <span class="w-3.5 h-1.5 rounded-full ${i < (humanPlayer === 0 ? p1Walls : p0Walls) ? 'bg-primary' : 'bg-surface-container-highest'}"></span>
+                    <span class="w-4 h-1.5 rounded-full ${i < (humanPlayer === 0 ? p1Walls : p0Walls) ? 'bg-primary' : 'bg-surface-container-highest'}"></span>
                   `).join('')}
                 </div>
                 <span class="font-label-sm text-label-sm text-on-surface-variant w-12 text-right font-medium">
@@ -457,10 +444,10 @@ export function createGameScreen({
               </div>
             </div>
 
-            <!-- Panel 2: Path Distance to Goal -->
+            <!-- Section 2: Distance to Goal -->
             <div class="py-space-sm border-t border-surface-container-highest flex items-center justify-between">
               <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Path Distance</span>
-              <div class="flex items-center gap-space-md font-label-md text-label-md">
+              <div class="flex items-center gap-space-lg font-label-md text-label-md">
                 <div class="flex items-center gap-space-xs">
                   <span class="text-on-surface-variant">You</span>
                   <span class="text-secondary font-semibold">${humanDistance} steps</span>
@@ -473,7 +460,7 @@ export function createGameScreen({
               </div>
             </div>
 
-            <!-- Panel 3: Engine Telemetry -->
+            <!-- Section 3: Engine Telemetry -->
             <div class="py-space-sm border-t border-surface-container-highest flex items-center justify-between font-mono text-label-sm">
               <span class="uppercase tracking-wider text-on-surface-variant font-sans">Telemetry</span>
               <div class="flex items-center gap-space-sm text-outline">
@@ -485,22 +472,21 @@ export function createGameScreen({
               </div>
             </div>
 
-            <!-- Panel 4: Notation Log (Collapsible or Scrollable) -->
+            <!-- Section 4: Move Notation Log (Scrollable Mono List) -->
             <div class="py-space-sm border-t border-surface-container-highest flex flex-col gap-space-xs">
               <div class="flex items-center justify-between">
                 <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Move Notation</span>
                 <span class="font-label-sm text-label-sm text-outline">${moveHistory.length} plies</span>
               </div>
               <div id="notation-list" class="max-h-20 overflow-y-auto bg-surface-container-lowest p-space-xs rounded border border-surface-container-highest font-mono text-label-sm">
-                <!-- Move entries populated here -->
               </div>
             </div>
 
-            <!-- Panel 5: Interaction Controls Bar -->
+            <!-- Section 5: Interaction Controls Bar -->
             <div class="py-space-md border-t border-surface-container-highest flex items-center justify-between">
-              <button id="btn-undo" class="px-space-md py-1.5 rounded bg-surface-container hover:bg-surface-variant text-on-surface font-body-sm text-body-sm transition-colors flex items-center gap-1 cursor-pointer">
+              <button id="btn-undo" class="px-space-md py-1.5 rounded bg-surface-container hover:bg-surface-variant text-on-surface font-body-sm text-body-sm transition-colors flex items-center gap-1 cursor-pointer" type="button">
                 <span class="material-symbols-outlined text-[16px]">undo</span>
-                <span>Undo (U)</span>
+                <span>Undo</span>
               </button>
 
               <!-- Toggle Show Paths -->
@@ -512,35 +498,39 @@ export function createGameScreen({
                 </span>
               </label>
 
-              <button id="btn-newgame" class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface uppercase tracking-wider underline underline-offset-4 cursor-pointer">
+              <button id="btn-newgame" class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface uppercase tracking-wider underline underline-offset-4 cursor-pointer" type="button">
                 [New game]
               </button>
             </div>
 
-            <!-- Panel 6: Shortcuts Guide -->
+            <!-- Section 6: Monospace Shortcuts Guide -->
             <div class="pt-space-xs text-center">
-              <p class="font-label-sm text-label-sm text-outline">R rotate wall · U undo · P paths · Esc menu</p>
+              <p class="font-label-sm text-label-sm text-outline">R rotate wall  ·  U undo  ·  P paths</p>
             </div>
+
           </div>
+
         </div>
       </main>
     `;
 
-    // Hook listeners
     renderNotationLog();
 
+    // Close toast
     el.querySelector('#btn-close-toast')?.addEventListener('click', () => {
       const toastEl = el.querySelector('#illegal-toast');
       if (toastEl) toastEl.classList.add('hidden');
     });
 
-    el.querySelector('#rotate-bubble')?.addEventListener('click', () => {
+    // Rotate bubble click
+    el.querySelector('#rotate-bubble')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       toggleOrientation();
     });
 
-    // Cell Clicks (Pawn Moves)
-    el.querySelectorAll('.board-cell').forEach((cell) => {
-      cell.addEventListener('click', () => {
+    // Cell clicks (pawn moves)
+    el.querySelectorAll('.cell-square').forEach((cell) => {
+      cell.addEventListener('click', (e) => {
         if (!isHumanTurn) return;
         const r = parseInt(cell.getAttribute('data-cell-r'), 10);
         const c = parseInt(cell.getAttribute('data-cell-c'), 10);
@@ -550,53 +540,54 @@ export function createGameScreen({
       });
     });
 
-    // Wall Slot Hover & Clicks
-    const boardSvg = el.querySelector('#board-svg');
-    if (boardSvg) {
-      boardSvg.addEventListener('mousemove', (e) => {
+    // Board Arena Hover & Click for Walls
+    const boardArena = el.querySelector('#board-arena');
+    if (boardArena) {
+      boardArena.addEventListener('mousemove', (e) => {
         if (!isHumanTurn) return;
-        const rect = boardSvg.getBoundingClientRect();
-        const svgX = ((e.clientX - rect.left) / rect.width) * BOARD_SIZE;
-        const svgY = ((e.clientY - rect.top) / rect.height) * BOARD_SIZE;
+        const rect = boardArena.getBoundingClientRect();
+        const pad = 10;
+        const contentW = rect.width - 2 * pad;
+        const contentH = rect.height - 2 * pad;
 
-        // Find closest intersection in 8x8 grid
-        let closestR = -1;
-        let closestC = -1;
-        let minDistance = Infinity;
+        const gridX = ((e.clientX - rect.left - pad) / contentW) * 360;
+        const gridY = ((e.clientY - rect.top - pad) / contentH) * 360;
 
-        for (let r = 0; r < 8; r++) {
-          for (let c = 0; c < 8; c++) {
-            const ix = c * STEP + CELL_SIZE + GAP_SIZE / 2;
-            const iy = r * STEP + CELL_SIZE + GAP_SIZE / 2;
-            const dist = Math.hypot(svgX - ix, svgY - iy);
-            if (dist < minDistance) {
-              minDistance = dist;
-              closestR = r;
-              closestC = c;
+        // Nearest wall groove intersection
+        const c = Math.round((gridX - 40) / 40);
+        const r = Math.round((gridY - 40) / 40);
+
+        if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+          const ix = (c + 1) * 40;
+          const iy = (r + 1) * 40;
+          const dist = Math.hypot(gridX - ix, gridY - iy);
+
+          if (dist < 26) {
+            if (!hoveredSlot || hoveredSlot.r !== r || hoveredSlot.c !== c) {
+              hoveredSlot = { r, c };
+              updatePreview();
             }
+            return;
           }
         }
 
-        if (minDistance < 32 && closestR >= 0 && closestC >= 0) {
-          if (!hoveredSlot || hoveredSlot.r !== closestR || hoveredSlot.c !== closestC) {
-            hoveredSlot = { r: closestR, c: closestC };
-            updatePreview();
-          }
-        } else {
-          if (hoveredSlot !== null) {
-            hoveredSlot = null;
-            updatePreview();
-          }
+        if (hoveredSlot !== null) {
+          hoveredSlot = null;
+          updatePreview();
         }
       });
 
-      boardSvg.addEventListener('mouseleave', () => {
+      boardArena.addEventListener('mouseleave', () => {
         hoveredSlot = null;
         updatePreview();
       });
 
-      boardSvg.addEventListener('click', (e) => {
+      boardArena.addEventListener('click', (e) => {
         if (!isHumanTurn || !hoveredSlot) return;
+        // Don't trigger if clicked on a cell with a legal pawn move
+        const target = e.target;
+        if (target.closest('.legal-dot')) return;
+
         const { r, c } = hoveredSlot;
         const wallMove = { type: 'wall', r, c, o: wallOrientation };
 
