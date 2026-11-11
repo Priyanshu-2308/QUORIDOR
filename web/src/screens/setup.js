@@ -1,136 +1,246 @@
 /**
- * Setup Screen.
- * Cobalt field, opponent selector (RANDOM / GREEDY / ALPHA-BETA / MCTS),
- * strength level selector (depth 2/3/4 or iterations 200/500/1000/2000),
- * side selector (YOU START / AI STARTS), button "START".
+ * Setup Screen - Quiet Bastion Design System.
+ * Stitch Project 6777394393065907640 (Screen: Quoridor - New Game).
  */
-export function createSetupScreen({ onStart, onConfigChange }) {
+
+export function createSetupScreen({ onStart, onBack }) {
   const el = document.createElement('div');
-  el.className = 'screen screen-setup';
+  el.className = 'flex flex-col min-h-screen w-full bg-surface text-on-surface';
 
   const opponents = [
-    { id: 'alphabeta', name: 'ALPHA-BETA', levels: [2, 3, 4], defaultLevelIdx: 1 },
-    { id: 'mcts', name: 'MCTS', levels: [200, 400, 600, 1000], defaultLevelIdx: 2 },
-    { id: 'greedy', name: 'GREEDY', levels: [], defaultLevelIdx: 0 },
-    { id: 'random', name: 'RANDOM', levels: [], defaultLevelIdx: 0 },
+    {
+      id: 'random',
+      badge: 'W',
+      name: 'Wobbles',
+      desc: 'Walks like it lost its keys.',
+      levels: [],
+      defaultLevelIdx: 0,
+      specFn: () => 'random',
+    },
+    {
+      id: 'greedy',
+      badge: 'D',
+      name: 'Dash',
+      desc: 'Zero walls. All speed.',
+      levels: [],
+      defaultLevelIdx: 0,
+      specFn: () => 'greedy',
+    },
+    {
+      id: 'alphabeta',
+      badge: 'P',
+      name: 'Professor Prune',
+      desc: 'Thinks first. Snips bad ideas.',
+      levels: [
+        { label: 'Casual', value: 1, text: 'Depth 1' },
+        { label: 'Careful', value: 2, text: 'Depth 2' },
+        { label: 'Sharp', value: 3, text: 'Depth 3' },
+        { label: 'Ruthless', value: 4, text: 'Depth 4' },
+      ],
+      defaultLevelIdx: 2, // Sharp (Depth 3)
+      specFn: (lvl) => `alphabeta:depth=${lvl.value}`,
+    },
+    {
+      id: 'mcts',
+      badge: 'G',
+      name: 'The Gambler',
+      desc: 'Rolls a thousand dice. Hopes.',
+      levels: [
+        { label: 'Casual', value: 200, text: '200 iter' },
+        { label: 'Careful', value: 400, text: '400 iter' },
+        { label: 'Sharp', value: 600, text: '600 iter' },
+        { label: 'Ruthless', value: 1000, text: '1000 iter' },
+      ],
+      defaultLevelIdx: 2, // Sharp (600 iter)
+      specFn: (lvl) => `mcts:iterations=${lvl.value}`,
+    },
   ];
 
-  let oppIdx = 0;
-  let levelIdx = opponents[0].defaultLevelIdx;
-  let humanPlayer = 0; // 0 = YOU START, 1 = AI STARTS
+  let selectedOppIdx = 2; // Default to Professor Prune
+  let selectedLevelIdx = opponents[2].defaultLevelIdx;
+  let humanPlayer = 0; // 0 = You, 1 = Opponent
 
-  function getSpec() {
-    const opp = opponents[oppIdx];
-    if (opp.id === 'alphabeta') {
-      return `alphabeta:depth=${opp.levels[levelIdx]}`;
+  function getSelectedSpec() {
+    const opp = opponents[selectedOppIdx];
+    if (opp.levels.length > 0) {
+      return opp.specFn(opp.levels[selectedLevelIdx]);
     }
-    if (opp.id === 'mcts') {
-      return `mcts:iterations=${opp.levels[levelIdx]}`;
+    return opp.specFn();
+  }
+
+  function getOpponentDisplayName() {
+    const opp = opponents[selectedOppIdx];
+    if (opp.levels.length > 0) {
+      return `${opp.name} (${opp.levels[selectedLevelIdx].text})`;
     }
-    return opp.id;
+    return opp.name;
   }
 
   function render() {
-    const opp = opponents[oppIdx];
-    const hasLevels = opp.levels.length > 0;
-    const currentVal = hasLevels ? opp.levels[levelIdx] : '';
-    const levelLabel = opp.id === 'alphabeta' ? `DEPTH ${currentVal}` : `ITERATIONS ${currentVal}`;
+    const currentOpp = opponents[selectedOppIdx];
+    const hasLevels = currentOpp.levels.length > 0;
 
     el.innerHTML = `
-      <div class="screen-header">
-        <p class="sub-label">SELECT OPPONENT &amp; STRENGTH</p>
-        <div class="row-controls">
-          <button class="chevron-btn" id="btn-prev-opp">&lsaquo;</button>
-          <div class="giant-label" id="opp-name">${opp.name}</div>
-          <button class="chevron-btn" id="btn-next-opp">&rsaquo;</button>
-        </div>
-
-        ${hasLevels ? `
-          <div class="row-controls" style="margin-top: 16px;">
-            <button class="chevron-btn" id="btn-prev-lvl">&darr;</button>
-            <div class="giant-number" id="lvl-val">${currentVal}</div>
-            <button class="chevron-btn" id="btn-next-lvl">&uarr;</button>
-          </div>
-          <p class="sub-label" style="opacity: 0.7;">${levelLabel}</p>
-        ` : `
-          <div style="height: clamp(56px, 12vw, 180px); display: flex; align-items: center;">
-            <p class="sub-label" style="opacity: 0.5;">STANDARD PROFILE</p>
-          </div>
-        `}
-      </div>
-
-      <div class="screen-footer">
-        <div style="margin-bottom: clamp(16px, 3vw, 32px);">
-          <p class="sub-label">WHO MOVES FIRST?</p>
-          <button class="monolith-btn" id="btn-side" style="font-size: clamp(28px, 5vw, 64px);">
-            ${humanPlayer === 0 ? 'YOU START (P0)' : 'AI STARTS (P1)'}
+      <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md pt-safe border-b border-surface-container-highest">
+        <div class="h-14 max-w-[480px] mx-auto px-margin flex items-center justify-between">
+          <button id="btn-back" aria-label="Back" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-on-surface hover:text-on-surface-variant transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
           </button>
+          <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface font-semibold">QUORIDOR</span>
+          <div class="w-10"></div>
         </div>
+      </header>
 
-        <button class="monolith-btn" id="btn-start">START &rarr;</button>
-        <div class="shortcuts-hint">USE [&larr;/&rarr;] OPPONENT &bull; [&uarr;/&darr;] DIFFICULTY &bull; [SPACE] SWITCH SIDE</div>
-      </div>
+      <main class="flex flex-col relative w-full pt-16 bg-surface min-h-screen pb-safe">
+        <div class="w-full max-w-[440px] mx-auto px-margin py-space-md flex flex-col gap-space-lg">
+          <!-- Screen Title & Quiet Subtitle -->
+          <div class="flex flex-col gap-space-xs pt-2">
+            <h2 class="font-headline-md text-headline-md text-on-surface font-semibold tracking-tight">New game</h2>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">Pick your opponent and customize the match</p>
+          </div>
+
+          <!-- Configuration Panel -->
+          <div class="flex flex-col gap-space-lg bg-surface-container-lowest p-space-md rounded-xl border border-surface-container-highest shadow-sm">
+            <!-- Opponent Selection -->
+            <div class="flex flex-col gap-space-sm">
+              <div class="flex items-center justify-between">
+                <label class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-medium">Opponent</label>
+              </div>
+              <div class="flex flex-col gap-space-xs" role="radiogroup" id="opponents-list">
+                ${opponents.map((opp, idx) => {
+                  const isSelected = idx === selectedOppIdx;
+                  return `
+                    <button type="button" data-opp-idx="${idx}" class="opp-item w-full text-left p-space-sm rounded-lg transition-all flex items-center gap-space-sm cursor-pointer ${
+                      isSelected
+                        ? 'bg-surface-container border-2 border-primary shadow-sm'
+                        : 'bg-surface-container-low hover:bg-surface-container border border-transparent'
+                    }">
+                      <div class="w-9 h-9 rounded-full bg-surface-container-highest border border-outline-variant/40 flex items-center justify-center shrink-0">
+                        <span class="font-headline-sm text-headline-sm font-semibold text-[#E5532D]">${opp.badge}</span>
+                      </div>
+                      <div class="flex flex-col flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                          <span class="font-body-md text-body-md font-semibold text-on-surface">${opp.name}</span>
+                          ${isSelected ? '<span class="material-symbols-outlined text-[18px] text-primary">check_circle</span>' : ''}
+                        </div>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant truncate">${opp.desc}</span>
+                      </div>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- Sharpness / Complexity -->
+            ${hasLevels ? `
+              <div class="flex flex-col gap-space-xs">
+                <div class="flex items-center justify-between">
+                  <label class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-medium">How sharp?</label>
+                  <span class="font-label-sm text-label-sm text-outline">${currentOpp.name}</span>
+                </div>
+                <div class="grid grid-cols-4 gap-space-xs">
+                  ${currentOpp.levels.map((lvl, idx) => {
+                    const isSelected = idx === selectedLevelIdx;
+                    return `
+                      <button type="button" data-level-idx="${idx}" class="level-btn py-2 text-center rounded text-body-sm font-body-sm transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-primary text-on-primary font-medium'
+                          : 'bg-surface-container-low text-on-surface hover:bg-surface-container-high'
+                      }">
+                        ${lvl.label}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Who moves first? -->
+            <div class="flex flex-col gap-space-xs">
+              <label class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-medium">Who moves first?</label>
+              <div class="grid grid-cols-2 gap-space-xs p-1 bg-surface-container rounded-lg">
+                <button type="button" id="turn-you" class="turn-btn py-2.5 px-3 rounded flex items-center justify-center gap-space-xs transition-all cursor-pointer ${
+                  humanPlayer === 0
+                    ? 'bg-secondary text-on-secondary font-medium shadow-sm'
+                    : 'text-on-surface hover:bg-surface-container-high'
+                }">
+                  <span class="w-2 h-2 rounded-full ${humanPlayer === 0 ? 'bg-surface' : 'bg-outline'}"></span>
+                  <span class="font-body-md text-body-md">You (Cobalt)</span>
+                </button>
+                <button type="button" id="turn-opp" class="turn-btn py-2.5 px-3 rounded flex items-center justify-center gap-space-xs transition-all cursor-pointer ${
+                  humanPlayer === 1
+                    ? 'bg-primary text-on-primary font-medium shadow-sm'
+                    : 'text-on-surface hover:bg-surface-container-high'
+                }">
+                  <span class="w-2 h-2 rounded-full ${humanPlayer === 1 ? 'bg-surface' : 'bg-outline'}"></span>
+                  <span class="font-body-md text-body-md truncate">${currentOpp.name}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Primary Action: Solid Black Button -->
+          <div class="flex flex-col gap-space-sm pt-space-xs">
+            <button id="btn-start" type="button" class="w-full py-3.5 px-space-md rounded bg-primary text-on-primary font-headline-sm text-headline-sm font-medium tracking-wide hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-space-xs cursor-pointer shadow-sm">
+              <span>Start game</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+            <p class="font-body-sm text-body-sm text-outline text-center leading-relaxed">
+              Reach the opposite side first. Place walls to slow your opponent.
+            </p>
+          </div>
+        </div>
+      </main>
     `;
 
     // Hook listeners
-    el.querySelector('#btn-prev-opp').addEventListener('click', () => {
-      oppIdx = (oppIdx - 1 + opponents.length) % opponents.length;
-      levelIdx = opponents[oppIdx].defaultLevelIdx;
-      updateVisual();
-      render();
+    el.querySelector('#btn-back')?.addEventListener('click', () => {
+      if (onBack) onBack();
     });
 
-    el.querySelector('#btn-next-opp').addEventListener('click', () => {
-      oppIdx = (oppIdx + 1) % opponents.length;
-      levelIdx = opponents[oppIdx].defaultLevelIdx;
-      updateVisual();
-      render();
-    });
-
-    if (hasLevels) {
-      el.querySelector('#btn-prev-lvl').addEventListener('click', () => {
-        if (levelIdx > 0) {
-          levelIdx--;
-          updateVisual();
-          render();
-        }
+    el.querySelectorAll('.opp-item').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget;
+        const idx = parseInt(target.getAttribute('data-opp-idx'), 10);
+        selectedOppIdx = idx;
+        selectedLevelIdx = opponents[idx].defaultLevelIdx;
+        render();
       });
+    });
 
-      el.querySelector('#btn-next-lvl').addEventListener('click', () => {
-        if (levelIdx < opp.levels.length - 1) {
-          levelIdx++;
-          updateVisual();
-          render();
-        }
+    el.querySelectorAll('.level-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget;
+        const idx = parseInt(target.getAttribute('data-level-idx'), 10);
+        selectedLevelIdx = idx;
+        render();
       });
-    }
+    });
 
-    el.querySelector('#btn-side').addEventListener('click', () => {
-      humanPlayer = (humanPlayer === 0) ? 1 : 0;
+    el.querySelector('#turn-you')?.addEventListener('click', () => {
+      humanPlayer = 0;
       render();
     });
 
-    el.querySelector('#btn-start').addEventListener('click', () => {
-      onStart({ opponent: getSpec(), humanPlayer });
+    el.querySelector('#turn-opp')?.addEventListener('click', () => {
+      humanPlayer = 1;
+      render();
+    });
+
+    el.querySelector('#btn-start')?.addEventListener('click', () => {
+      onStart({
+        opponent: getSelectedSpec(),
+        humanPlayer,
+        opponentInfo: {
+          name: currentOpp.name,
+          displayName: getOpponentDisplayName(),
+          badge: currentOpp.badge,
+          id: currentOpp.id,
+        },
+      });
     });
   }
 
-  function updateVisual() {
-    if (onConfigChange) {
-      const opp = opponents[oppIdx];
-      let levelNum = levelIdx + 1;
-      let color = 0xEDE7DA;
-      if (opp.id === 'alphabeta') color = 0xE8452C;
-      if (opp.id === 'mcts') color = 0xD9A441;
-      if (opp.id === 'greedy') color = 0x2441D6;
-      onConfigChange(levelNum, color);
-    }
-  }
-
-  // Initial render
   render();
-  updateVisual();
-
   return el;
 }
-
