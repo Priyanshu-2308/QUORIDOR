@@ -1,6 +1,12 @@
 # Quoridor AI
 
-A high-performance Python implementation of the board game Quoridor ($9 \times 9$ board, two players, 10 walls each) featuring multiple AI search strategies (Random, Greedy, Alpha-Beta Minimax, and Monte Carlo Tree Search), an automated tournament and ablation runner, and a modern reactive 3D web UI built with Three.js. The core game logic uses only the Python standard library with an immutable state architecture.
+A Python implementation of the board game Quoridor ($9 \times 9$ board, two players, 10 walls each) featuring four AI search strategies (Random, Greedy, Alpha-Beta Minimax, and Monte Carlo Tree Search), an automated tournament and ablation runner, and a 3D web UI built with Three.js. The core game logic uses only the Python standard library with an immutable state architecture.
+
+---
+
+## Live Demo
+
+- Live deployment: [quoridor-ai.onrender.com](https://quoridor-ai.onrender.com) (or local container at `http://localhost:7860`)
 
 ---
 
@@ -16,38 +22,37 @@ pip install -r requirements.txt
 
 ## Running Tests
 
-Run the full pytest suite:
+Run the test suite with pytest:
 
 ```bash
 python -m pytest -q
 ```
 
-All unit and regression tests across state representations, game rules, pathfinding, evaluation heuristics, Alpha-Beta search, MCTS, server endpoints, and tournament multiprocessing execute and pass cleanly.
+All 103 unit and regression tests across state representations, game rules, pathfinding, evaluation heuristics, Alpha-Beta search, MCTS, server endpoints, and tournament multiprocessing pass.
 
 ---
 
-## File Layout and Module Ownership
+## File Layout
 
 ```
 QUORIDOR/
-  README.md                       Shubham creates; Priyanshu finalises
-  requirements.txt  .gitignore    Shubham
+  README.md                       Project overview, setup, tournament guide
+  requirements.txt  .gitignore    Development dependencies
+  requirements-deploy.txt         Production dependencies (FastAPI, Uvicorn)
+  Dockerfile  render.yaml         Container build and deployment configuration
   quoridor/
-    __init__.py  constants.py  types.py  state.py        Shubham
-    pathfinding.py  rules.py                              Rajnish
-    eval.py  moves.py  runner.py                          Siddhesh
-    agents/__init__.py  random_agent.py  greedy_agent.py  Siddhesh
-    agents/base.py                                        Shubham
-    agents/alphabeta_agent.py  agents/mcts_agent.py       Shivam
-    tournament.py                                         Priyanshu
-  server/app.py                                           Priyanshu
-  web/                                                    Priyanshu
-  tests/test_state.py                                     Shubham
-  tests/test_pathfinding.py  tests/test_rules.py          Rajnish
-  tests/test_eval_moves.py  tests/test_agents_basic.py  tests/test_runner.py    Siddhesh
-  tests/test_alphabeta.py  tests/test_mcts.py             Shivam
-  tests/test_server.py  tests/test_tournament.py          Priyanshu
-  results/  docs/REPORT.md                                Priyanshu
+    __init__.py  constants.py  types.py  state.py        Core rules and state
+    pathfinding.py  rules.py                              Pathfinding and moves
+    eval.py  moves.py  runner.py                          Evaluation and runner
+    agents/__init__.py  random_agent.py  greedy_agent.py  Baselines
+    agents/base.py                                        Agent base class
+    agents/alphabeta_agent.py  agents/mcts_agent.py       Search agents
+    tournament.py                                         Tournament CLI
+  server/app.py                                           FastAPI backend
+  web/                                                    Three.js web UI
+  tests/                                                  Unit and regression tests
+  results/                                                Tournament logs and CSVs
+  docs/REPORT.md                                          Empirical evaluation report
 ```
 
 ---
@@ -60,15 +65,15 @@ Start the backend server with Uvicorn:
 uvicorn server.app:app --port 8000
 ```
 
-Open your browser to `http://localhost:8000` to access the full-bleed **Monolith** 3D interface:
-- **Title Screen (`#/title`):** Rotating pawn monolith, single-click start.
-- **Setup Screen (`#/setup`):** Select opponent (`RANDOM`, `GREEDY`, `ALPHA-BETA`, `MCTS`), adjust strength level (depth 2/3/4 or iterations 200/500/1000/2000), and choose who moves first (`YOU START` or `AI STARTS`).
-- **Game Screen (`#/game`):** Interactive $9 \times 9$ board with legal pawn move markers, groove raycasting with ghost wall preview, wall orientation rotation (`R`), and live HUD.
-- **Stats Screen (`#/stats`):** 3D telemetry visualization displaying nodes visited, execution latency, and position evaluation.
-- **Result Screen (`#/result`):** Immediate rematch option or return to main menu.
+Open `http://localhost:8000` in your browser to access the 3D interface:
+- **Title Screen (`#/title`):** Rotating pawn monolith, start button.
+- **Setup Screen (`#/setup`):** Select opponent (`RANDOM`, `GREEDY`, `ALPHA-BETA`, `MCTS`), adjust strength level (depth 2/3/4 or iterations 200/400/600/1000), and choose who moves first (`YOU START` or `AI STARTS`).
+- **Game Screen (`#/game`):** Interactive $9 \times 9$ board with legal move markers, groove raycasting with ghost wall preview, wall rotation (`R`), and HUD.
+- **Stats Screen (`#/stats`):** 3D telemetry column displaying nodes visited, move latency, and evaluation.
+- **Result Screen (`#/result`):** Rematch option or return to menu.
 
 ### Keyboard Shortcuts
-- `P`: Toggle shortest-path trails on the board.
+- `P`: Toggle shortest-path trails.
 - `R`: Rotate candidate wall orientation (`H` $\leftrightarrow$ `V`) or trigger rematch.
 - `U`: Undo human move and subsequent AI reply.
 - `S`: View AI telemetry and stats.
@@ -78,15 +83,15 @@ Open your browser to `http://localhost:8000` to access the full-bleed **Monolith
 
 ## Running Tournaments & Experiments
 
-The tournament CLI supports single matchups, the standard evaluation suite, ablation studies, and matplotlib chart rendering.
+The tournament CLI supports single matchups, the evaluation suite, ablation studies, and chart rendering.
 
 ### 1. Single Matchup
 ```bash
 python -m quoridor.tournament --a "alphabeta:depth=3" --b "mcts:iterations=800" --games 20 --workers 4 --out results/custom_match.json
 ```
 
-### 2. Standard Tournament Suite
-Runs the full 7-matchup matrix (20 games each with alternating seats) and writes `results/summary.csv` and `results/win_rates.png`:
+### 2. Tournament Suite
+Runs the 7-matchup matrix (20 games each with alternating seats) and writes `results/summary.csv` and `results/win_rates.png`:
 ```bash
 python -m quoridor.tournament --suite --workers 6
 ```
@@ -106,7 +111,7 @@ python -m quoridor.tournament --charts
 
 ## Empirical Tournament Results
 
-Below is the summary of results from the 20-game alternating-seat evaluation suite (`results/summary.csv`):
+Summary of results from the 20-game alternating-seat evaluation suite (`results/summary.csv`):
 
 | Matchup (Agent A vs Agent B) | Games | Wins A | Wins B | Draws | Win Rate A | Mean Plies | Nodes/Move A | Latency A | Nodes/Move B | Latency B |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -118,4 +123,30 @@ Below is the summary of results from the 20-game alternating-seat evaluation sui
 | **AlphaBeta(d=3) vs MCTS(1000)** | 20 | 12 | 8 | 0 | **60.0%** | 66.8 | 179.3 | 617.0 ms | 956.7 | 4,746.7 ms |
 | **AlphaBeta(d=2) vs AlphaBeta(d=3)** | 20 | 6 | 14 | 0 | **30.0%** | 62.0 | 35.1 | 185.6 ms | 189.8 | 726.3 ms |
 
-*See `docs/REPORT.md` for in-depth algorithmic analyses, search ablation breakdowns, and architectural details.*
+See `docs/REPORT.md` for in-depth algorithmic analyses, confidence intervals, ablation breakdowns, and architectural details.
+
+---
+
+## Deploying
+
+The application can be deployed with Docker on any container hosting platform (Render, Hugging Face Spaces, Fly.io, Railway).
+
+### Deploying to Render
+1. Create a new Web Service on [Render](https://render.com).
+2. Connect this repository (`https://github.com/Priyanshu-2308/QUORIDOR`).
+3. Select "Docker" as the runtime. Render automatically detects `Dockerfile` and `render.yaml`.
+4. Choose the Free plan and click "Create Web Service".
+
+### Deploying to Hugging Face Spaces
+1. Create a new Space on [Hugging Face](https://huggingface.co/spaces).
+2. Select "Docker" as the Space SDK.
+3. Push this repository to the Space remote. The Dockerfile exposes port 7860, which Hugging Face routes automatically.
+
+### Running with Docker Locally
+```bash
+docker build -t quoridor .
+docker run -p 7860:7860 quoridor
+```
+Open `http://localhost:7860` in your browser.
+
+> Note: Use exactly one worker process (`--workers 1`) because game sessions live in memory. To protect public instances, opponent parameters are capped: Alpha-Beta depth is limited to 1-4, MCTS iterations are limited to 50-1000, and idle sessions are evicted automatically.
