@@ -4,7 +4,6 @@
  */
 
 import * as api from './api.js';
-import { createTitleScreen } from './screens/title.js';
 import { createSetupScreen } from './screens/setup.js';
 import { createGameScreen } from './screens/game.js';
 import { createResultScreen } from './screens/result.js';
@@ -29,14 +28,11 @@ class QuoridorApp {
     this.isAiThinking = false;
     this.currentScreenKey = null;
 
-    // Instantiate screen modules
+    // Instantiate screens
     this.screens = {
-      title: createTitleScreen({
-        onPlay: () => this.navigate('#/setup'),
-      }),
       setup: createSetupScreen({
         onStart: (cfg) => this.startGame(cfg),
-        onBack: () => this.navigate('#/title'),
+        onBack: () => this.navigate('#/setup'),
       }),
       game: createGameScreen({
         onPawnMove: (r, c) => this.handlePawnMove(r, c),
@@ -47,11 +43,11 @@ class QuoridorApp {
       }),
     };
 
-    // Instantiate result overlay
+    // Result overlay
     this.resultOverlay = createResultScreen({
       onRematch: () => this.restartGame(),
       onReview: () => {
-        // Overlay dismissed, user stays in arena to inspect final board
+        // Dismiss overlay so user can review the final board state
       },
       onNewGame: () => this.navigate('#/setup'),
     });
@@ -62,9 +58,9 @@ class QuoridorApp {
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
     window.addEventListener('hashchange', () => this.route());
 
-    // Initial routing
-    if (!window.location.hash) {
-      window.location.hash = '#/title';
+    // Initial routing: Default directly to Setup screen
+    if (!window.location.hash || window.location.hash === '#' || window.location.hash === '#/') {
+      window.location.hash = '#/setup';
     } else {
       this.route();
     }
@@ -79,12 +75,11 @@ class QuoridorApp {
   }
 
   async route() {
-    const hash = window.location.hash || '#/title';
-    const screenKey = hash.replace('#/', '').split('?')[0] || 'title';
+    const hash = window.location.hash || '#/setup';
+    let screenKey = hash.replace('#/', '').split('?')[0] || 'setup';
 
-    if (!this.screens[screenKey]) {
-      this.navigate('#/title');
-      return;
+    if (screenKey !== 'setup' && screenKey !== 'game') {
+      screenKey = 'setup';
     }
 
     if (screenKey === 'game' && !this.gameId) {
@@ -94,7 +89,7 @@ class QuoridorApp {
 
     if (this.currentScreenKey === screenKey) return;
 
-    // Hide any lingering result overlay
+    // Hide any active modal overlay
     this.resultOverlay.classList.add('hidden');
 
     // Mount screen
@@ -185,13 +180,11 @@ class QuoridorApp {
       return;
     }
 
-    // Refresh legal moves and paths
     const legalData = await api.getLegalMoves(this.gameId);
     this.legalMoves = legalData.moves;
     this.screens.game.updateState(this.gameState, this.humanPlayer, true, this.legalMoves);
     await this.refreshPaths();
 
-    // Trigger AI move
     if (this.gameState.current !== this.humanPlayer) {
       await this.triggerAiMove();
     }
@@ -267,21 +260,15 @@ class QuoridorApp {
         durationSeconds: duration,
         lastNotation: lastMove,
       });
-    }, 600);
+    }, 500);
   }
 
   handleKeyDown(event) {
     const key = event.key.toUpperCase();
 
-    if (this.currentScreenKey === 'title') {
-      if (key === ' ' || key === 'ENTER') {
-        this.navigate('#/setup');
-      }
-    } else if (this.currentScreenKey === 'setup') {
+    if (this.currentScreenKey === 'setup') {
       if (key === 'ENTER') {
         this.screens.setup.querySelector('#btn-start')?.click();
-      } else if (key === 'ESCAPE') {
-        this.navigate('#/title');
       }
     } else if (this.currentScreenKey === 'game') {
       if (!this.resultOverlay.classList.contains('hidden')) {
@@ -306,7 +293,7 @@ class QuoridorApp {
   }
 }
 
-// Initialize on DOMContentLoaded
+// Initialize on DOM ready
 window.addEventListener('DOMContentLoaded', () => {
   new QuoridorApp();
 });

@@ -29,16 +29,16 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
     const themeColor = isHumanWin ? '#2E4BDB' : '#E5532D';
 
     el.innerHTML = `
-      <!-- Modal Card -->
-      <div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-space-lg flex flex-col relative shadow-xl border border-surface-container-highest modal-enter">
+      <!-- Modal Card: Grounded dual-plane elevation, pure white surface, flat discipline -->
+      <div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-space-lg flex flex-col relative shadow-xl modal-enter" style="outline: 1px solid #D9D7D0;">
         
-        <!-- Top Status Bar -->
+        <!-- Top Monogram & Victory Status -->
         <div class="flex items-center justify-between pb-space-md mb-space-md bg-surface-container-low -mx-space-lg -mt-space-lg px-space-lg pt-space-md rounded-t-xl border-b border-surface-container-highest">
           <div class="flex items-center gap-space-xs">
             <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${themeColor};"></span>
             <span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider">Match Concluded</span>
           </div>
-          <span class="font-label-sm text-label-sm text-outline font-mono">${currentResult.lastNotation}</span>
+          <span class="font-label-sm text-label-sm text-outline font-mono">Notation: ${currentResult.lastNotation}</span>
         </div>
 
         <!-- Result Headline & Editorial Subtext -->
@@ -54,40 +54,40 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
 
         <!-- Match Stats Breakdown -->
         <div class="bg-surface-container-low rounded-lg p-space-md mb-space-lg flex flex-col gap-space-sm border border-surface-container-highest">
-          <div class="flex items-center justify-between font-mono">
-            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-sans">Duration</span>
-            <span class="font-label-md text-label-md text-on-surface font-medium">${formatDuration(currentResult.durationSeconds)}</span>
+          <div class="flex items-center justify-between">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Duration</span>
+            <span class="font-label-md text-label-md text-on-surface font-medium font-mono">${formatDuration(currentResult.durationSeconds)}</span>
           </div>
-          <div class="h-[1px] bg-surface-container-highest w-full"></div>
-          <div class="flex items-center justify-between font-mono">
-            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-sans">Opponent</span>
+          <div class="h-[1px] bg-surface-variant w-full"></div>
+          <div class="flex items-center justify-between">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Opponent</span>
             <span class="font-label-md text-label-md text-on-surface font-medium truncate max-w-[180px]">${currentResult.opponentInfo.displayName || currentResult.opponentInfo.name}</span>
           </div>
-          <div class="h-[1px] bg-surface-container-highest w-full"></div>
-          <div class="flex items-center justify-between font-mono">
-            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-sans">Result</span>
+          <div class="h-[1px] bg-surface-variant w-full"></div>
+          <div class="flex items-center justify-between">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Result</span>
             <span class="font-label-md text-label-md font-semibold" style="color: ${themeColor};">
               ${isHumanWin ? 'Victory (Corridor Mastered)' : 'Defeat (Opponent Reached Goal)'}
             </span>
           </div>
         </div>
 
-        <!-- Action Buttons -->
+        <!-- Buttons Stack (Editorial hierarchy) -->
         <div class="flex flex-col gap-space-sm w-full">
-          <!-- Rematch: The ONLY solid black (#151515) primary button -->
-          <button id="btn-rematch" class="w-full min-h-[44px] bg-primary text-on-primary font-label-md text-label-md py-space-sm px-space-md rounded transition-all hover:opacity-90 active:scale-[0.99] flex items-center justify-center gap-space-xs cursor-pointer shadow-sm">
+          <!-- Rematch: The ONLY solid black (#151515) primary button on the viewport -->
+          <button id="btn-rematch" class="w-full min-h-[44px] bg-primary text-on-primary font-label-md text-label-md py-space-sm px-space-md rounded transition-colors active:bg-neutral-800 flex items-center justify-center gap-space-xs cursor-pointer shadow-sm" type="button">
             <span class="material-symbols-outlined text-[18px]">replay</span>
             <span>Rematch</span>
           </button>
 
           <!-- Secondary Outlined Action: Review Match -->
-          <button id="btn-review" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low border border-surface-container-highest flex items-center justify-center gap-space-xs cursor-pointer">
+          <button id="btn-review" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low active:bg-surface-container flex items-center justify-center gap-space-xs cursor-pointer" type="button" style="outline: 1px solid #D9D7D0;">
             <span class="material-symbols-outlined text-[18px] text-on-surface-variant">history_edu</span>
             <span>Review match</span>
           </button>
 
           <!-- Tertiary Outlined Action: New Game -->
-          <button id="btn-newgame" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low border border-surface-container-highest flex items-center justify-center gap-space-xs cursor-pointer">
+          <button id="btn-newgame" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low active:bg-surface-container flex items-center justify-center gap-space-xs cursor-pointer" type="button" style="outline: 1px solid #D9D7D0;">
             <span class="material-symbols-outlined text-[18px] text-on-surface-variant">add_circle_outline</span>
             <span>New game</span>
           </button>
@@ -95,7 +95,7 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
       </div>
     `;
 
-    // Hook listeners
+    // Listeners
     el.querySelector('#btn-rematch')?.addEventListener('click', () => {
       if (onRematch) onRematch();
     });
