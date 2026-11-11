@@ -1,6 +1,6 @@
-# Quoridor AI
+# Quoridor AI (V2)
 
-A Python implementation of the board game Quoridor ($9 \times 9$ board, two players, 10 walls each) featuring four AI search strategies (Random, Greedy, Alpha-Beta Minimax, and Monte Carlo Tree Search), an automated tournament and ablation runner, and a 3D web UI built with Three.js. The core game logic uses only the Python standard library with an immutable state architecture.
+A Python implementation of the board game Quoridor ($9 \times 9$ board, two players, 10 walls each) featuring four AI search strategies (Random, Greedy, Alpha-Beta Minimax, and Monte Carlo Tree Search), an automated tournament and ablation runner, and the V2 "Quiet Bastion" web interface with real-time corridor path analysis, interactive wall placement, and AI telemetry. The core game logic uses only the Python standard library with an immutable state architecture.
 
 ---
 
@@ -57,7 +57,7 @@ QUORIDOR/
 
 ---
 
-## Running the Web UI
+## Running the Web UI (V2)
 
 Start the backend server with Uvicorn:
 
@@ -65,19 +65,31 @@ Start the backend server with Uvicorn:
 uvicorn server.app:app --port 8000
 ```
 
-Open `http://localhost:8000` in your browser to access the 3D interface:
-- **Title Screen (`#/title`):** Rotating pawn monolith, start button.
-- **Setup Screen (`#/setup`):** Select opponent (`RANDOM`, `GREEDY`, `ALPHA-BETA`, `MCTS`), adjust strength level (depth 2/3/4 or iterations 200/400/600/1000), and choose who moves first (`YOU START` or `AI STARTS`).
-- **Game Screen (`#/game`):** Interactive $9 \times 9$ board with legal move markers, groove raycasting with ghost wall preview, wall rotation (`R`), and HUD.
-- **Stats Screen (`#/stats`):** 3D telemetry column displaying nodes visited, move latency, and evaluation.
-- **Result Screen (`#/result`):** Rematch option or return to menu.
+Open `http://localhost:8000` in your browser to access the V2 "Quiet Bastion" interface:
+- **Title Screen (`#/title`):** Minimalist archival introduction, feature synopsis, and game start.
+- **Setup Screen (`#/setup`):** Character persona cards with dedicated badges and complexity controls:
+  - **Wobbles (`random`):** Casual baseline (*"Walks like it lost its keys"*).
+  - **Dash (`greedy`):** Fast baseline with zero wall usage (*"Zero walls. All speed"*).
+  - **Professor Prune (`alphabeta`):** Minimax with alpha-beta pruning, iterative deepening, transposition table, and killer heuristics (*"Thinks first. Snips bad ideas"*). Search depth options: Casual (Depth 1), Careful (Depth 2), Sharp (Depth 3), Ruthless (Depth 4).
+  - **The Gambler (`mcts`):** Monte Carlo Tree Search with UCB1 exploration and rollout heuristics (*"Rolls a thousand dice. Hopes"*). Iteration count options: Casual (200), Careful (400), Sharp (600), Ruthless (1000).
+  - **Side Selection:** Choose who moves first: **You (Cobalt `#2E4BDB`)** or **Opponent (Vermilion `#E5532D`)**.
+- **Match Arena (`#/game`):**
+  - High-precision $9 \times 9$ Quoridor matrix with algebraic coordinates (`a-i`, `1-9`) and goal row tinting.
+  - Interactive pawn moves with legal dot indicator pips.
+  - Interactive wall placement with live ghost wall preview, orientation tooltip, and illegal attempt detection.
+  - Real-time SVG shortest-path trails (Cobalt for Player 0, Vermilion for Player 1).
+  - Wall inventory tracking (10-pill counters for both players with remaining counts).
+  - Real-time path distance metrics (`You: X steps · Opponent: Y steps`).
+  - Search engine telemetry (`nodes`, `latency`, `eval`).
+  - Scrollable move notation log formatted in standard algebraic notation.
+  - One-click Undo (`U`), shortest path toggle (`P`), and new game reset (`Esc`).
+- **Game Over Modal (`#/result`):** Post-match review card featuring match duration, plies count, walls placed, winner monogram, Rematch action, Review mode, and New Game.
 
 ### Keyboard Shortcuts
-- `P`: Toggle shortest-path trails.
 - `R`: Rotate candidate wall orientation (`H` $\leftrightarrow$ `V`) or trigger rematch.
+- `P`: Toggle shortest-path trails.
 - `U`: Undo human move and subsequent AI reply.
-- `S`: View AI telemetry and stats.
-- `Esc`: Return to menu or back to game.
+- `Esc`: Return to setup screen or main menu.
 
 ---
 

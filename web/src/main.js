@@ -1,66 +1,68 @@
 /**
- * Quoridor Monolith UI — Screen Router and Game Controller.
+ * Quoridor V2 — Quiet Bastion Minimalist Client.
+ * Router and Game Controller orchestrating Setup, Arena, and Overlays.
  */
-import { QuoridorScene } from './scene.js';
+
 import * as api from './api.js';
 import { createTitleScreen } from './screens/title.js';
 import { createSetupScreen } from './screens/setup.js';
 import { createGameScreen } from './screens/game.js';
-import { createStatsScreen } from './screens/stats.js';
 import { createResultScreen } from './screens/result.js';
 
-class MonolithApp {
+class QuoridorApp {
   constructor() {
-    this.canvasContainer = document.getElementById('canvas-container');
     this.screenContainer = document.getElementById('screen-container');
-    this.wipeOverlay = document.getElementById('wipe-overlay');
 
-    this.scene = new QuoridorScene(this.canvasContainer);
-
-    // Active Game State
+    // App State
     this.gameId = null;
     this.gameState = null;
     this.humanPlayer = 0;
     this.opponentSpec = 'alphabeta:depth=3';
+    this.opponentInfo = {
+      name: 'Professor Prune',
+      displayName: 'Professor Prune (Depth 3)',
+      badge: 'P',
+      id: 'alphabeta',
+    };
     this.legalMoves = [];
     this.lastStats = null;
-    this.statsHistory = [];
     this.isAiThinking = false;
-    this.isTransitioning = false;
+    this.currentScreenKey = null;
 
-    // Build screen instances
+    // Instantiate screen modules
     this.screens = {
       title: createTitleScreen({
         onPlay: () => this.navigate('#/setup'),
       }),
       setup: createSetupScreen({
         onStart: (cfg) => this.startGame(cfg),
-        onConfigChange: (lvl, col) => this.scene.updateSetupMonolith(lvl, col),
+        onBack: () => this.navigate('#/title'),
       }),
       game: createGameScreen({
+        onPawnMove: (r, c) => this.handlePawnMove(r, c),
+        onWallMove: (r, c, o) => this.handleWallMove(r, c, o),
         onUndo: () => this.handleUndo(),
-        onTogglePaths: () => this.togglePaths(),
-        onOpenStats: () => this.navigate('#/stats'),
-        onQuit: () => this.navigate('#/title'),
-      }),
-      stats: createStatsScreen({
-        onBack: () => this.navigate('#/game'),
-      }),
-      result: createResultScreen({
-        onRematch: () => this.restartGame(),
-        onMenu: () => this.navigate('#/title'),
+        onTogglePaths: () => this.refreshPaths(),
+        onQuit: () => this.navigate('#/setup'),
       }),
     };
 
-    // Attach scene callbacks for board interaction
-    this.scene.onCellClick = (r, c) => this.handlePawnMove(r, c);
-    this.scene.onWallClick = (r, c, o) => this.handleWallMove(r, c, o);
+    // Instantiate result overlay
+    this.resultOverlay = createResultScreen({
+      onRematch: () => this.restartGame(),
+      onReview: () => {
+        // Overlay dismissed, user stays in arena to inspect final board
+      },
+      onNewGame: () => this.navigate('#/setup'),
+    });
+    this.resultOverlay.classList.add('hidden');
+    document.body.appendChild(this.resultOverlay);
 
-    // Keyboard controls
+    // Global keyboard listener
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
     window.addEventListener('hashchange', () => this.route());
 
-    // Initial route
+    // Initial routing
     if (!window.location.hash) {
       window.location.hash = '#/title';
     } else {
@@ -68,7 +70,6 @@ class MonolithApp {
     }
   }
 
-  // Router and Screen Transitions
   navigate(hash) {
     if (window.location.hash === hash) {
       this.route();
@@ -92,55 +93,26 @@ class MonolithApp {
     }
 
     if (this.currentScreenKey === screenKey) return;
-    await this.transitionTo(screenKey);
-  }
 
-  async transitionTo(screenKey) {
-    if (this.isTransitioning) return;
-    this.isTransitioning = true;
+    // Hide any lingering result overlay
+    this.resultOverlay.classList.add('hidden');
 
-    // 1. Wipe in (cover screen)
-    this.wipeOverlay.style.transition = 'transform 0.2s cubic-bezier(0.77, 0, 0.175, 1)';
-    this.wipeOverlay.style.transform = 'translateX(0%)';
-    await new Promise(r => setTimeout(r, 200));
-
-    // 2. Swap active screen DOM
+    // Mount screen
     this.screenContainer.innerHTML = '';
     const screenEl = this.screens[screenKey];
     this.screenContainer.appendChild(screenEl);
-
-    // 3. Update 3D scene active group
-    this.scene.setScreen(screenKey);
     this.currentScreenKey = screenKey;
 
     if (screenKey === 'game') {
-      this.screens.game.updateState(this.gameState, this.humanPlayer, this.isAiThinking);
-      this.scene.syncGameState(this.gameState, this.legalMoves);
-      this.refreshPaths();
-    } else if (screenKey === 'stats') {
-      this.screens.stats.updateStats(this.lastStats);
-      if (this.lastStats) {
-        this.scene.updateStatsVisual(this.lastStats.nodes || this.lastStats.iterations || 100, this.statsHistory);
-      }
-    } else if (screenKey === 'result') {
-      this.screens.result.setResult(this.gameState ? this.gameState.winner : null, this.humanPlayer);
-      this.scene.setResultWinner(this.gameState ? this.gameState.winner : 0);
+      this.screens.game.updateState(this.gameState, this.humanPlayer, this.isAiThinking, this.legalMoves);
+      await this.refreshPaths();
     }
-
-    // 4. Wipe out (reveal new screen)
-    this.wipeOverlay.style.transform = 'translateX(100%)';
-    await new Promise(r => setTimeout(r, 200));
-    this.wipeOverlay.style.transition = 'none';
-    this.wipeOverlay.style.transform = 'translateX(-100%)';
-
-    this.isTransitioning = false;
   }
 
-  // Game Lifecycle & Turns
-  async startGame({ opponent, humanPlayer }) {
+  async startGame({ opponent, humanPlayer, opponentInfo }) {
     this.opponentSpec = opponent;
     this.humanPlayer = humanPlayer;
-    this.statsHistory = [];
+    if (opponentInfo) this.opponentInfo = opponentInfo;
     this.lastStats = null;
 
     try {
@@ -151,15 +123,19 @@ class MonolithApp {
       const legalData = await api.getLegalMoves(this.gameId);
       this.legalMoves = legalData.moves;
 
+      this.screens.game.initGame(this.gameState, this.humanPlayer, this.opponentInfo);
+      this.screens.game.updateState(this.gameState, this.humanPlayer, false, this.legalMoves);
+
       this.navigate('#/game');
+      await this.refreshPaths();
 
       // If AI moves first
       if (this.gameState.current !== this.humanPlayer) {
         await this.triggerAiMove();
       }
     } catch (err) {
-      console.error(`Failed to start game: ${err.message}`);
-      alert(`Failed to start game: ${err.message}`);
+      console.error('Failed to create game:', err);
+      alert(`Could not start game: ${err.message}`);
     }
   }
 
@@ -167,6 +143,7 @@ class MonolithApp {
     await this.startGame({
       opponent: this.opponentSpec,
       humanPlayer: this.humanPlayer,
+      opponentInfo: this.opponentInfo,
     });
   }
 
@@ -177,10 +154,11 @@ class MonolithApp {
     try {
       const move = { type: 'pawn', to: [r, c] };
       const data = await api.makeMove(this.gameId, move);
+      this.screens.game.addHistoryMove(this.humanPlayer, move);
       this.gameState = data.state;
-      this.onMoveApplied();
+      await this.onMoveFinished();
     } catch (err) {
-      console.warn('Move failed:', err.message);
+      console.warn('Pawn move error:', err.message);
     }
   }
 
@@ -191,29 +169,29 @@ class MonolithApp {
     try {
       const move = { type: 'wall', r, c, o };
       const data = await api.makeMove(this.gameId, move);
+      this.screens.game.addHistoryMove(this.humanPlayer, move);
       this.gameState = data.state;
-      this.onMoveApplied();
+      await this.onMoveFinished();
     } catch (err) {
-      console.warn('Wall placement failed:', err.message);
+      console.warn('Wall move error:', err.message);
     }
   }
 
-  async onMoveApplied() {
+  async onMoveFinished() {
     if (this.gameState.winner !== null) {
-      this.screens.game.updateState(this.gameState, this.humanPlayer, false);
-      this.scene.syncGameState(this.gameState, []);
-      setTimeout(() => this.navigate('#/result'), 600);
+      this.screens.game.updateState(this.gameState, this.humanPlayer, false, []);
+      await this.refreshPaths();
+      this.showGameOverModal();
       return;
     }
 
-    // Refresh legal moves and sync
+    // Refresh legal moves and paths
     const legalData = await api.getLegalMoves(this.gameId);
     this.legalMoves = legalData.moves;
-    this.screens.game.updateState(this.gameState, this.humanPlayer, true);
-    this.scene.syncGameState(this.gameState, this.legalMoves);
-    this.refreshPaths();
+    this.screens.game.updateState(this.gameState, this.humanPlayer, true, this.legalMoves);
+    await this.refreshPaths();
 
-    // Trigger AI move if it's AI turn
+    // Trigger AI move
     if (this.gameState.current !== this.humanPlayer) {
       await this.triggerAiMove();
     }
@@ -221,20 +199,21 @@ class MonolithApp {
 
   async triggerAiMove() {
     this.isAiThinking = true;
-    this.screens.game.updateState(this.gameState, this.humanPlayer, true);
+    this.screens.game.updateState(this.gameState, this.humanPlayer, true, []);
 
     try {
       const data = await api.getAiMove(this.gameId);
+      if (data.move) {
+        this.screens.game.addHistoryMove(1 - this.humanPlayer, data.move);
+      }
       this.gameState = data.state;
       this.lastStats = data.stats;
-      if (data.stats && (data.stats.nodes || data.stats.iterations)) {
-        this.statsHistory.push(data.stats.nodes || data.stats.iterations);
-      }
+      this.screens.game.setStats(data.stats);
 
       if (this.gameState.winner !== null) {
-        this.screens.game.updateState(this.gameState, this.humanPlayer, false);
-        this.scene.syncGameState(this.gameState, []);
-        setTimeout(() => this.navigate('#/result'), 700);
+        this.screens.game.updateState(this.gameState, this.humanPlayer, false, []);
+        await this.refreshPaths();
+        this.showGameOverModal();
         return;
       }
 
@@ -244,24 +223,21 @@ class MonolithApp {
       console.error('AI move error:', err);
     } finally {
       this.isAiThinking = false;
-      this.screens.game.updateState(this.gameState, this.humanPlayer, false);
-      this.scene.syncGameState(this.gameState, this.legalMoves);
-      this.refreshPaths();
+      this.screens.game.updateState(this.gameState, this.humanPlayer, false, this.legalMoves);
+      await this.refreshPaths();
     }
   }
 
   async handleUndo() {
-    if (this.isAiThinking || !this.gameId) return;
+    if (this.isAiThinking || !this.gameId || (this.gameState && this.gameState.winner !== null)) return;
 
     try {
       const data = await api.undoMove(this.gameId);
       this.gameState = data.state;
       const legalData = await api.getLegalMoves(this.gameId);
       this.legalMoves = legalData.moves;
-
-      this.screens.game.updateState(this.gameState, this.humanPlayer, false);
-      this.scene.syncGameState(this.gameState, this.legalMoves);
-      this.refreshPaths();
+      this.screens.game.updateState(this.gameState, this.humanPlayer, false, this.legalMoves);
+      await this.refreshPaths();
     } catch (err) {
       console.warn('Undo error:', err.message);
     }
@@ -271,15 +247,29 @@ class MonolithApp {
     if (!this.gameId) return;
     try {
       const data = await api.getPaths(this.gameId);
-      this.scene.setShortestPaths(data.paths);
+      this.screens.game.setPaths(data.paths);
     } catch (_) {}
   }
 
-  togglePaths() {
-    return this.scene.toggleShortestPaths();
+  showGameOverModal() {
+    const history = this.screens.game.getMoveHistory();
+    const lastMove = history.length > 0 ? history[history.length - 1].notation : 'e9#';
+    const totalWallsPlaced = (this.gameState.h_walls ? this.gameState.h_walls.length : 0) + (this.gameState.v_walls ? this.gameState.v_walls.length : 0);
+    const duration = this.screens.game.getElapsedSeconds();
+
+    setTimeout(() => {
+      this.resultOverlay.showResult({
+        winner: this.gameState.winner,
+        humanPlayer: this.humanPlayer,
+        opponentInfo: this.opponentInfo,
+        turnCount: this.gameState.turn_count,
+        wallsPlaced: totalWallsPlaced,
+        durationSeconds: duration,
+        lastNotation: lastMove,
+      });
+    }, 600);
   }
 
-  // Global Keyboard Shortcuts
   handleKeyDown(event) {
     const key = event.key.toUpperCase();
 
@@ -290,45 +280,33 @@ class MonolithApp {
     } else if (this.currentScreenKey === 'setup') {
       if (key === 'ENTER') {
         this.screens.setup.querySelector('#btn-start')?.click();
-      } else if (key === ' ') {
-        this.screens.setup.querySelector('#btn-side')?.click();
-      } else if (key === 'ARROWLEFT') {
-        this.screens.setup.querySelector('#btn-prev-opp')?.click();
-      } else if (key === 'ARROWRIGHT') {
-        this.screens.setup.querySelector('#btn-next-opp')?.click();
-      } else if (key === 'ARROWUP') {
-        this.screens.setup.querySelector('#btn-next-lvl')?.click();
-      } else if (key === 'ARROWDOWN') {
-        this.screens.setup.querySelector('#btn-prev-lvl')?.click();
+      } else if (key === 'ESCAPE') {
+        this.navigate('#/title');
       }
     } else if (this.currentScreenKey === 'game') {
+      if (!this.resultOverlay.classList.contains('hidden')) {
+        if (key === 'R') {
+          this.restartGame();
+        } else if (key === 'ESCAPE') {
+          this.navigate('#/setup');
+        }
+        return;
+      }
+
       if (key === 'R') {
-        this.scene.toggleWallOrientation();
+        this.screens.game.toggleWallOrientation();
       } else if (key === 'P') {
-        this.togglePaths();
+        this.screens.game.togglePaths();
       } else if (key === 'U') {
         this.handleUndo();
-      } else if (key === 'S') {
-        this.navigate('#/stats');
       } else if (key === 'ESCAPE') {
-        this.navigate('#/title');
-      }
-    } else if (this.currentScreenKey === 'stats') {
-      if (key === 'ESCAPE' || key === 'S') {
-        this.navigate('#/game');
-      }
-    } else if (this.currentScreenKey === 'result') {
-      if (key === 'R') {
-        this.restartGame();
-      } else if (key === 'ESCAPE') {
-        this.navigate('#/title');
+        this.navigate('#/setup');
       }
     }
   }
 }
 
-// Instantiate application on DOM ready
+// Initialize on DOMContentLoaded
 window.addEventListener('DOMContentLoaded', () => {
-  new MonolithApp();
+  new QuoridorApp();
 });
-
