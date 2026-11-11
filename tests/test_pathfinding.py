@@ -1,4 +1,4 @@
-"""Tests for quoridor.pathfinding (owner: Rajnish)."""
+"""Tests for quoridor.pathfinding."""
 import pytest
 
 from quoridor.constants import START

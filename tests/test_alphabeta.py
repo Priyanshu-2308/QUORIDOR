@@ -1,4 +1,4 @@
-"""Tests for AlphaBetaAgent (owner: Shivam)."""
+"""Tests for AlphaBetaAgent."""
 from __future__ import annotations
 
 import pytest

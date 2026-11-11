@@ -1,5 +1,5 @@
 /**
- * Quoridor Monolith UI — Screen Router and Game Controller (owner: Priyanshu).
+ * Quoridor Monolith UI — Screen Router and Game Controller.
  */
 import { QuoridorScene } from './scene.js';
 import * as api from './api.js';
@@ -68,9 +68,7 @@ class MonolithApp {
     }
   }
 
-  /* -------------------------------------------------------------
-   * Router and Screen Transitions
-   * ------------------------------------------------------------- */
+  // Router and Screen Transitions
   navigate(hash) {
     if (window.location.hash === hash) {
       this.route();
@@ -138,9 +136,7 @@ class MonolithApp {
     this.isTransitioning = false;
   }
 
-  /* -------------------------------------------------------------
-   * Game Lifecycle & Turns
-   * ------------------------------------------------------------- */
+  // Game Lifecycle & Turns
   async startGame({ opponent, humanPlayer }) {
     this.opponentSpec = opponent;
     this.humanPlayer = humanPlayer;
@@ -283,9 +279,7 @@ class MonolithApp {
     return this.scene.toggleShortestPaths();
   }
 
-  /* -------------------------------------------------------------
-   * Global Keyboard Shortcuts
-   * ------------------------------------------------------------- */
+  // Global Keyboard Shortcuts
   handleKeyDown(event) {
     const key = event.key.toUpperCase();
 

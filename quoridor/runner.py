@@ -1,4 +1,4 @@
-"""Game runner (owner: Siddhesh)."""
+"""Game runner."""
 from __future__ import annotations
 
 from dataclasses import dataclass

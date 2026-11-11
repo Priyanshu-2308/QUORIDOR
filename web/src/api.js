@@ -1,5 +1,5 @@
 /**
- * API client for Quoridor server endpoints (owner: Priyanshu).
+ * API client for Quoridor server endpoints.
  */
 
 const BASE_URL = '';

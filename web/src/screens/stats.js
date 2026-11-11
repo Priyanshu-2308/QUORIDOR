@@ -1,5 +1,5 @@
 /**
- * Stats Screen (owner: Priyanshu).
+ * Stats Screen.
  * Ink field with bone type (no glow, no gradients).
  * Giant numerals for the last AI move: nodes, ms, eval, depth/iterations.
  */

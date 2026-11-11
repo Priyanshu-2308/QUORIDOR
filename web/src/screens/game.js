@@ -1,5 +1,5 @@
 /**
- * Game Screen (owner: Priyanshu).
+ * Game Screen.
  * Bone field, minimal HUD (turn indicator, wall counters, shortcuts line).
  */
 export function createGameScreen({

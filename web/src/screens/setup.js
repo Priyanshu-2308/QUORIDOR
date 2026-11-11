@@ -1,5 +1,5 @@
 /**
- * Setup Screen (owner: Priyanshu).
+ * Setup Screen.
  * Cobalt field, opponent selector (RANDOM / GREEDY / ALPHA-BETA / MCTS),
  * strength level selector (depth 2/3/4 or iterations 200/500/1000/2000),
  * side selector (YOU START / AI STARTS), button "START".

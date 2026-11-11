@@ -1,4 +1,4 @@
-"""Tests for RandomAgent, GreedyAgent, and make_agent (owner: Siddhesh)."""
+"""Tests for RandomAgent, GreedyAgent, and make_agent."""
 from __future__ import annotations
 
 import pytest

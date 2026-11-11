@@ -1,5 +1,5 @@
 /**
- * Result Screen (owner: Priyanshu).
+ * Result Screen.
  * Solid field with winner's colour (Cobalt for human win, Vermilion for AI win, Ochre for draw).
  * Giant "YOU WIN" or "AI WINS", buttons "REMATCH" and "MENU".
  */

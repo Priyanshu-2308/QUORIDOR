@@ -1,11 +1,4 @@
-"""Alpha-beta search agent (owner: Shivam).
-
-Benchmark timings (typical move):
-  - depth=2: initial ~0.09s, after 20 plies ~0.03s
-  - depth=3: initial ~0.26s, after 20 plies ~0.13s
-  - depth=4: initial ~1.27s, after 20 plies ~0.46s
-Recommended UI difficulty: Easy = depth 2, Medium = depth 3, Hard = depth 4.
-"""
+"""Alpha-beta search agent."""
 from __future__ import annotations
 
 import random as _random
