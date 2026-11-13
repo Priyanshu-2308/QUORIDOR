@@ -54,7 +54,7 @@ class GreedyAgent(Agent):
             nodes += len(wall_candidates)
 
             best_wall: WallMove | None = None
-            best_wall_net = best_pawn_net  # must strictly exceed pawn step
+            best_wall_net = best_pawn_net  # wall has to beat the best pawn step
 
             for w in wall_candidates:
                 ns = state.apply(w)

@@ -21,7 +21,6 @@ class TestAlphaBetaLegality:
     def test_always_returns_legal_move(self, seed: int):
         agent = AlphaBetaAgent(depth=2, seed=seed)
         state = _initial()
-        # Test across successive plies
         for _ in range(10):
             if state.is_terminal():
                 break
@@ -32,7 +31,6 @@ class TestAlphaBetaLegality:
 
 class TestAlphaBetaImmediateWin:
     def test_takes_immediate_win_player_0(self):
-        # Player 0 at (1, 4), can step to (0, 4) to win immediately
         state = GameState(
             pawns=((1, 4), (0, 0)),
             walls_left=(10, 10),
@@ -46,7 +44,6 @@ class TestAlphaBetaImmediateWin:
         assert move == PawnMove(to=(0, 4))
 
     def test_takes_immediate_win_player_1(self):
-        # Player 1 at (7, 4), can step to (8, 4) to win immediately
         state = GameState(
             pawns=((8, 8), (7, 4)),
             walls_left=(10, 10),
@@ -92,7 +89,7 @@ class TestAlphaBetaOrderingAndTT:
         m_off = ab_off.choose_move(state)
         assert is_legal(state, m_off)
 
-        # Node count with both optimizations ON must be <= node count with both OFF
+        # tt and move ordering prune more nodes
         assert ab_on.last_stats["nodes"] <= ab_off.last_stats["nodes"]
 
 
@@ -132,7 +129,6 @@ class TestAlphaBetaBeatsGreedy:
 
 class TestAlphaBetaEdgeCases:
     def test_terminal_state_raises_value_error(self):
-        # A state where player 0 has already won
         state = GameState(
             pawns=((0, 4), (5, 4)),
             walls_left=(10, 10),

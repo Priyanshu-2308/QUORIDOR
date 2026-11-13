@@ -1,7 +1,4 @@
-/**
- * Setup Screen - Quiet Bastion Design System.
- * Stitch Project 6777394393065907640 (Screen: Quoridor - New Game).
- */
+// setup screen: pick opponent and who moves first
 
 export function createSetupScreen({ onStart, onBack }) {
   const el = document.createElement('div');
@@ -95,16 +92,13 @@ export function createSetupScreen({ onStart, onBack }) {
         <div class="flex flex-col w-full pb-safe">
           <div class="w-full max-w-[420px] mx-auto px-margin py-space-lg flex flex-col gap-space-lg">
             
-            <!-- Screen Title & Quiet Subtitle -->
             <div class="flex flex-col gap-space-xs">
               <h2 class="font-headline-md text-headline-md text-on-surface font-medium">New game</h2>
               <p class="font-body-sm text-body-sm text-on-surface-variant">Pick your opponent</p>
             </div>
 
-            <!-- Configuration Panel -->
             <div class="flex flex-col gap-space-lg bg-surface-container-lowest p-space-md rounded-lg shadow-sm">
               
-              <!-- Opponents Radiogroup -->
               <div class="flex flex-col gap-space-sm">
                 <div class="flex items-center justify-between">
                   <label class="font-label-md text-label-md uppercase text-on-surface font-medium">Opponent</label>
@@ -134,7 +128,6 @@ export function createSetupScreen({ onStart, onBack }) {
                 </div>
               </div>
 
-              <!-- How Sharp / Complexity -->
               ${hasLevels ? `
                 <div class="flex flex-col gap-space-xs">
                   <div class="flex items-center justify-between">
@@ -158,7 +151,6 @@ export function createSetupScreen({ onStart, onBack }) {
                 </div>
               ` : ''}
 
-              <!-- Who moves first? -->
               <div class="flex flex-col gap-space-xs">
                 <label class="font-label-md text-label-md uppercase text-on-surface font-medium">Who moves first?</label>
                 <div class="grid grid-cols-2 gap-space-xs p-1 bg-surface-container rounded-lg">
@@ -182,14 +174,12 @@ export function createSetupScreen({ onStart, onBack }) {
               </div>
             </div>
 
-            <!-- Primary Action: Exactly one solid black button -->
             <div class="flex flex-col gap-space-sm pt-space-xs">
               <button id="btn-start" type="button" class="w-full py-3.5 px-space-md rounded bg-primary text-on-primary font-headline-sm text-headline-sm font-medium tracking-wide hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-space-xs cursor-pointer shadow-sm">
                 <span>Start game</span>
                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
               </button>
               
-              <!-- Archival Ruleset Helper Text -->
               <p class="font-body-sm text-body-sm text-outline text-center leading-relaxed">
                 Reach the opposite side first. Place walls to slow your opponent.
               </p>
@@ -200,7 +190,6 @@ export function createSetupScreen({ onStart, onBack }) {
       </main>
     `;
 
-    // Listeners
     el.querySelector('#btn-back')?.addEventListener('click', () => {
       if (onBack) onBack();
     });

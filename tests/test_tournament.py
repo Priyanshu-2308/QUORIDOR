@@ -10,21 +10,18 @@ from quoridor.tournament import run_match
 
 def test_run_match_workers_consistency_and_seat_swapping():
     """Verify 4-game greedy vs random run with workers=2 matches workers=1 and swaps seats."""
-    # Run with 2 workers
     res_w2 = run_match("greedy", "random", games=4, seed=42, workers=2)
-    # Run with 1 worker
     res_w1 = run_match("greedy", "random", games=4, seed=42, workers=1)
 
     assert res_w2["games_count"] == 4
     assert len(res_w2["games"]) == 4
 
-    # Verify seat swapping: even games A is Player 0, odd games B is Player 0
+    # seats alternate every game
     assert res_w2["games"][0]["a_player"] == 0
     assert res_w2["games"][1]["a_player"] == 1
     assert res_w2["games"][2]["a_player"] == 0
     assert res_w2["games"][3]["a_player"] == 1
 
-    # Verify identical summaries between workers=1 and workers=2
     s2 = res_w2["summary"]
     s1 = res_w1["summary"]
 
@@ -34,7 +31,6 @@ def test_run_match_workers_consistency_and_seat_swapping():
     assert s2["win_rate_a"] == s1["win_rate_a"]
     assert s2["mean_plies"] == s1["mean_plies"]
 
-    # Verify game-by-game consistency
     for g1, g2 in zip(res_w1["games"], res_w2["games"]):
         assert g1["winner"] == g2["winner"]
         assert g1["plies"] == g2["plies"]

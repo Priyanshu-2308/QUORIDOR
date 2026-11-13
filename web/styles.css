@@ -31,7 +31,6 @@
   }
 }
 
-/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -47,7 +46,6 @@
   background: #747878;
 }
 
-/* Interactive board styling */
 .board-cell {
   transition: background-color 0.15s ease, transform 0.1s ease;
 }
@@ -70,7 +68,6 @@
   }
 }
 
-/* Wall Grooves & Ghost preview */
 .wall-slot-h, .wall-slot-v {
   cursor: pointer;
   transition: opacity 0.15s ease;
@@ -80,7 +77,6 @@
   opacity: 0.6;
 }
 
-/* Modal and Toast transitions */
 .fade-in {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

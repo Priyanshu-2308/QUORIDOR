@@ -23,6 +23,7 @@ def legal_pawn_moves(state: GameState) -> list[PawnMove]:
         if n != opp_pos:
             moves.append(PawnMove(to=n))
         else:
+            # jump over the opponent, or step sideways if the wall behind them blocks it
             j = (opp_pos[0] + dr, opp_pos[1] + dc)
             if not state.is_blocked(opp_pos, j):
                 moves.append(PawnMove(to=j))

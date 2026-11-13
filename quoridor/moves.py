@@ -21,6 +21,7 @@ def candidate_walls(state: GameState) -> list[WallMove]:
     seen: set[WallMove] = set()
     result: list[WallMove] = []
 
+    # only try walls that cross the opponent's shortest path, otherwise branching explodes
     for i in range(len(path) - 1):
         (r1, c1), (r2, c2) = path[i], path[i + 1]
 

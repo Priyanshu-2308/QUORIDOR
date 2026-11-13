@@ -37,12 +37,12 @@ class Session:
     last_accessed: float = field(default_factory=time.time)
 
 
-# In-memory session store
+# active games in memory
 sessions: dict[str, Session] = {}
 
 
 def validate_opponent_spec(spec: str) -> None:
-    """Validate opponent specification against an allowlist."""
+    """Check opponent spec against the allowed parameters."""
     if not isinstance(spec, str) or not spec.strip():
         raise HTTPException(status_code=400, detail="invalid opponent spec: empty spec")
 
@@ -124,9 +124,9 @@ def validate_opponent_spec(spec: str) -> None:
 
 
 def _evict_stale_sessions() -> None:
-    """Evict sessions idle for >2 hours, and ensure total sessions stay strictly under MAX_SESSIONS."""
+    """Drop sessions idle for >2 hours or past the cap."""
     now = time.time()
-    # 1. Delete sessions idle for > 2 hours
+    # drop games idle for over 2h
     stale_keys = [
         gid for gid, s in sessions.items()
         if now - s.last_accessed > SESSION_IDLE_TIMEOUT_SECONDS
@@ -134,7 +134,7 @@ def _evict_stale_sessions() -> None:
     for gid in stale_keys:
         sessions.pop(gid, None)
 
-    # 2. If at or above cap, evict oldest sessions
+    # if still full, drop the oldest
     if len(sessions) >= MAX_SESSIONS:
         sorted_sessions = sorted(sessions.items(), key=lambda item: item[1].last_accessed)
         num_to_evict = len(sessions) - MAX_SESSIONS + 1
@@ -153,19 +153,19 @@ class MoveRequest(BaseModel):
 
 @app.get("/api/health")
 def api_health() -> dict[str, str]:
-    """Health check endpoint."""
+    """Health check."""
     return {"status": "ok"}
 
 
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
-    """Empty favicon response to prevent 404 logs."""
+    """Empty favicon to keep logs clean."""
     return Response(content=b"", media_type="image/x-icon")
 
 
 @app.post("/api/new")
 def api_new(req: NewGameRequest) -> dict[str, Any]:
-    """Start a new game session with a specified opponent and human player side."""
+    """Start a new game session."""
     if req.human_player not in (0, 1):
         raise HTTPException(status_code=400, detail="human_player must be 0 or 1")
 
@@ -307,7 +307,7 @@ def api_undo(game_id: str) -> dict[str, Any]:
     return {"state": session.state.to_dict()}
 
 
-# Mount web directory if it exists
+# static files for the web client
 web_dir = Path(__file__).resolve().parent.parent / "web"
 if web_dir.is_dir():
     app.mount("/", StaticFiles(directory=str(web_dir), html=True), name="web")

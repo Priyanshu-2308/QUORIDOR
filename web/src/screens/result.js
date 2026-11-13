@@ -1,7 +1,4 @@
-/**
- * Game Over Screen & Modal Overlay - Quiet Bastion Design System.
- * Stitch Project 6777394393065907640 (Screen: Quoridor - Game Over).
- */
+// game over dialog
 
 export function createResultScreen({ onRematch, onReview, onNewGame }) {
   const el = document.createElement('div');
@@ -29,10 +26,8 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
     const themeColor = isHumanWin ? '#2E4BDB' : '#E5532D';
 
     el.innerHTML = `
-      <!-- Modal Card: Grounded dual-plane elevation, pure white surface, flat discipline -->
       <div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-space-lg flex flex-col relative shadow-xl modal-enter" style="outline: 1px solid #D9D7D0;">
         
-        <!-- Top Monogram & Victory Status -->
         <div class="flex items-center justify-between pb-space-md mb-space-md bg-surface-container-low -mx-space-lg -mt-space-lg px-space-lg pt-space-md rounded-t-xl border-b border-surface-container-highest">
           <div class="flex items-center gap-space-xs">
             <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${themeColor};"></span>
@@ -41,7 +36,6 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
           <span class="font-label-sm text-label-sm text-outline font-mono">Notation: ${currentResult.lastNotation}</span>
         </div>
 
-        <!-- Result Headline & Editorial Subtext -->
         <div class="mb-space-lg">
           <div class="flex items-center gap-space-sm mb-1">
             <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight font-semibold">${resultTitle}</h2>
@@ -52,7 +46,6 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
           </p>
         </div>
 
-        <!-- Match Stats Breakdown -->
         <div class="bg-surface-container-low rounded-lg p-space-md mb-space-lg flex flex-col gap-space-sm border border-surface-container-highest">
           <div class="flex items-center justify-between">
             <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Duration</span>
@@ -72,21 +65,17 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
           </div>
         </div>
 
-        <!-- Buttons Stack (Editorial hierarchy) -->
         <div class="flex flex-col gap-space-sm w-full">
-          <!-- Rematch: The ONLY solid black (#151515) primary button on the viewport -->
           <button id="btn-rematch" class="w-full min-h-[44px] bg-primary text-on-primary font-label-md text-label-md py-space-sm px-space-md rounded transition-colors active:bg-neutral-800 flex items-center justify-center gap-space-xs cursor-pointer shadow-sm" type="button">
             <span class="material-symbols-outlined text-[18px]">replay</span>
             <span>Rematch</span>
           </button>
 
-          <!-- Secondary Outlined Action: Review Match -->
           <button id="btn-review" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low active:bg-surface-container flex items-center justify-center gap-space-xs cursor-pointer" type="button" style="outline: 1px solid #D9D7D0;">
             <span class="material-symbols-outlined text-[18px] text-on-surface-variant">history_edu</span>
             <span>Review match</span>
           </button>
 
-          <!-- Tertiary Outlined Action: New Game -->
           <button id="btn-newgame" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low active:bg-surface-container flex items-center justify-center gap-space-xs cursor-pointer" type="button" style="outline: 1px solid #D9D7D0;">
             <span class="material-symbols-outlined text-[18px] text-on-surface-variant">add_circle_outline</span>
             <span>New game</span>
@@ -95,7 +84,6 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
       </div>
     `;
 
-    // Listeners
     el.querySelector('#btn-rematch')?.addEventListener('click', () => {
       if (onRematch) onRematch();
     });

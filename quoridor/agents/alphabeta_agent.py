@@ -57,7 +57,7 @@ class AlphaBetaAgent(Agent):
             elif isinstance(m, WallMove):
                 walls.append(m)
 
-        # Sort pawn moves ascending by own distance to goal after move
+        # closer to goal first
         def _pawn_dist(pm: PawnMove) -> int:
             ns = state.apply(pm)
             d = pathfinding.shortest_path_length(ns, curr)
@@ -65,7 +65,7 @@ class AlphaBetaAgent(Agent):
 
         pawns.sort(key=_pawn_dist)
 
-        # Sort walls descending by (opponent_distance_after - own_distance_after)
+        # walls that hurt the opponent more than us first, cap at 12
         def _wall_net(wm: WallMove) -> int:
             ns = state.apply(wm)
             d0, d1 = pathfinding.distances(ns)
@@ -122,6 +122,7 @@ class AlphaBetaAgent(Agent):
         if self.use_tt and state_key in self.tt:
             self.tt_hits += 1
             tt_depth, tt_val, tt_flag, tt_best_move = self.tt[state_key]
+            # tt cutoff: exact match, or lower bound beats beta, or upper drops below alpha
             if tt_depth >= depth:
                 if tt_flag == "EXACT":
                     return tt_val
@@ -160,6 +161,7 @@ class AlphaBetaAgent(Agent):
                 break
 
         if self.use_tt:
+            # store value: upper if failed low, lower if failed high, else exact
             if best_val <= alpha_orig:
                 flag = "UPPER"
             elif best_val >= beta:

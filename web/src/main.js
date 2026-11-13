@@ -1,7 +1,4 @@
-/**
- * Quoridor V2 — Quiet Bastion Minimalist Client.
- * Router and Game Controller orchestrating Setup, Arena, and Overlays.
- */
+// router and controller for the screens
 
 import * as api from './api.js';
 import { createSetupScreen } from './screens/setup.js';
@@ -12,7 +9,6 @@ class QuoridorApp {
   constructor() {
     this.screenContainer = document.getElementById('screen-container');
 
-    // App State
     this.gameId = null;
     this.gameState = null;
     this.humanPlayer = 0;
@@ -28,7 +24,6 @@ class QuoridorApp {
     this.isAiThinking = false;
     this.currentScreenKey = null;
 
-    // Instantiate screens
     this.screens = {
       setup: createSetupScreen({
         onStart: (cfg) => this.startGame(cfg),
@@ -43,22 +38,18 @@ class QuoridorApp {
       }),
     };
 
-    // Result overlay
     this.resultOverlay = createResultScreen({
       onRematch: () => this.restartGame(),
       onReview: () => {
-        // Dismiss overlay so user can review the final board state
       },
       onNewGame: () => this.navigate('#/setup'),
     });
     this.resultOverlay.classList.add('hidden');
     document.body.appendChild(this.resultOverlay);
 
-    // Global keyboard listener
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
     window.addEventListener('hashchange', () => this.route());
 
-    // Initial routing: Default directly to Setup screen
     if (!window.location.hash || window.location.hash === '#' || window.location.hash === '#/') {
       window.location.hash = '#/setup';
     } else {
@@ -89,10 +80,8 @@ class QuoridorApp {
 
     if (this.currentScreenKey === screenKey) return;
 
-    // Hide any active modal overlay
     this.resultOverlay.classList.add('hidden');
 
-    // Mount screen
     this.screenContainer.innerHTML = '';
     const screenEl = this.screens[screenKey];
     this.screenContainer.appendChild(screenEl);
@@ -124,7 +113,6 @@ class QuoridorApp {
       this.navigate('#/game');
       await this.refreshPaths();
 
-      // If AI moves first
       if (this.gameState.current !== this.humanPlayer) {
         await this.triggerAiMove();
       }
@@ -293,7 +281,6 @@ class QuoridorApp {
   }
 }
 
-// Initialize on DOM ready
 window.addEventListener('DOMContentLoaded', () => {
   new QuoridorApp();
 });

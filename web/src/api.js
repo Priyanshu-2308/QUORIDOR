@@ -1,6 +1,4 @@
-/**
- * API client for Quoridor server endpoints.
- */
+// api calls to the backend
 
 const BASE_URL = '';
 

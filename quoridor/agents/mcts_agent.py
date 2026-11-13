@@ -121,7 +121,6 @@ class MCTSAgent(Agent):
                 break
             actual_iterations += 1
 
-            # 1. Selection
             curr = root
             depth = 0
             while not curr.state.is_terminal():
@@ -169,7 +168,6 @@ class MCTSAgent(Agent):
                 self._rng.shuffle(cands)
                 curr.untried_moves = cands
 
-            # 2. Expansion
             if not curr.state.is_terminal() and curr.untried_moves:
                 move = curr.untried_moves.pop()
                 next_state = curr.state.apply(move)
@@ -181,7 +179,6 @@ class MCTSAgent(Agent):
                 if depth > max_depth:
                     max_depth = depth
 
-            # 3. Simulation (Rollout)
             sim_state = curr.state
             ply = 0
             d0: list[int] | None = None
@@ -197,7 +194,7 @@ class MCTSAgent(Agent):
                 d_curr = d0 if curr_p == 0 else d1
 
                 if self.rollout_policy == "path_biased":
-                    # 0.95 chosen by trial against the greedy agent
+                    # 0.95 worked best against greedy, didn't tune it much
                     if self._rng.random() < 0.95:
                         p_moves = rules.legal_pawn_moves(sim_state)
                         if p_moves:
@@ -230,7 +227,6 @@ class MCTSAgent(Agent):
                     d1 = None
                 sim_state = sim_state.apply(step)
 
-            # Rollout result
             if sim_state.is_terminal():
                 result_root = 1.0 if sim_state.winner() == root_player else 0.0
             else:
@@ -247,7 +243,6 @@ class MCTSAgent(Agent):
                 d_opp = dist1 if root_player == 0 else dist0
                 result_root = 0.5 + 0.5 * math.tanh((d_opp - d_me) / 4.0)
 
-            # 4. Back-propagation
             node: _MCTSNode | None = curr
             while node is not None:
                 node.visits += 1
@@ -258,7 +253,7 @@ class MCTSAgent(Agent):
                         node.value += (1.0 - result_root)
                 node = node.parent
 
-        # If an immediate winning move exists among root children, prioritize it
+        # take the win if we see it
         immediate_win = None
         for child in root.children:
             if child.state.is_terminal() and child.state.winner() == root_player:

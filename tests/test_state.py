@@ -56,7 +56,7 @@ def test_is_blocked_h_wall():
     assert s.is_blocked((3, 3), (4, 3))
     assert not s.is_blocked((3, 1), (4, 1))
     assert not s.is_blocked((3, 4), (4, 4))
-    # horizontal movement across the wall's row is not affected
+    # moving parallel to the wall is fine
     assert not s.is_blocked((3, 2), (3, 3))
 
 
@@ -131,7 +131,6 @@ def test_render_runs():
 
 
 def test_legal_moves_delegates_to_rules():
-    # rules is a stub until Rajnish lands; either way the call must reach quoridor.rules
     try:
         GameState.initial().legal_moves()
     except NotImplementedError:
