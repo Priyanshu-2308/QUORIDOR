@@ -37,7 +37,7 @@ class Session:
     last_accessed: float = field(default_factory=time.time)
 
 
-# active games in memory
+# In-memory session store mapping game IDs to active Session instances
 sessions: dict[str, Session] = {}
 
 
@@ -124,9 +124,9 @@ def validate_opponent_spec(spec: str) -> None:
 
 
 def _evict_stale_sessions() -> None:
-    """Drop sessions idle for >2 hours or past the cap."""
+    """Evict sessions idle for >2 hours, and ensure total sessions stay strictly under MAX_SESSIONS."""
     now = time.time()
-    # drop games idle for over 2h
+    # Evict sessions idle for longer than 2 hours
     stale_keys = [
         gid for gid, s in sessions.items()
         if now - s.last_accessed > SESSION_IDLE_TIMEOUT_SECONDS
@@ -134,7 +134,7 @@ def _evict_stale_sessions() -> None:
     for gid in stale_keys:
         sessions.pop(gid, None)
 
-    # if still full, drop the oldest
+    # If capacity reached, evict least recently accessed sessions
     if len(sessions) >= MAX_SESSIONS:
         sorted_sessions = sorted(sessions.items(), key=lambda item: item[1].last_accessed)
         num_to_evict = len(sessions) - MAX_SESSIONS + 1
@@ -307,7 +307,7 @@ def api_undo(game_id: str) -> dict[str, Any]:
     return {"state": session.state.to_dict()}
 
 
-# static files for the web client
+# Static assets for the web interface
 web_dir = Path(__file__).resolve().parent.parent / "web"
 if web_dir.is_dir():
     app.mount("/", StaticFiles(directory=str(web_dir), html=True), name="web")

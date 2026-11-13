@@ -1,4 +1,4 @@
-// game over dialog
+// Post-match summary dialog displaying outcome, ply count, duration, and rematch controls.
 
 export function createResultScreen({ onRematch, onReview, onNewGame }) {
   const el = document.createElement('div');

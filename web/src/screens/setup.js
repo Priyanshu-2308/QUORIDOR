@@ -1,4 +1,4 @@
-// setup screen: pick opponent and who moves first
+// Match configuration screen: opponent selection, difficulty levels, and turn assignment.
 
 export function createSetupScreen({ onStart, onBack }) {
   const el = document.createElement('div');

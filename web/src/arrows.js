@@ -1,4 +1,4 @@
-// pick move target for arrow keys
+// Resolves directional arrow inputs (orthogonal steps, straight jumps, and blocked-jump diagonals) into valid destination coordinates.
 // pawn: [r, c]; pawnMoves: array of [r, c] legal destinations; dir: 'up' | 'down' | 'left' | 'right'
 // returns { kind: 'move', to: [r, c] } | { kind: 'choose', options: [[r, c], [r, c]] } | { kind: 'none' }
 
@@ -20,17 +20,17 @@ export function pickArrowMove(pawn, pawnMoves, dir) {
 
   const has = (tr, tc) => pawnMoves.some(([pr, pc]) => pr === tr && pc === tc);
 
-  // 1. Plain step
+  // 1. Direct orthogonal step
   if (has(r + dr, c + dc)) {
     return { kind: 'move', to: [r + dr, c + dc] };
   }
 
-  // 2. Straight jump over opponent
+  // 2. Straight jump over adjacent opponent
   if (has(r + 2 * dr, c + 2 * dc)) {
     return { kind: 'move', to: [r + 2 * dr, c + 2 * dc] };
   }
 
-  // 3. Diagonal jump when straight jump is blocked
+  // 3. Diagonal evasion when straight jump is blocked by a wall or board boundary
   const diagCandidates = [];
   if (dr !== 0) {
     // vertical motion: diagonals are left and right

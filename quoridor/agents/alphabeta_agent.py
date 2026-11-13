@@ -57,7 +57,7 @@ class AlphaBetaAgent(Agent):
             elif isinstance(m, WallMove):
                 walls.append(m)
 
-        # closer to goal first
+        # Move ordering: prioritize pawn moves that reduce shortest path distance to goal
         def _pawn_dist(pm: PawnMove) -> int:
             ns = state.apply(pm)
             d = pathfinding.shortest_path_length(ns, curr)
@@ -65,7 +65,7 @@ class AlphaBetaAgent(Agent):
 
         pawns.sort(key=_pawn_dist)
 
-        # walls that hurt the opponent more than us first, cap at 12
+        # Prioritize wall moves maximizing (opponent_distance_delta - own_distance_delta), capped at top 12 to prune search space
         def _wall_net(wm: WallMove) -> int:
             ns = state.apply(wm)
             d0, d1 = pathfinding.distances(ns)
@@ -122,7 +122,7 @@ class AlphaBetaAgent(Agent):
         if self.use_tt and state_key in self.tt:
             self.tt_hits += 1
             tt_depth, tt_val, tt_flag, tt_best_move = self.tt[state_key]
-            # tt cutoff: exact match, or lower bound beats beta, or upper drops below alpha
+            # Transposition table cutoff: return cached value if bound satisfies alpha/beta constraints
             if tt_depth >= depth:
                 if tt_flag == "EXACT":
                     return tt_val
@@ -161,7 +161,7 @@ class AlphaBetaAgent(Agent):
                 break
 
         if self.use_tt:
-            # store value: upper if failed low, lower if failed high, else exact
+            # Classify transposition bounds: UPPER (all-node fail-low), LOWER (cut-node fail-high), or EXACT (PV-node)
             if best_val <= alpha_orig:
                 flag = "UPPER"
             elif best_val >= beta:

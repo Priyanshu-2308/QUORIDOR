@@ -21,7 +21,7 @@ def candidate_walls(state: GameState) -> list[WallMove]:
     seen: set[WallMove] = set()
     result: list[WallMove] = []
 
-    # only try walls that cross the opponent's shortest path, otherwise branching explodes
+    # Prune search space: generate wall candidates that intersect opponent's current shortest path
     for i in range(len(path) - 1):
         (r1, c1), (r2, c2) = path[i], path[i + 1]
 

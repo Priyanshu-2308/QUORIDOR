@@ -1,4 +1,4 @@
-// api calls to the backend
+// REST API client for game sessions, legal moves, path calculations, and AI decision queries.
 
 const BASE_URL = '';
 

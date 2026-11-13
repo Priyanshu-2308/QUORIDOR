@@ -1,4 +1,4 @@
-// router and controller for the screens
+// Application controller: manages client-side view routing, keyboard shortcuts, and game loop orchestration.
 
 import * as api from './api.js';
 import { createSetupScreen } from './screens/setup.js';

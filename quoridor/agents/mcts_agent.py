@@ -194,7 +194,7 @@ class MCTSAgent(Agent):
                 d_curr = d0 if curr_p == 0 else d1
 
                 if self.rollout_policy == "path_biased":
-                    # 0.95 worked best against greedy, didn't tune it much
+                    # Path-biased rollout: 95% probability of advancing along shortest path, 5% candidate exploration
                     if self._rng.random() < 0.95:
                         p_moves = rules.legal_pawn_moves(sim_state)
                         if p_moves:
@@ -253,7 +253,7 @@ class MCTSAgent(Agent):
                         node.value += (1.0 - result_root)
                 node = node.parent
 
-        # take the win if we see it
+        # Prioritize immediate winning move if present among root children
         immediate_win = None
         for child in root.children:
             if child.state.is_terminal() and child.state.winner() == root_player:

@@ -1,4 +1,4 @@
-// game arena screen
+// Game arena screen: renders SVG board, manages interaction state, and dispatches pawn and wall moves.
 import { pickArrowMove } from '../arrows.js';
 
 export function createGameScreen({
@@ -645,7 +645,7 @@ export function createGameScreen({
 
       boardArena.addEventListener('click', (e) => {
         if (!isHumanTurn || !hoveredSlot || isThinking || isRequestInFlight) return;
-        // the pawn-move dots deal with their own clicks
+        // Ignore clicks bubbling from pawn-move indicators
         const target = e.target;
         if (target.closest('.legal-dot')) return;
 
