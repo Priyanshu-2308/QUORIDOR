@@ -51,3 +51,4 @@ export function pickArrowMove(pawn, pawnMoves, dir) {
 
   return { kind: 'none' };
 }
+

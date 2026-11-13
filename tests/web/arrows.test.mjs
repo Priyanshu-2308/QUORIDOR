@@ -74,3 +74,4 @@ test('legal sideways step is not mistaken for a diagonal', () => {
   const legalMoves = [[4, 3], [4, 5], [5, 4]];
   assert.deepEqual(pickArrowMove(pawn, legalMoves, 'up'), { kind: 'none' });
 });
+

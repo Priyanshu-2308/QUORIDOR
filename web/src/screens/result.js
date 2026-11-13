@@ -2,6 +2,7 @@
 
 export function createResultScreen({ onRematch, onReview, onNewGame }) {
   const el = document.createElement('div');
+  el.id = 'result-modal';
   el.className = 'fixed inset-0 z-50 flex items-center justify-center p-margin bg-surface/60 backdrop-blur-sm fade-in';
 
   let currentResult = {
