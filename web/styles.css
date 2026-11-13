@@ -106,3 +106,19 @@
     transform: scale(1) translateY(0);
   }
 }
+
+.pawn-shake {
+  animation: pawnShake 0.15s ease-in-out;
+}
+
+@keyframes pawnShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}

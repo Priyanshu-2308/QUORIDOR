@@ -22,6 +22,7 @@ class QuoridorApp {
     this.legalMoves = [];
     this.lastStats = null;
     this.isAiThinking = false;
+    this.isRequestInFlight = false;
     this.currentScreenKey = null;
 
     this.screens = {
@@ -131,9 +132,11 @@ class QuoridorApp {
   }
 
   async handlePawnMove(r, c) {
-    if (this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
+    if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
     if (this.gameState.current !== this.humanPlayer) return;
 
+    this.isRequestInFlight = true;
+    this.screens.game.setRequestInFlight?.(true);
     try {
       const move = { type: 'pawn', to: [r, c] };
       const data = await api.makeMove(this.gameId, move);
@@ -142,13 +145,18 @@ class QuoridorApp {
       await this.onMoveFinished();
     } catch (err) {
       console.warn('Pawn move error:', err.message);
+    } finally {
+      this.isRequestInFlight = false;
+      this.screens.game.setRequestInFlight?.(false);
     }
   }
 
   async handleWallMove(r, c, o) {
-    if (this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
+    if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
     if (this.gameState.current !== this.humanPlayer) return;
 
+    this.isRequestInFlight = true;
+    this.screens.game.setRequestInFlight?.(true);
     try {
       const move = { type: 'wall', r, c, o };
       const data = await api.makeMove(this.gameId, move);
@@ -157,6 +165,9 @@ class QuoridorApp {
       await this.onMoveFinished();
     } catch (err) {
       console.warn('Wall move error:', err.message);
+    } finally {
+      this.isRequestInFlight = false;
+      this.screens.game.setRequestInFlight?.(false);
     }
   }
 
@@ -210,8 +221,10 @@ class QuoridorApp {
   }
 
   async handleUndo() {
-    if (this.isAiThinking || !this.gameId || (this.gameState && this.gameState.winner !== null)) return;
+    if (this.isRequestInFlight || this.isAiThinking || !this.gameId || (this.gameState && this.gameState.winner !== null)) return;
 
+    this.isRequestInFlight = true;
+    this.screens.game.setRequestInFlight?.(true);
     try {
       const data = await api.undoMove(this.gameId);
       this.gameState = data.state;
@@ -221,6 +234,9 @@ class QuoridorApp {
       await this.refreshPaths();
     } catch (err) {
       console.warn('Undo error:', err.message);
+    } finally {
+      this.isRequestInFlight = false;
+      this.screens.game.setRequestInFlight?.(false);
     }
   }
 
@@ -252,30 +268,58 @@ class QuoridorApp {
   }
 
   handleKeyDown(event) {
-    const key = event.key.toUpperCase();
-
     if (this.currentScreenKey === 'setup') {
-      if (key === 'ENTER') {
+      if (event.key === 'Enter') {
         this.screens.setup.querySelector('#btn-start')?.click();
       }
-    } else if (this.currentScreenKey === 'game') {
+      return;
+    }
+
+    if (this.currentScreenKey === 'game') {
       if (!this.resultOverlay.classList.contains('hidden')) {
+        const key = event.key.toUpperCase();
         if (key === 'R') {
           this.restartGame();
-        } else if (key === 'ESCAPE') {
+        } else if (event.key === 'Escape') {
           this.navigate('#/setup');
         }
         return;
       }
 
-      if (key === 'R') {
+      const arrowMap = {
+        ArrowUp: 'up',
+        ArrowDown: 'down',
+        ArrowLeft: 'left',
+        ArrowRight: 'right',
+      };
+      const dir = arrowMap[event.key];
+      if (dir) {
+        event.preventDefault();
+        if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
+        if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
+        if (this.gameState.current !== this.humanPlayer) return;
+
+        this.screens.game.moveByArrow(dir);
+        return;
+      }
+
+      const key = event.key.toUpperCase();
+      if (event.key === 'Escape') {
+        const cancelled = this.screens.game.cancelChoice?.();
+        if (!cancelled) {
+          this.navigate('#/setup');
+        }
+      } else if (key === 'R') {
+        this.screens.game.cancelChoice?.();
         this.screens.game.toggleWallOrientation();
       } else if (key === 'P') {
+        this.screens.game.cancelChoice?.();
         this.screens.game.togglePaths();
       } else if (key === 'U') {
+        this.screens.game.cancelChoice?.();
         this.handleUndo();
-      } else if (key === 'ESCAPE') {
-        this.navigate('#/setup');
+      } else {
+        this.screens.game.cancelChoice?.();
       }
     }
   }

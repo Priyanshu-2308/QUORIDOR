@@ -1,4 +1,5 @@
 // game arena screen
+import { pickArrowMove } from '../arrows.js';
 
 export function createGameScreen({
   onPawnMove,
@@ -16,9 +17,12 @@ export function createGameScreen({
   let legalMoves = [];
   let shortestPaths = [[], []];
   let showPaths = true;
-  let wallOrientation = 'H'; // 'H' or 'V'
-  let hoveredSlot = null; // { r, c }
+  let wallOrientation = 'H';
+  let manualOrientationLocked = false;
+  let hoveredSlot = null;
+  let pendingChoice = null;
   let isThinking = false;
+  let isRequestInFlight = false;
   let lastStats = null;
   let moveHistory = [];
   let toastTimer = null;
@@ -94,22 +98,20 @@ export function createGameScreen({
 
   function toggleOrientation() {
     wallOrientation = (wallOrientation === 'H') ? 'V' : 'H';
+    manualOrientationLocked = true;
     updatePreview();
   }
 
   function updatePreview() {
     const previewRect = el.querySelector('#staged-wall');
-    const rotateBubble = el.querySelector('#rotate-bubble');
-    const bubbleText = el.querySelector('#rotate-bubble-text');
     const statusText = el.querySelector('#turn-status-text');
     const turnIndicator = el.querySelector('#turn-indicator');
     const boardArena = el.querySelector('#board-arena');
 
-    if (!previewRect || !rotateBubble || !boardArena) return;
+    if (!previewRect || !boardArena) return;
 
     if (!hoveredSlot || isThinking || (gameState && gameState.current !== humanPlayer) || (gameState && gameState.winner !== null)) {
       previewRect.setAttribute('opacity', '0');
-      rotateBubble.classList.add('hidden');
       if (!isThinking && gameState && gameState.winner === null) {
         if (statusText) statusText.textContent = (gameState.current === humanPlayer) ? 'Your move' : `${opponentInfo.name} thinking...`;
         if (turnIndicator) turnIndicator.className = `w-2.5 h-2.5 rounded-full ${gameState.current === humanPlayer ? 'bg-secondary' : 'bg-on-tertiary-container animate-pulse'}`;
@@ -142,24 +144,104 @@ export function createGameScreen({
     previewRect.setAttribute('fill', legal ? '#1C1B1B' : '#BA1A1A');
     previewRect.setAttribute('opacity', legal ? '0.4' : '0.8');
 
-    const centerSvgX = wx + ww / 2;
-    const centerSvgY = wy + wh / 2;
-    // svg is 360 units wide, arena has 10px padding
-    const arenaRect = boardArena.getBoundingClientRect();
-    const pad = 10;
-    const contentW = arenaRect.width - 2 * pad;
-    const contentH = arenaRect.height - 2 * pad;
-    if (contentW > 0) {
-      const leftPx = pad + (centerSvgX / 360) * contentW;
-      const topPx = pad + (centerSvgY / 360) * contentH;
-      rotateBubble.style.left = `${(leftPx / arenaRect.width) * 100}%`;
-      rotateBubble.style.top = `${(topPx / arenaRect.height) * 100}%`;
-      rotateBubble.classList.remove('hidden');
-      if (bubbleText) bubbleText.textContent = `R to rotate (${wallOrientation})`;
+    if (statusText) {
+      statusText.textContent = legal
+        ? `Placing wall (${isH ? 'horizontal' : 'vertical'})`
+        : 'Illegal attempt';
+    }
+    if (turnIndicator) turnIndicator.className = `w-2.5 h-2.5 rounded-full ${legal ? 'bg-primary' : 'bg-error'}`;
+  }
+
+  function clearPendingChoice() {
+    if (pendingChoice) {
+      if (pendingChoice.timer) clearTimeout(pendingChoice.timer);
+      pendingChoice = null;
+    }
+    el.querySelectorAll('.legal-dot-choice').forEach((dot) => {
+      dot.classList.remove('legal-dot-choice', 'legal-dot-pulse');
+    });
+    const statusText = el.querySelector('#turn-status-text');
+    if (statusText && !isThinking && gameState && gameState.winner === null) {
+      statusText.textContent = (gameState.current === humanPlayer) ? 'Your move' : `${opponentInfo.name} thinking...`;
+    }
+  }
+
+  function cancelChoice() {
+    if (pendingChoice) {
+      clearPendingChoice();
+      return true;
+    }
+    return false;
+  }
+
+  function moveByArrow(dir) {
+    if (!gameState || isThinking || isRequestInFlight || gameState.current !== humanPlayer || gameState.winner !== null) {
+      return;
     }
 
-    if (statusText) statusText.textContent = legal ? 'Placing wall' : 'Illegal attempt';
-    if (turnIndicator) turnIndicator.className = `w-2.5 h-2.5 rounded-full ${legal ? 'bg-primary' : 'bg-error'}`;
+    const humanPawn = (humanPlayer === 0) ? gameState.pawns[0] : gameState.pawns[1];
+    const legalPawnMoves = legalMoves.filter((m) => m.type === 'pawn').map((m) => m.to);
+
+    if (pendingChoice) {
+      const orig = pendingChoice.originalDir;
+      const opts = pendingChoice.options;
+      let chosen = null;
+
+      if (orig === 'up' || orig === 'down') {
+        if (dir === 'left') {
+          chosen = opts.reduce((a, b) => (a[1] < b[1] ? a : b));
+        } else if (dir === 'right') {
+          chosen = opts.reduce((a, b) => (a[1] > b[1] ? a : b));
+        }
+      } else if (orig === 'left' || orig === 'right') {
+        if (dir === 'up') {
+          chosen = opts.reduce((a, b) => (a[0] < b[0] ? a : b));
+        } else if (dir === 'down') {
+          chosen = opts.reduce((a, b) => (a[0] > b[0] ? a : b));
+        }
+      }
+
+      if (chosen) {
+        isRequestInFlight = true;
+        clearPendingChoice();
+        onPawnMove(chosen[0], chosen[1]);
+        return;
+      }
+      clearPendingChoice();
+      return;
+    }
+
+    const res = pickArrowMove(humanPawn, legalPawnMoves, dir);
+
+    if (res.kind === 'move') {
+      isRequestInFlight = true;
+      onPawnMove(res.to[0], res.to[1]);
+    } else if (res.kind === 'choose') {
+      res.options.forEach(([r, c]) => {
+        const dot = el.querySelector(`.cell-square[data-cell-r="${r}"][data-cell-c="${c}"] .legal-dot`);
+        if (dot) {
+          dot.classList.add('legal-dot-choice', 'legal-dot-pulse');
+        }
+      });
+      const statusText = el.querySelector('#turn-status-text');
+      if (statusText) statusText.textContent = 'Pick a side';
+
+      const timer = setTimeout(() => {
+        clearPendingChoice();
+      }, 3000);
+
+      pendingChoice = { originalDir: dir, options: res.options, timer };
+    } else if (res.kind === 'none') {
+      const pawnEl = el.querySelector(`.cell-square[data-cell-r="${humanPawn[0]}"][data-cell-c="${humanPawn[1]}"] .pawn-marker`);
+      if (pawnEl) {
+        pawnEl.classList.remove('pawn-shake');
+        void pawnEl.offsetWidth;
+        pawnEl.classList.add('pawn-shake');
+        setTimeout(() => {
+          pawnEl.classList.remove('pawn-shake');
+        }, 150);
+      }
+    }
   }
 
   function renderNotationLog() {
@@ -271,13 +353,13 @@ export function createGameScreen({
         let innerContent = '';
         if (isP0) {
           innerContent = `
-            <div class="w-[62%] aspect-square rounded-full bg-secondary shadow-sm flex items-center justify-center">
+            <div class="pawn-marker w-[62%] aspect-square rounded-full bg-secondary shadow-sm flex items-center justify-center">
               <span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest opacity-75"></span>
             </div>
           `;
         } else if (isP1) {
           innerContent = `
-            <div class="w-[62%] aspect-square rounded-full bg-on-tertiary-container shadow-sm flex items-center justify-center">
+            <div class="pawn-marker w-[62%] aspect-square rounded-full bg-on-tertiary-container shadow-sm flex items-center justify-center">
               <span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest opacity-60"></span>
             </div>
           `;
@@ -366,13 +448,6 @@ export function createGameScreen({
               </g>
             </svg>
 
-            <div class="hidden absolute z-20 pointer-events-auto transform -translate-x-1/2 -translate-y-full cursor-pointer" id="rotate-bubble">
-              <div class="bg-primary text-on-primary px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1 font-label-sm text-[9px] uppercase tracking-wider hover:bg-neutral-800">
-                <span id="rotate-bubble-text">R to rotate (${wallOrientation})</span>
-                <span class="material-symbols-outlined text-[10px]">sync</span>
-              </div>
-            </div>
-
             <div class="grid grid-cols-9 grid-rows-9 gap-1.5 w-full h-full" id="grid-cells">
               ${cellsHtml.join('')}
             </div>
@@ -383,7 +458,7 @@ export function createGameScreen({
             <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span><span>i</span>
           </div>
 
-          <div class="w-full mt-space-md flex flex-col">
+          <div id="side-panel" class="w-full mt-space-md flex flex-col">
             
             <div class="py-space-sm border-t border-surface-container-highest">
               <div class="flex items-center justify-between py-1">
@@ -471,7 +546,7 @@ export function createGameScreen({
             </div>
 
             <div class="pt-space-xs text-center">
-              <p class="font-label-sm text-label-sm text-outline">R rotate wall  ·  U undo  ·  P paths</p>
+              <p class="font-label-sm text-label-sm text-outline">Arrows move  ·  R rotate wall  ·  U undo  ·  P paths</p>
             </div>
 
           </div>
@@ -487,26 +562,40 @@ export function createGameScreen({
       if (toastEl) toastEl.classList.add('hidden');
     });
 
-    el.querySelector('#rotate-bubble')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleOrientation();
-    });
-
     el.querySelectorAll('.cell-square').forEach((cell) => {
       cell.addEventListener('click', (e) => {
-        if (!isHumanTurn) return;
+        if (!isHumanTurn || isThinking || isRequestInFlight) return;
         const r = parseInt(cell.getAttribute('data-cell-r'), 10);
         const c = parseInt(cell.getAttribute('data-cell-c'), 10);
         if (isMoveLegal({ type: 'pawn', to: [r, c] })) {
+          isRequestInFlight = true;
+          clearPendingChoice();
           onPawnMove(r, c);
         }
       });
     });
 
+    const sidePanel = el.querySelector('#side-panel');
+    if (sidePanel) {
+      sidePanel.addEventListener('mouseenter', () => {
+        if (hoveredSlot !== null) {
+          hoveredSlot = null;
+          manualOrientationLocked = false;
+          updatePreview();
+        }
+      });
+    }
+
     const boardArena = el.querySelector('#board-arena');
     if (boardArena) {
+      boardArena.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        if (!isHumanTurn || isThinking || !hoveredSlot) return;
+        toggleOrientation();
+      });
+
       boardArena.addEventListener('mousemove', (e) => {
-        if (!isHumanTurn) return;
+        if (!isHumanTurn || isThinking) return;
         const rect = boardArena.getBoundingClientRect();
         const pad = 10;
         const contentW = rect.width - 2 * pad;
@@ -524,27 +613,38 @@ export function createGameScreen({
           const dist = Math.hypot(gridX - ix, gridY - iy);
 
           if (dist < 26) {
-            if (!hoveredSlot || hoveredSlot.r !== r || hoveredSlot.c !== c) {
+            const isNewSlot = (!hoveredSlot || hoveredSlot.r !== r || hoveredSlot.c !== c);
+            if (isNewSlot) {
               hoveredSlot = { r, c };
-              updatePreview();
+              manualOrientationLocked = false;
             }
+            if (!manualOrientationLocked) {
+              const autoH = Math.abs(gridX - ix) >= Math.abs(gridY - iy);
+              const nextOrient = autoH ? 'H' : 'V';
+              if (isNewSlot || wallOrientation !== nextOrient) {
+                wallOrientation = nextOrient;
+              }
+            }
+            updatePreview();
             return;
           }
         }
 
         if (hoveredSlot !== null) {
           hoveredSlot = null;
+          manualOrientationLocked = false;
           updatePreview();
         }
       });
 
       boardArena.addEventListener('mouseleave', () => {
         hoveredSlot = null;
+        manualOrientationLocked = false;
         updatePreview();
       });
 
       boardArena.addEventListener('click', (e) => {
-        if (!isHumanTurn || !hoveredSlot) return;
+        if (!isHumanTurn || !hoveredSlot || isThinking || isRequestInFlight) return;
         // the pawn-move dots deal with their own clicks
         const target = e.target;
         if (target.closest('.legal-dot')) return;
@@ -553,7 +653,14 @@ export function createGameScreen({
         const wallMove = { type: 'wall', r, c, o: wallOrientation };
 
         if (isMoveLegal(wallMove)) {
-          onWallMove(r, c, wallOrientation);
+          isRequestInFlight = true;
+          const placedR = r;
+          const placedC = c;
+          const placedO = wallOrientation;
+          hoveredSlot = null;
+          manualOrientationLocked = false;
+          updatePreview();
+          onWallMove(placedR, placedC, placedO);
         } else {
           showToast('Invalid wall: overlaps existing wall or blocks all paths to goal!');
           const staged = el.querySelector('#staged-wall');
@@ -608,6 +715,7 @@ export function createGameScreen({
     gameState = state;
     humanPlayer = humanPl;
     isThinking = thinking;
+    isRequestInFlight = false;
     legalMoves = legal || [];
     render();
   };
@@ -635,6 +743,16 @@ export function createGameScreen({
 
   el.toggleWallOrientation = function () {
     toggleOrientation();
+  };
+
+  el.toggleOrientation = function () {
+    toggleOrientation();
+  };
+
+  el.moveByArrow = moveByArrow;
+  el.cancelChoice = cancelChoice;
+  el.setRequestInFlight = function (val) {
+    isRequestInFlight = val;
   };
 
   el.togglePaths = function () {
