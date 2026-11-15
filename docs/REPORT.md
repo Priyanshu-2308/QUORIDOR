@@ -7,7 +7,7 @@
 
 ## 1. Executive Summary
 
-This project implements an engine for the board game **Quoridor**, featuring multiple AI search strategies (Random, Greedy, Minimax with $\alpha$-$\beta$ Pruning, and Monte Carlo Tree Search), an automated tournament harness for empirical performance profiling, an ablation study on tree search optimizations, and a web application.
+This project implements an engine for the board game **Quoridor**, featuring multiple AI search strategies (Random, Greedy, Minimax with $\alpha$ - $\beta$ Pruning, and Monte Carlo Tree Search), an automated tournament harness for empirical performance profiling, an ablation study on tree search optimizations, and a web application.
 
 The game engine is implemented strictly using the Python 3 standard library, with an immutable `GameState` architecture ensuring correctness, determinism, and process-safe parallelization across multiple worker processes.
 
