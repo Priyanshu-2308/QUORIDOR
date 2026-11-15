@@ -1,357 +1,220 @@
-# Quoridor AI Project Report
+# Quoridor AI: Engine, Search Agents and a Small Comparison
 
-**CS AI Course Project — Monolith Quoridor Engine, Search Strategies, Tournament Evaluation & Modern Web Interface**  
-*Team: Shubham, Rajnish, Siddhesh, Shivam, Priyanshu*  
+CS AI course project. Team: Shubham, Rajnish, Siddhesh, Shivam, Priyanshu.
 
----
+## 1. Summary
 
-## 1. Executive Summary
+We built a Quoridor engine in Python and four computer players: random, greedy, alpha-beta search, and Monte Carlo tree search (MCTS). We then ran a small tournament between them and a benchmark of the alpha-beta speed-ups. A web interface sits on top so the agents can be played against.
 
-This project implements an engine for the board game **Quoridor**, featuring multiple AI search strategies (Random, Greedy, Minimax with $\alpha$ - $\beta$ Pruning, and Monte Carlo Tree Search), an automated tournament harness for empirical performance profiling, an ablation study on tree search optimizations, and a web application.
+What we can say from the data:
 
-The game engine is implemented strictly using the Python 3 standard library, with an immutable `GameState` architecture ensuring correctness, determinism, and process-safe parallelization across multiple worker processes.
+- Alpha-beta (depth 2 or 3) and MCTS (500 or 1000 simulations) beat the greedy baseline in 18 to 20 of 20 games each. The greedy agent in these runs never places walls (see 6.2), so this is a weak baseline.
+- Alpha-beta depth 3 won 12 of 20 against MCTS with 1000 simulations. That is **not** a significant difference (p = 0.50). We cannot say which agent is stronger.
+- Alpha-beta depth 3 won 14 of 20 against depth 2 (p = 0.12). Suggestive, not conclusive.
+- Pruning the wall candidates is what makes multi-ply search affordable. With only wall pruning switched off, the search visits about 40 times more nodes at depth 3 (561 to 22,336) and takes about 56 times longer.
+- Move ordering reduces nodes (by 38% at depth 3, 44% at depth 4) but did not reduce time in our runs. The transposition table helped only at depth 4 (about 7% fewer nodes, about 18% less time).
 
-Key empirical findings from our tournament suite and ablation experiments include:
-1. **Wall Pruning:** Candidate wall pruning (`moves.candidate_walls`) provides a **64.5x reduction** in nodes searched at Depth 3 (22,335.7 nodes down to 346.1 nodes) and a **46.1x speedup** in wall-clock time (14,604.4 ms down to 316.5 ms).
-2. **Move Ordering Trade-Off:** Move ordering cuts visited states by 38.3% at Depth 3 (561.4 to 346.1 nodes) and 44.4% at Depth 4 (1,548.5 to 861.5 nodes). Because sorting requires extra path computations at every node and caps candidate walls at 12 per node, wall-clock time is higher in both cases (316.5 ms vs 280.4 ms at Depth 3, and 1,496.2 ms vs 1,282.9 ms at Depth 4).
-3. **Transposition Table Impact:** In our sample of 15 positions with no repeats, transposition table hits averaged 0.0 at Depth 3; at Depth 4, transposition caching achieved 52.9 hits per move, lowering visited nodes from 923.2 to 861.5.
-4. **MCTS Path-Biased Simulation:** Standard random rollouts in Quoridor suffer from aimless wandering. Implementing a goal-directed, path-biased rollout policy (prioritizing shortest-path pawn advances with 95% probability, tuned by trial against the greedy baseline without systematic tuning) raised MCTS win rates against baseline greedy agents from ~35% to **90.0%** (18/20) at 500 iterations and **100.0%** (20/20) at 1000 iterations.
-5. **Headline Match:** AlphaBeta(d=3) won 12 of 20 games against MCTS(1000) (60.0%, 95% Wilson CI [38.7%, 78.1%], $p = 0.5034$). With 20 games this is not a statistically significant difference; the two agents are of similar strength under these settings. However, AlphaBeta reached this strength using roughly 8x less wall-clock time per move (0.6 s vs 4.7 s).
+What we did not do: there is no learning or training anywhere in the project. All weights are set by hand. We did not compare against outside engines or human players, and 20 games per matchup is a small sample.
 
----
+## 2. Game rules as implemented
 
-## 2. Quoridor Game Rules & Mechanics
+- Board: 9 x 9 cells, `(row, col)`, row 0 at the top. Each player has 10 walls.
+- Player 0 starts at (8, 4) and must reach row 0. Player 1 starts at (0, 4) and must reach row 8. Player 0 moves first.
+- A turn is either a pawn move or a wall placement.
+- Pawn moves: one step up, down, left or right if no wall or board edge blocks it. If the opponent is in the adjacent cell, the pawn jumps straight over if the cell behind the opponent is open. If that is blocked, it moves diagonally to a free cell beside the opponent.
+- A wall covers two cell edges, horizontal (`H`) or vertical (`V`). It cannot overlap or cross another wall, and it cannot be placed if either player would be left with no path to the goal row.
+- At the start there are 131 legal moves: 3 pawn moves and 128 walls (`quoridor/rules.py`). This is why plain search is expensive.
 
-Quoridor is played on a $9 \times 9$ grid by two players, each starting with 10 walls:
-- **Player 0** starts at row 8, column 4 $(8, 4)$ and aims to reach any cell in row 0.
-- **Player 1** starts at row 0, column 4 $(0, 4)$ and aims to reach any cell in row 8.
-
-On their turn, a player may either:
-1. **Move their pawn** to an adjacent orthogonal cell (North, South, East, West), provided no wall blocks the passage.
-   - **Straight Jump:** If an opponent pawn occupies the adjacent cell and the square beyond is open, the pawn may jump directly over the opponent.
-   - **Diagonal Jump:** If an opponent pawn occupies the adjacent cell and the straight jump is blocked by a wall or the board perimeter, the pawn may jump diagonally to either adjacent open square next to the opponent.
-2. **Place a wall:** A wall occupies two cell edges (grooves) either horizontally (`"H"`) or vertically (`"V"`).
-   - Walls cannot overlap existing walls or intersect perpendicularly through the center of another wall.
-   - **Fair-Play Rule:** A wall placement is strictly illegal if it completely blocks the path of *either* player to their respective goal row. Each player must always retain at least one unobstructed path to their goal.
-
----
-
-## 3. Architecture & File Layout
-
-The codebase maintains strict separation of concerns across layered modules:
+## 3. Code layout
 
 ```
-QUORIDOR/
-  README.md                       Project overview, quickstart, CLI reference, results
-  requirements.txt  .gitignore    Minimal dependencies (pytest, fastapi, uvicorn, httpx, matplotlib)
-  quoridor/
-    __init__.py                   Package root
-    constants.py                  Board dimension (9), wall limits (10), directions
-    types.py                      Cell, PawnMove, WallMove, serialization helpers
-    state.py                      Immutable GameState dataclass
-    pathfinding.py                BFS shortest path, distance grids, multi-source search
-    rules.py                      Legal moves generation, wall legality validation
-    eval.py                       Heuristic evaluation functions
-    moves.py                      Candidate moves and candidate wall pruning heuristics
-    runner.py                     play_game orchestration harness and GameResult dataclass
-    agents/
-      __init__.py                 make_agent factory for string specifications
-      base.py                     Abstract Agent base class
-      random_agent.py             Uniform random legal move selection
-      greedy_agent.py             Shortest-path greedy pawn advancement
-      alphabeta_agent.py          Fixed-depth Alpha-Beta minimax search
-      mcts_agent.py               Monte Carlo Tree Search with UCT and path-biased rollouts
-    tournament.py                 Multiprocessing tournament suite, ablation runner & charts
-  server/
-    app.py                        FastAPI backend serving JSON REST API & static web assets
-  web/
-    index.html                    Single-page web entrypoint with import maps
-    styles.css                    Monolith design system styling
-    src/
-      main.js                     App controller, screen router, hash navigation
-      api.js                      REST API client communicating with FastAPI
-      scene.js                    Three.js scene graph, board rendering, raycasting
-      screens/                    Full-bleed visual screens
-        title.js                  Title screen with rotating monolith
-        setup.js                  Opponent, strength, and side configuration
-        game.js                   Interactive 9x9 board with ghost wall and HUD
-        stats.js                  3D telemetry and node visualization
-        result.js                 Victory/defeat screen with rematch options
-  tests/                          Unit and regression test suite
-  results/                        Tournament JSONs, CSV summaries, and generated PNG charts
-  docs/
-    REPORT.md                     Engineering and empirical evaluation report
+quoridor/
+  constants.py      board size, start cells, goal rows, directions
+  types.py          PawnMove, WallMove, dict conversion
+  state.py          immutable GameState (frozen dataclass)
+  pathfinding.py    BFS shortest path / length / reachability
+  rules.py          legal pawn moves, wall legality, legal moves
+  eval.py           position evaluation used by alpha-beta
+  moves.py          candidate (pruned) wall and move generation
+  runner.py         play_game
+  tournament.py     matches, suite, ablation, charts
+  agents/           base, random, greedy, alphabeta, mcts, make_agent
+server/app.py       FastAPI API
+web/                browser interface (plain JavaScript modules)
+tests/              pytest suite, plus tests/web (node)
+results/            match logs, summary.csv, ablation.csv, stats.txt, plots
 ```
 
----
+The engine and agents use only the Python standard library. The server needs FastAPI, and the tournament charts need matplotlib.
 
-## 4. State & Move Representation
+## 4. State and rules engine
 
-### 4.1 Immutable `GameState`
-To eliminate side-effects, race conditions in multiprocessing, and state corruption across deep search branches, `GameState` is implemented as an immutable, frozen dataclass:
+### 4.1 State
 
-```python
-@dataclass(frozen=True)
-class GameState:
-    pawns: tuple[Cell, Cell]
-    walls_left: tuple[int, int]
-    h_walls: frozenset[Cell]
-    v_walls: frozenset[Cell]
-    current: int
-    turn_count: int = 0
+`GameState` is a frozen dataclass: `pawns`, `walls_left`, `h_walls`, `v_walls` (frozensets), `current`, `turn_count`. `state.apply(move)` returns a new state and does no legality check. Immutability means search code never has to undo a move and states can be shared across worker processes. `state.key()` returns a hashable tuple used by the transposition table.
+
+A wall is stored as `(r, c)` with `r, c` in 0..7 plus an orientation. An `H` wall at `(r, c)` blocks the steps between rows `r` and `r+1` in columns `c` and `c+1`. A `V` wall at `(r, c)` blocks the steps between columns `c` and `c+1` in rows `r` and `r+1`. `state.is_blocked(a, b)` implements this.
+
+### 4.2 Pathfinding
+
+`pathfinding.py` has three breadth-first searches that start from the pawn and stop when any goal-row cell is reached: `shortest_path` (returns the cells), `shortest_path_length`, and `has_path`. They ignore the other pawn. Walls are checked on the fly with `is_blocked`; there is no stored graph. We used BFS rather than A* because every step costs 1 on a 9 x 9 board, so BFS already gives the shortest path and the board is small.
+
+### 4.3 Wall legality
+
+`rules.is_wall_legal` first runs the cheap checks (game not over, walls left, in bounds, no overlap, no crossing). Only then does it apply the wall and run `has_path` for both players. That ordering avoids a BFS for walls that are already illegal.
+
+## 5. Agents
+
+### 5.1 Random and greedy (baselines)
+
+- **Random**: with probability `wall_prob` (default 0.2) picks a random legal wall, otherwise a random legal pawn move.
+- **Greedy**: picks the pawn move that leaves its own shortest path shortest. It can place walls only if `wall_prob > 0`. The default is 0.0, and the tournament runs use the default, so **greedy never places a wall in any of our matches**.
+
+### 5.2 Candidate wall pruning (`moves.py`)
+
+Instead of all 128 walls, `candidate_walls` takes the opponent's current shortest path and, for each step on it, tries the two walls that would block that step. It keeps those that are legal. The idea is that a wall off the opponent's path does not make them walk further right now.
+
+At the opening this gives 16 candidate walls, so 19 candidate moves instead of 131.
+
+What this can miss: walls that only matter after the path changes, walls that protect the agent's own route, and anything that is useful for reasons other than lengthening the opponent's current shortest path. We did not measure how often the best wall is missed. The ablation (section 7) only shows that pruning changes the chosen move in many positions; it does not say whether the pruned or unpruned choice is better.
+
+### 5.3 Evaluation (`eval.py`)
+
+For the player to move:
+
+```
+eval = 1.0 * (d_opp - d_me) + 0.25 * (walls_me - walls_opp)
 ```
 
-- **Pawn Coordinates:** `(row, col)` with $0 \le \text{row}, \text{col} \le 8$.
-- **Wall Sets:** Frozensets storing top-left groove coordinates $(r, c)$ where $0 \le r, c \le 7$.
-  - An `"H"` wall at $(r, c)$ spans columns $c$ and $c+1$ in the groove below row $r$.
-  - A `"V"` wall at $(r, c)$ spans rows $r$ and $r+1$ in the groove right of column $c$.
-- **State Transition:** `state.apply(move)` returns a new instance of `GameState`, leaving the parent state completely untouched.
-- **Position Identity:** `state.key()` returns a compact tuple of all attributes, enabling hash-table indexing for transposition tables and repetition tracking.
+`d_me` and `d_opp` are BFS shortest-path lengths (99 if no path). A win scores +10,000 and a loss -10,000. The opening position evaluates to 0. The weights 1.0 and 0.25 were set by hand. We did not tune them or test other values.
 
-### 4.2 Move Primitives
-- `PawnMove(to=(r, c))`: Targeted movement to cell `(r, c)`.
-- `WallMove(r=r, c=c, o="H"|"V")`: Placement of a wall at groove `(r, c)` with orientation `o`.
+### 5.4 Alpha-beta (`alphabeta_agent.py`)
 
----
+Fixed-depth negamax with alpha-beta cutoffs. At a terminal node the score is `WIN_SCORE - ply` (or the negative), so earlier wins score higher. At depth 0 it calls the evaluation above. Three switches, all on by default:
 
-## 5. Algorithms and Design Choices
+- **Wall pruning**: use `candidate_moves` instead of all legal moves.
+- **Move ordering**: pawn moves sorted by the distance left after the move; walls sorted by (opponent distance minus own distance) after the wall, and **only the top 12 walls are kept**. So turning ordering off also changes which moves are searched, not only their order.
+- **Transposition table**: a dict keyed by `state.key()` storing depth, value, a bound flag (exact, lower, upper) and the best move. It is cleared at the start of every `choose_move`.
 
-### 5.1 Graph Representation and Pathfinding (`pathfinding.py`)
-Rather than maintaining an explicit 81-node adjacency matrix or graph data structure that would require updates after every wall placement, wall obstructions are checked dynamically on-the-fly via coordinate arithmetic:
-- Stepping North from $(r, c)$ is blocked if $(r-1, c) \in \text{h\_walls}$ or $(r-1, c-1) \in \text{h\_walls}$.
-- Stepping South from $(r, c)$ is blocked if $(r, c) \in \text{h\_walls}$ or $(r, c-1) \in \text{h\_walls}$.
-- Stepping East from $(r, c)$ is blocked if $(r, c) \in \text{v\_walls}$ or $(r-1, c) \in \text{v\_walls}$.
-- Stepping West from $(r, c)$ is blocked if $(r, c-1) \in \text{v\_walls}$ or $(r-1, c-1) \in \text{v\_walls}$.
+At the root, all moves that tie for the best value are collected and one is picked with a seeded random choice. The root uses a window that tightens as moves are found, so a move reported as tied may in fact be slightly worse. We did not test whether this affects play.
 
-**Multi-Source Backward BFS:**  
-For shortest-path distance lookups, a multi-source breadth-first search is initiated backwards from all 9 cells of the target goal row simultaneously. In a single BFS traversal ($\le 81$ cell visits), exact shortest-path distances to the goal are computed and cached for every cell on the board.
+Iterative deepening and a time limit exist in the code but are off by default and were not used in any experiment. Search depth is fixed (depth 2, 3, or 4 depending on the experiment).
 
-### 5.2 Wall Legality & Fair-Play Validation (`rules.py`)
-Checking whether a candidate wall traps a player requires verifying that a path to the goal still exists for both players. Performing full path extraction for all 128 potential wall placements per turn would be computationally prohibitive.  
-Our implementation optimizes this by:
-1. First performing constant-time geometric checks: remaining wall count $> 0$, coordinates within bounds $0 \le r, c \le 7$, no direct overlap, and no cross-intersection (e.g., $(r, c, \text{H})$ cannot coexist with $(r, c, \text{V})$).
-2. Only performing goal-reachability BFS if the geometric tests pass.
-3. Early-exit BFS: the traversal halts the instant any cell on the goal row is popped from the queue.
+### 5.5 MCTS (`mcts_agent.py`)
 
-### 5.3 Candidate Wall Pruning (`moves.py`)
-In the initial position, there are 128 legal wall placements. Branching by 131 moves per ply causes tree size to explode exponentially ($131^3 \approx 2.25 \times 10^6$ nodes; $131^4 \approx 2.95 \times 10^8$ nodes).  
-However, walls placed far away from both pawns or far from their shortest paths rarely impact immediate tactics.
+Standard UCT with exploration constant c = 1.4.
 
-`moves.candidate_walls(state)` prunes this set dramatically:
-1. Computes the shortest path for both Player 0 and Player 1.
-2. Identifies all groove coordinates adjacent to cells along these critical paths and surrounding the pawns.
-3. Filters legal walls to only those that intersect or directly neighbor these critical paths.
+1. **Selection**: pick the child maximising `value/visits + c * sqrt(ln(parent visits) / visits)`.
+2. **Expansion**: add one untried move from `candidate_moves`.
+3. **Simulation** (up to 60 plies): with probability 0.95, the player to move steps along its shortest path (or the best-distance pawn step); with probability 0.05 it plays a random candidate move.
+4. **Result**: a finished game scores 1 for a root-player win and 0 for a loss. If the 60 plies run out, the score is `0.5 + 0.5 * tanh((d_opp - d_me) / 4)`, viewed from the root player.
+5. **Backpropagation**, then the final move is the **most-visited** root child. If a root child is an immediate win, that move is played.
 
-This reduces the active wall branching factor from 128 down to typically **12–18 candidate walls**, yielding an order-of-magnitude reduction in search space while preserving tactical relevance.
+The rollout parameters (0.95, 60, the divisor 4) were set by hand. The path-biased rollout is a design choice; we did not run a comparison against plain random rollouts, so we make no claim about how much it helps.
 
-### 5.4 Minimax with $\alpha$-$\beta$ Pruning (`alphabeta_agent.py`)
-`AlphaBetaAgent` implements fixed-depth minimax search with $\alpha$-$\beta$ pruning. (Iterative deepening is supported in the codebase but was disabled by default (`iterative_deepening=False`) and was not used in any evaluated agents or benchmarks.)
+## 6. Tournament
 
-The search is enhanced by three features:
+### 6.1 Setup
 
-1. **Move Ordering:**
-   Moves are sorted before exploration: pawn moves along the shortest path are prioritized first, followed by candidate wall placements ranked by their heuristic evaluation. Good moves trigger cutoffs early, maximizing the number of pruned branches. Note that move ordering also caps wall candidates at 12 per node.
-2. **Transposition Table (TT):**
-   A hash table caches visited positions keyed by `state.key()`. Each entry stores `{depth, score, flag, best_move}`. If a previously explored state is encountered at an equal or greater depth, the stored value provides immediate cutoffs or tightens the $(\alpha, \beta)$ window.
-3. **Evaluation Function (`eval.py`):**
-   The position evaluation balances path progress and wall resources:
-   $$\text{Eval}(s) = (d_{\text{opp}} - d_{\text{me}}) \times 10.0 + (w_{\text{me}} - w_{\text{opp}}) \times 1.2$$
-   - Terminal win: $+10,000$; terminal loss: $-10,000$.
-   - A positive distance differential indicates the current player is closer to their goal.
-   - Wall advantage provides secondary tie-breaking pressure.
+`python -m quoridor.tournament --suite --workers N` plays 20 games per pairing. Game `i` uses seed `base_seed + i` for both agents. Seats alternate: Agent A plays Player 0 in even games and Player 1 in odd games, so each agent plays 10 games on each side. Games are capped at 200 plies (no game hit the cap; there were 0 draws). Games run in parallel processes and each pairing is saved as a JSON file in `results/`. `results/stats.py` computes a 95% Wilson interval and an exact two-sided binomial p-value against 50%.
 
-### 5.5 Monte Carlo Tree Search (`mcts_agent.py`)
-`MCTSAgent` implements the Upper Confidence bounds for Trees (UCT) framework:
+Agent settings: `alphabeta:depth=2` or `depth=3` with all switches on; `mcts:iterations=500` or `1000` with c = 1.4, rollout depth 60.
 
-1. **Selection:**
-   Traverses the tree using the UCT formula:
-   $$\text{UCT}(i) = \frac{v_i}{n_i} + c \sqrt{\frac{\ln N}{n_i}}$$
-   where $v_i$ is cumulative child value, $n_i$ is child visit count, $N$ is parent visit count, and $c = 1.4$ balances exploitation and exploration.
-2. **Expansion:**
-   One unvisited candidate move from `moves.candidate_moves` is expanded per iteration.
-3. **Simulation (Rollout Policy):**
-   Uniform random rollouts in Quoridor frequently lead to aimless wandering. We use a **path-biased rollout policy**:
-   - With 95% probability, play the greedy pawn step that minimizes the mover's shortest-path distance.
-   - With 5% probability, select a random candidate move.
-   - Rollouts terminate upon reaching a goal row or at `rollout_depth = 60`.
-   The 95% threshold was chosen by trial against the greedy baseline without systematic parameter tuning.
-4. **Terminal Win Prioritization:**
-   When an immediate winning move exists at the root, the agent prioritizes the proven winning child directly, ensuring 100% tactical precision in endgames.
-5. **Backpropagation:**
-   Terminal wins award $1.0$; terminal losses award $0.0$. For non-terminal rollout cutoffs, a continuous evaluation is backpropagated:
-   $$R = 0.5 + 0.5 \times \tanh\left(\frac{d_{\text{opp}} - d_{\text{me}}}{4.0}\right)$$
+### 6.2 Results (`results/summary.csv`, `results/stats.txt`)
 
----
+| Matchup (A vs B) | A wins | Win % | 95% CI | p vs 50% | Mean plies | ms/move A | ms/move B |
+|---|---|---|---|---|---|---|---|
+| Greedy vs Random | 20/20 | 100% | 83.9 to 100 | <0.0001 | 15.2 | 0.8 | 11.2 |
+| AlphaBeta d=2 vs Greedy | 20/20 | 100% | 83.9 to 100 | <0.0001 | 19.1 | 140.5 | 0.9 |
+| AlphaBeta d=3 vs Greedy | 20/20 | 100% | 83.9 to 100 | <0.0001 | 26.6 | 467.1 | 1.0 |
+| MCTS 500 vs Greedy | 18/20 | 90% | 69.9 to 97.2 | 0.0004 | 38.2 | 2037.6 | 1.0 |
+| MCTS 1000 vs Greedy | 20/20 | 100% | 83.9 to 100 | <0.0001 | 31.7 | 3735.0 | 1.2 |
+| AlphaBeta d=3 vs MCTS 1000 | 12/20 | 60% | 38.7 to 78.1 | 0.50 | 66.8 | 617.0 | 4746.7 |
+| AlphaBeta d=2 vs AlphaBeta d=3 | 6/20 | 30% | 14.5 to 51.9 | 0.12 | 62.0 | 185.6 | 726.3 |
 
-## 6. Empirical Tournament Evaluation
+(In the last row depth 3 is Agent B and won 14 of 20.)
 
-We evaluated all agent pairings using our automated tournament harness across 20-game matches. To eliminate first-move advantage, seats alternate every game (even games: Agent A plays as Player 0; odd games: Agent B plays as Player 0). Matches were executed across 6 parallel worker processes using `ProcessPoolExecutor`.
+### 6.3 What the results show
 
-### 6.1 Tournament Results Matrix
+- **Against greedy**: every search agent wins almost every game. Keep in mind the greedy opponent only walks its shortest path and never places a wall, so this shows the search agents can beat a pure runner, not that they play well.
+- **Alpha-beta vs MCTS**: 12 to 8 is within chance. The 95% interval (38.7% to 78.1%) includes 50%. To separate two agents whose true win rate is 60% from 50% we would need roughly 100 to 200 games.
+- **Time**: MCTS used about 4.7 s per move against about 0.6 s for alpha-beta, roughly 8 times more. This is measured wall-clock in Python while several games ran in parallel, so the absolute numbers depend on the machine and are only comparable within this run.
+- **Depth 2 vs depth 3**: depth 3 won 14 of 20. With p = 0.12 we cannot rule out chance.
+- **Seats**: in the matches the first mover won 8 to 12 of 20 depending on the pairing (10 of 20 in most). With seat alternation, any first-move advantage cancels between the two agents; we did not measure the advantage itself.
 
-| Matchup (Agent A vs Agent B) | Games | Wins A | Wins B | Draws | Win Rate A | Mean Plies | Nodes/Move A | Latency A | Nodes/Move B | Latency B |
-|---|---|---|---|---|---|---|---|---|---|---|
-| **Greedy vs Random** | 20 | 20 | 0 | 0 | **100.0%** | 15.2 | 3.8 | 0.8 ms | 32.6 | 11.2 ms |
-| **AlphaBeta(d=2) vs Greedy** | 20 | 20 | 0 | 0 | **100.0%** | 19.1 | 36.2 | 140.5 ms | 3.6 | 0.9 ms |
-| **AlphaBeta(d=3) vs Greedy** | 20 | 20 | 0 | 0 | **100.0%** | 26.6 | 247.7 | 467.1 ms | 3.3 | 1.0 ms |
-| **MCTS(500) vs Greedy** | 20 | 18 | 2 | 0 | **90.0%** | 38.2 | 486.3 | 2,037.6 ms | 3.3 | 1.0 ms |
-| **MCTS(1000) vs Greedy** | 20 | 20 | 0 | 0 | **100.0%** | 31.7 | 976.3 | 3,735.0 ms | 3.4 | 1.2 ms |
-| **AlphaBeta(d=3) vs MCTS(1000)** | 20 | 12 | 8 | 0 | **60.0%** | 66.8 | 179.3 | 617.0 ms | 956.7 | 4,746.7 ms |
-| **AlphaBeta(d=2) vs AlphaBeta(d=3)** | 20 | 6 | 14 | 0 | **30.0%** | 62.0 | 35.1 | 185.6 ms | 189.8 | 726.3 ms |
+## 7. Alpha-beta ablation
 
-*All results recorded in `results/summary.csv` and individual JSON logs. Visualized in `results/win_rates.png`.*
+`python -m quoridor.tournament --ablation` takes 15 positions and runs 9 configurations. The positions come from seeded games of greedy vs random (both with wall probability 0.3), taking the positions after plies 4, 8, 12 and 16 until 15 are collected. That means they come from only four games (seeds 0 to 3), they are early-game positions, and positions from the same game are not independent. For each configuration the table gives mean nodes, mean time per move, transposition-table hits, cutoffs, and how often the chosen move equals the chosen move of the full configuration at the same depth.
 
-### 6.2 Analysis of Matchups
-
-Every pair was played over a sample size of 20 games, with seats alternating between games to balance first-mover advantage. Below are the 95% Wilson score confidence intervals and exact two-sided binomial p-values testing the null hypothesis of equal playing strength ($p = 0.50$), computed with `results/stats.py`:
-- **Greedy vs Random:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
-- **AlphaBeta(d=2) vs Greedy:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
-- **AlphaBeta(d=3) vs Greedy:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
-- **MCTS(500) vs Greedy:** 18/20 wins (90.0%), 95% Wilson CI [69.9%, 97.2%], $p = 0.0004$.
-- **MCTS(1000) vs Greedy:** 20/20 wins (100.0%), 95% Wilson CI [83.9%, 100.0%], $p < 0.0001$.
-- **AlphaBeta(d=3) vs MCTS(1000):** 12/20 wins (60.0%), 95% Wilson CI [38.7%, 78.1%], $p = 0.5034$.
-- **AlphaBeta(d=2) vs AlphaBeta(d=3):** Depth 3 won 14 of 20 games (70.0%), 95% Wilson CI [48.1%, 85.5%], $p = 0.1153$ (Depth 2 won 6/20, 30.0%, 95% Wilson CI [14.5%, 51.9%]).
-
-Detailed findings:
-- **Baseline Performance:** Over 20 games each, both AlphaBeta (depth $\ge 2$) and MCTS ($\ge 500$ iterations) won 20 of 20 games against Greedy and Random (18 of 20 for MCTS-500 against Greedy). Purely reactive greedy agents cannot handle basic wall placements or adversarial lookahead.
-- **The Headline Match (AlphaBeta d=3 vs MCTS 1000):** AlphaBeta(d=3) won 12 of 20 games against MCTS(1000). With 20 games this is not a statistically significant difference; the two agents are of similar strength under these settings. However, MCTS used about 4.7 s per move against about 0.6 s for alpha-beta, so alpha-beta reached the same strength with roughly 8x less time.
-- **Search Depth Scaling:** Depth 3 won 14 of 20 games against depth 2 ($p = 0.12$). This is suggestive but not conclusive at this sample size.
-
----
-
-## 7. Empirical Search Ablation Study
-
-To isolate and quantify the concrete performance impacts of our search enhancements in `AlphaBetaAgent`, we conducted a controlled ablation study across 15 distinct, representative middle-game positions. These positions were sampled from seeded tournament games at plies 4, 8, 12, and 16, capturing diverse board configurations, varying pawn distances, and intricate wall placements.
-
-We benchmarked 9 configurations spanning Depth 3 and Depth 4, evaluating mean nodes expanded, mean wall-clock time (in milliseconds), transposition table cache hits, cutoffs triggered, and the move agreement rate against the full `all_on` baseline.
-
-### 7.1 Ablation Results Table
-
-| Configuration | Search Depth | Mean Nodes | Mean Time (ms) | Mean TT Hits | Mean Cutoffs | Move Match Rate |
+| Config | Depth | Nodes | ms | TT hits | Cutoffs | Same move as all_on |
 |---|---|---|---|---|---|---|
-| **`all_on`** | 3 | **346.1** | 316.5 ms | 0.0 | 28.1 | **100.0%** (Baseline) |
-| `no_tt` | 3 | 346.1 | 319.1 ms | 0.0 | 28.1 | 100.0% |
-| `no_ordering` | 3 | 561.4 | **280.4 ms** | 0.0 | 30.8 | 80.0% |
-| `no_ordering_no_tt` | 3 | 561.4 | 262.6 ms | 0.0 | 30.8 | 80.0% |
-| `no_pruning` | 3 | **22,335.7** | **14,604.4 ms** | 0.0 | 309.7 | 53.3% |
-| **`all_on`** | 4 | **861.5** | 1,496.2 ms | **52.9** | 316.1 | **100.0%** (Baseline) |
-| `no_tt` | 4 | 923.2 | 1,833.7 ms | 0.0 | 316.4 | 100.0% |
-| `no_ordering` | 4 | 1,548.5 | **1,282.9 ms** | 98.7 | 519.7 | 33.3% |
-| `no_ordering_no_tt` | 4 | 1,700.6 | 1,503.7 ms | 0.0 | 520.1 | 33.3% |
+| all_on | 3 | 346.1 | 316.5 | 0.0 | 28.1 | 100% |
+| no_tt | 3 | 346.1 | 319.1 | 0.0 | 28.1 | 100% |
+| no_ordering | 3 | 561.4 | 280.4 | 0.0 | 30.8 | 80% |
+| no_ordering_no_tt | 3 | 561.4 | 262.6 | 0.0 | 30.8 | 80% |
+| no_pruning (also no ordering, no TT) | 3 | 22,335.7 | 14,604.4 | 0.0 | 309.7 | 53.3% |
+| all_on | 4 | 861.5 | 1496.2 | 52.9 | 316.1 | 100% |
+| no_tt | 4 | 923.2 | 1833.7 | 0.0 | 316.4 | 100% |
+| no_ordering | 4 | 1548.5 | 1282.9 | 98.7 | 519.7 | 33.3% |
+| no_ordering_no_tt | 4 | 1700.6 | 1503.7 | 0.0 | 520.1 | 33.3% |
 
-*Data recorded in `results/ablation.csv`. Visualizations available in `results/ablation_nodes.png` and `results/ablation_ms.png`.*
+How to read it:
 
-### 7.2 Key Ablation Findings & Discussion
+- **Wall pruning.** The `no_pruning` row also has move ordering and the transposition table off, so the fair comparison is against `no_ordering_no_tt`: 561.4 to 22,335.7 nodes (about 40 times) and 262.6 to 14,604.4 ms (about 56 times). Comparing against `all_on` (64.5 times in nodes) mixes in the other two switches. The unpruned search picked a different move in 47% of positions. The table does not tell us which move was better.
+- **Move ordering.** Fewer nodes (561 to 346 at depth 3, 1548 to 862 at depth 4), but the time per move went up (280 to 317 ms, 1283 to 1496 ms) because each node now does extra path computations. Because ordering also applies the 12-wall cap, the lower move agreement (80% and 33%) comes from both the order and the cap. This says the capped, ordered search picks different moves, not that it picks worse ones.
+- **Transposition table.** No hits at depth 3. At depth 4 it saved about 7% of nodes (923 to 862) and about 18% of time (1834 to 1496 ms).
+- **Noise.** Each row is one run on 15 positions. Differences of a few percent in time, like `all_on` against `no_tt` at depth 3, are within what we would expect from noise.
 
-#### 1. Wall Pruning Effect
-At Depth 3, disabling candidate wall pruning (`no_pruning`) causes the search tree to expand from **346.1 nodes** to **22,335.7 nodes** — a **64.5x increase in search volume**.  
-The corresponding decision latency increases from **316.5 ms to 14,604.4 ms** (~14.6 seconds per move). The unpruned search also chose a different move in 47% of the positions; this table does not show which choice is better. Candidate wall pruning is the largest single effect we measured in making multi-ply Quoridor search viable.
+## 8. Web interface
 
-#### 2. The Move Ordering Trade-Off
-Move ordering reduces tree size:
-- At Depth 3, ordering slashes visited states from **561.4 nodes down to 346.1 nodes** (a 38.3% reduction).
-- At Depth 4, ordering slashes visited states from **1,548.5 nodes down to 861.5 nodes** (a 44.4% reduction).
+A FastAPI server (`server/app.py`) exposes endpoints to start a game, get the state and legal moves, play a move, ask the AI for a move, get the shortest paths, undo, and check health. The server only accepts known opponents (random, greedy, alpha-beta with depth 1 to 4, MCTS with 50 to 1000 simulations) and keeps at most 200 sessions, dropping those idle for over 2 hours.
 
-However, sorting moves requires computing path evaluations for candidate moves at internal nodes. In addition, the ordering option caps wall candidates at 12 per node, so turning it off changes the set of moves searched as well as their order. As a result, ordering takes more wall-clock time in both cases (316.5 ms vs 280.4 ms at Depth 3, and 1,496.2 ms vs 1,282.9 ms at Depth 4), because sorting needs extra path computations at every node.
+The browser interface (`web/`) is plain JavaScript modules with three screens (setup, game, result). You can move by clicking a dot or with the arrow keys, place a wall by clicking a gap, rotate with R or right-click, undo with U, and show shortest paths with P. A Dockerfile and `render.yaml` deploy it to Render's free tier; the first request after idle can take about a minute. The live demo is at https://quoridor-rqj3.onrender.com. The interface is not part of the evaluation.
 
-#### 3. Transposition Table Value Scales with Depth
-In this sample of 15 positions with no repeats:
-- At Depth 3, transposition table hits are 0.0, because trees at depth 3 on a $9 \times 9$ board have minimal path reconvergence.
-- At Depth 4, the transposition table recorded an average of **52.9 hits per move**, reducing node visits from 923.2 down to 861.5, and reducing wall-clock time from 1,833.7 ms down to 1,496.2 ms (an 18.4% speedup).
+## 9. Testing
 
----
+`python -m pytest -q` runs 107 tests (about 100 seconds on the machine we used); `node --test tests/web` runs 7 tests for the arrow-key logic. The tests cover the state and wall encoding, BFS, the legality rules (jumps, diagonals, overlaps, crossings, the no-path rule), the evaluation and candidate walls, the baseline agents, the game runner, both search agents (on hand-built positions and in short games), the server API and the tournament harness.
 
-## 8. Strategic Discussion: Alpha-Beta vs. MCTS
+What the tests do not cover: whether the pruned search plays better or worse than unpruned search, whether the evaluation weights are good, and the browser interface beyond the arrow-key logic.
 
-### 8.1 Discussion (not measured here)
-The following points reflect general domain characteristics rather than project measurements:
-- Alpha-Beta search is designed for concrete, near-term tactical lookahead. Within depth limits of 3 to 4 plies, it evaluates forced pawn moves and direct wall placements using a handcrafted evaluation function.
-- MCTS with UCT explores broader branching using randomized simulation without relying on a static evaluation function, though simulation accuracy depends on rollout policy quality and iteration budget.
+## 10. Limitations
 
-### 8.2 Failure Modes
-- **Horizon Effect in Alpha-Beta:** Fixed-depth search is subject to horizon effects: a wall placement that delays an opponent within depth $d$ may be easily circumvented at ply $d+1$.
-- **Rollout Variance in MCTS:** Without path guidance, uniform random rollouts in Quoridor wander erratically. Our path-biased policy (95% greedy path steps) stabilizes simulation rollouts.
+1. **Sample size.** 20 games per matchup resolves large gaps only. Alpha-beta against MCTS is undecided.
+2. **Weak baselines.** Greedy places no walls in these runs and random plays randomly. Beating them shows little about strength.
+3. **Hand-set parameters.** Evaluation weights, the 12-wall cap, rollout depth, the 0.95 rollout share and the tanh scale were chosen by hand and never tuned or compared.
+4. **Pruning can miss moves.** Candidate walls only block the opponent's current shortest path. We measured speed, not lost move quality.
+5. **Shallow search.** Alpha-beta looks 2 to 4 plies ahead, so walls whose value shows up later are missed.
+6. **Small ablation.** 15 early-game positions from four games, one run each; timing is single-run.
+7. **Timing.** Times were taken in Python with parallel games on one machine.
+8. **No outside comparison.** We did not test against other Quoridor engines or human players.
+9. **Not new.** Quoridor, alpha-beta and MCTS are standard. What this repository adds is a common rules engine and pruning shared by both agents, switches for measuring each speed-up, and a reproducible, seeded, seat-swapped tournament with exact statistics.
 
-### 8.3 Limitations
-We note several methodological limitations in this evaluation:
-1. **Sample Size:** Matches were run over 20 games per pair. While adequate to separate strong agents from baselines, 20 games cannot resolve small differences in strength between AlphaBeta(d=3) and MCTS(1000).
-2. **Seed Schedule:** Tournaments used a single seed schedule across pairings.
-3. **Ablation Sample:** The ablation experiment evaluated 15 middle-game positions without repeats.
-4. **Timing Variance:** Wall-clock times were measured on a single multi-core workstation with parallel worker processes running concurrently. As a result, absolute millisecond values reflect system load and are comparable only across rows of the same run.
-5. **No External Engine:** No comparisons were performed against external Quoridor engines or human players.
+## 11. Team
 
----
+The work was split by module:
 
-## 9. Web Interface Architecture ("Monolith")
+- **Shubham**: constants, types, `GameState`, project setup, state tests.
+- **Rajnish**: pathfinding, rules, legal move generation and their tests.
+- **Siddhesh**: evaluation, candidate-move pruning, random and greedy agents, agent factory, game runner and their tests.
+- **Shivam**: alpha-beta and MCTS agents and their tests.
+- **Priyanshu**: tournament and ablation harness, statistics, server, web interface, deployment, report.
 
-The Quoridor web user interface is crafted under the **"Monolith"** design system:
-- **Zero Build Step:** Built entirely with native ES modules and pinned directly to Three.js `0.160.0` via browser import maps.
-- **Full-Bleed Solid Color Fields:** Eliminates decorative gradients, glassmorphism, cards, and borders in favor of distinct, hyper-focused solid color fields:
-  - **Bone (`#EDE7DA`)**: Game screen board field.
-  - **Ink (`#121212`)**: Telemetry and statistics screen.
-  - **Vermilion (`#E8452C`)**: Title screen and AI victory result screen.
-  - **Cobalt (`#2441D6`)**: Opponent setup and human victory result screen.
-  - **Ochre (`#D9A441`)**: Wall pieces and indicator accents.
-- **Minimalist 3D Representation:** Each screen features exactly one central 3D monolith rendered via WebGL:
-  - *Title:* A rotating monolithic pawn slab.
-  - *Setup:* A reactive difficulty totem whose height and color dynamically scale with selected search strength.
-  - *Game:* A floating $9 \times 9$ board slab viewed from an angled perspective, with smooth pawn navigation, groove raycasting for transparent ghost wall previews, and legal destination markers.
-  - *Stats:* A 3D logarithmic column visualizing total search nodes explored alongside historical moves.
-  - *Result:* An elevated victory monolith.
-- **Keyboard Shortcuts:** Full keyboard controllability with `P` (toggle shortest paths trail), `R` (rotate ghost wall / rematch), `U` (undo move), `S` (telemetry view), and `Esc` (return to menu).
+The git history has 33 commits from seven author names: Priyanshu (20) and Priyanshu-2308 (3), Rajnish (5), Shubham7094 (2), Shivam Yadav (1), Siddhesh Bansal (1) and Siddhesh1420 (1). Much of the later integration and fixing was committed from Priyanshu's account, so the history does not show exactly who wrote each part.
 
----
+## 12. Reproducing everything
 
-## 10. Team Contributions
-
-Our team operated under a modular, test-driven architecture with clean API boundaries established prior to implementation:
-
-- **Shubham (Foundation, State Model & Project Scaffolding):**  
-  Architected the core game representations in `constants.py`, `types.py`, and `state.py`. Designed the immutable, frozen `GameState` structure that guaranteed side-effect-free transitions across search trees and worker processes. Configured repository standards (`requirements.txt`, `.gitignore`, `README.md` skeleton) and authored `tests/test_state.py`.
-
-- **Rajnish (Pathfinding Graph Engine & Rule Validation):**  
-  Implemented dynamic coordinate-based movement and wall adjacency checks in `pathfinding.py` and `rules.py`. Engineered multi-source backward BFS for rapid goal distance field evaluation, early-exit path reachability checks for the Quoridor fair-play rule, and complete legal move generation validated by `tests/test_pathfinding.py` and `tests/test_rules.py`.
-
-- **Siddhesh (Evaluation Metrics, Pruning Heuristics & Baselines):**  
-  Authored the heuristic evaluation functions in `eval.py`, the candidate wall and candidate move pruning algorithms in `moves.py`, the baseline `RandomAgent` and `GreedyAgent`, the dynamic agent factory `make_agent`, and the game execution runner `runner.py`. Validated these components with `tests/test_eval_moves.py`, `tests/test_agents_basic.py`, and `tests/test_runner.py`.
-
-- **Shivam (Search Intelligence: Alpha-Beta & MCTS):**  
-  Developed the high-performance `AlphaBetaAgent` featuring depth-limited minimax, dynamic move ordering, and transposition table caching. Authored the core MCTS algorithm in `mcts_agent.py` featuring UCT selection, candidate expansion, path-biased rollout simulations, and terminal win prioritization. Verified search correctness in `tests/test_alphabeta.py` and `tests/test_mcts.py`.
-
-- **Priyanshu (Tournament Harness, Server, Web UI & Final Reporting):**  
-  Implemented the multiprocessing tournament and ablation CLI in `quoridor/tournament.py` with matplotlib chart generation. Built the FastAPI backend in `server/app.py` providing REST endpoints and static asset serving with in-memory session undo tracking. Created the interactive Three.js "Monolith" web UI in `web/` with 5 full-bleed screens, raycast ghost walls, and shortest-path overlays. Authored `tests/test_tournament.py`, `tests/test_server.py`, finalized `README.md`, and produced `docs/REPORT.md`.
-
----
-
-## 11. Execution & Reproduction Guide
-
-### Quickstart
 ```bash
-# Clone repository and enter directory
 git clone https://github.com/Priyanshu-2308/QUORIDOR.git
 cd QUORIDOR
-
-# Create virtual environment and install dependencies
-python -m venv .venv
-source .venv/bin/activate        # On Windows: .venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Run full test suite
-python -m pytest -q
+python -m pytest -q                                  # 107 tests
+node --test tests/web                                # 7 tests
+python -m quoridor.tournament --suite --workers 4    # writes results/*.json, summary.csv
+python results/stats.py                              # writes results/stats.txt
+python -m quoridor.tournament --ablation             # writes results/ablation.csv
+uvicorn server.app:app --port 8000                   # play in the browser
 ```
 
-### Launch Web User Interface
-```bash
-uvicorn server.app:app --port 8000
-# Open http://localhost:8000 in your browser
-```
-
-### Reproduce Empirical Results
-```bash
-# Run full tournament suite (writes results/summary.csv and results/win_rates.png)
-python -m quoridor.tournament --suite --workers 6
-
-# Run ablation study (writes results/ablation.csv and ablation charts)
-python -m quoridor.tournament --ablation
-```
-
+Existing result files are skipped unless `--force` is given. Reruns use the same seeds, but the timing columns will differ from ours.
