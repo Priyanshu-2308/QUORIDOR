@@ -1,0 +1,2136 @@
+{
+  "table": [
+    "paranoid:depth=2,eval_mode='mean'",
+    "paranoid:depth=2,eval_mode='leader'",
+    "greedy",
+    "greedy"
+  ],
+  "seating_mode": "perms",
+  "reps": 1,
+  "total_games": 24,
+  "base_seed": 54000,
+  "elapsed_s": 11.126772800000253,
+  "summary": {
+    "greedy": {
+      "games_played": 48,
+      "wins": 12,
+      "ranks": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        4.0,
+        1.0,
+        3.0,
+        3.0,
+        4.0,
+        1.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        2.0,
+        1.0,
+        3.0,
+        3.0,
+        2.0,
+        1.0,
+        1.0,
+        3.0,
+        3.0,
+        2.0,
+        1.0,
+        3.0,
+        3.0,
+        2.0,
+        3.0,
+        1.0,
+        3.0,
+        1.0,
+        1.0,
+        3.0,
+        3.0,
+        2.0,
+        1.0,
+        3.0,
+        3.0,
+        2.0,
+        3.0,
+        1.0,
+        3.0,
+        1.0
+      ],
+      "total_nodes": 1274,
+      "total_time_s": 0.24292920000152662,
+      "total_moves": 336,
+      "win_rate": 0.25,
+      "mean_rank": 2.4166666666666665,
+      "mean_nodes_per_move": 3.7916666666666665,
+      "mean_time_per_move": 0.000723003571433115
+    },
+    "paranoid:depth=2,eval_mode='leader'": {
+      "games_played": 24,
+      "wins": 6,
+      "ranks": [
+        3.0,
+        3.0,
+        3.0,
+        2.5,
+        3.0,
+        2.5,
+        1.0,
+        1.0,
+        1.0,
+        3.5,
+        1.0,
+        3.5,
+        3.0,
+        4.0,
+        3.0,
+        1.0,
+        4.0,
+        2.0,
+        3.0,
+        4.0,
+        3.0,
+        1.0,
+        4.0,
+        2.0
+      ],
+      "total_nodes": 8796,
+      "total_time_s": 40.10136420000708,
+      "total_moves": 164,
+      "win_rate": 0.25,
+      "mean_rank": 2.5833333333333335,
+      "mean_nodes_per_move": 53.63414634146341,
+      "mean_time_per_move": 0.24452051341467734
+    },
+    "paranoid:depth=2,eval_mode='mean'": {
+      "games_played": 24,
+      "wins": 6,
+      "ranks": [
+        1.0,
+        1.0,
+        1.0,
+        2.5,
+        1.0,
+        2.5,
+        3.0,
+        3.0,
+        3.0,
+        3.5,
+        3.0,
+        3.5,
+        3.0,
+        1.0,
+        3.0,
+        4.0,
+        2.0,
+        4.0,
+        3.0,
+        1.0,
+        3.0,
+        4.0,
+        2.0,
+        4.0
+      ],
+      "total_nodes": 7866,
+      "total_time_s": 39.69240450001962,
+      "total_moves": 164,
+      "win_rate": 0.25,
+      "mean_rank": 2.5833333333333335,
+      "mean_nodes_per_move": 47.96341463414634,
+      "mean_time_per_move": 0.2420268567074367
+    }
+  },
+  "games": [
+    {
+      "game_idx": 0,
+      "seed": 54000,
+      "seating": [
+        "paranoid:depth=2,eval_mode='mean'",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 1.6745689000017592,
+          "median_time_per_move": 0.2558810000009544,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 368,
+          "total_time_s": 1.604545500003951,
+          "median_time_per_move": 0.27536275000056776,
+          "mean_nodes_per_move": 61.333333333333336
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004012299998066737,
+          "median_time_per_move": 0.0006805999992138823,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004448899999260902,
+          "median_time_per_move": 0.000772349999351718,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 1,
+      "seed": 54001,
+      "seating": [
+        "paranoid:depth=2,eval_mode='mean'",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 1.7849083999990398,
+          "median_time_per_move": 0.2555859000003693,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 368,
+          "total_time_s": 1.524105900001814,
+          "median_time_per_move": 0.2796731999997064,
+          "mean_nodes_per_move": 61.333333333333336
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004671899998356821,
+          "median_time_per_move": 0.0008335499996974249,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.005445199996756855,
+          "median_time_per_move": 0.0009649000003264518,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 2,
+      "seed": 54002,
+      "seating": [
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 2.105042900000626,
+          "median_time_per_move": 0.32383459999982733,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.0063619000029575545,
+          "median_time_per_move": 0.0008847500002957531,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 367,
+          "total_time_s": 1.7627936999997473,
+          "median_time_per_move": 0.2923630499990395,
+          "mean_nodes_per_move": 61.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.00700209999922663,
+          "median_time_per_move": 0.0010505500004001078,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 3,
+      "seed": 54003,
+      "seating": [
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'"
+      ],
+      "winner": 2,
+      "no_winner": false,
+      "ranks": {
+        "2": 1.0,
+        "0": 2.5,
+        "3": 2.5,
+        "1": 4.0
+      },
+      "plies": 31,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "V(5,6)",
+        "P(4,6)",
+        "P(7,3)",
+        "P(3,2)",
+        "V(3,6)",
+        "P(3,6)",
+        "P(8,3)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 8,
+          "total_nodes": 531,
+          "total_time_s": 2.362521099998048,
+          "median_time_per_move": 0.3379586000000927,
+          "mean_nodes_per_move": 66.375
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.00722190000306,
+          "median_time_per_move": 0.0008720000005268957,
+          "mean_nodes_per_move": 3.625
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.008728100001462735,
+          "median_time_per_move": 0.0007763000003251364,
+          "mean_nodes_per_move": 3.875
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 370,
+          "total_time_s": 1.779461000000083,
+          "median_time_per_move": 0.29929790000096546,
+          "mean_nodes_per_move": 52.857142857142854
+        }
+      }
+    },
+    {
+      "game_idx": 4,
+      "seed": 54004,
+      "seating": [
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 1.7994266000005155,
+          "median_time_per_move": 0.2512358000003587,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004581099998176796,
+          "median_time_per_move": 0.0008034000002226094,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 367,
+          "total_time_s": 1.49155790000259,
+          "median_time_per_move": 0.23308630000065023,
+          "mean_nodes_per_move": 61.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004535700003543752,
+          "median_time_per_move": 0.0007964500009620679,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 5,
+      "seed": 54005,
+      "seating": [
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'"
+      ],
+      "winner": 2,
+      "no_winner": false,
+      "ranks": {
+        "2": 1.0,
+        "0": 2.5,
+        "3": 2.5,
+        "1": 4.0
+      },
+      "plies": 31,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "V(5,6)",
+        "P(4,6)",
+        "P(7,3)",
+        "P(3,2)",
+        "V(3,6)",
+        "P(3,6)",
+        "P(8,3)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 8,
+          "total_nodes": 531,
+          "total_time_s": 2.001973000004,
+          "median_time_per_move": 0.22862380000060512,
+          "mean_nodes_per_move": 66.375
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.005578199999945355,
+          "median_time_per_move": 0.0008294500003103167,
+          "mean_nodes_per_move": 3.625
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.004558199998427881,
+          "median_time_per_move": 0.0007022999998298474,
+          "mean_nodes_per_move": 3.875
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 370,
+          "total_time_s": 1.4488760000022012,
+          "median_time_per_move": 0.20884579999983544,
+          "mean_nodes_per_move": 52.857142857142854
+        }
+      }
+    },
+    {
+      "game_idx": 6,
+      "seed": 54006,
+      "seating": [
+        "paranoid:depth=2,eval_mode='leader'",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 2.131349399998726,
+          "median_time_per_move": 0.31125520000023243,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 285,
+          "total_time_s": 1.8225346000017453,
+          "median_time_per_move": 0.3592747999991843,
+          "mean_nodes_per_move": 47.5
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004548099997919053,
+          "median_time_per_move": 0.0007714000003034016,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.007713299997703871,
+          "median_time_per_move": 0.0008859999998094281,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 7,
+      "seed": 54007,
+      "seating": [
+        "paranoid:depth=2,eval_mode='leader'",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 2.138311899998371,
+          "median_time_per_move": 0.3151287999990018,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 285,
+          "total_time_s": 1.8103380000029574,
+          "median_time_per_move": 0.3590142000011838,
+          "mean_nodes_per_move": 47.5
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.007206299998870236,
+          "median_time_per_move": 0.0008824500000628177,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.008248899999671266,
+          "median_time_per_move": 0.001130100000409584,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 8,
+      "seed": 54008,
+      "seating": [
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 1.7418922999986535,
+          "median_time_per_move": 0.2615241999992577,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004663800000344054,
+          "median_time_per_move": 0.0007902500001364388,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 283,
+          "total_time_s": 1.5672939999985829,
+          "median_time_per_move": 0.2801418499993815,
+          "mean_nodes_per_move": 47.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004502300000240211,
+          "median_time_per_move": 0.0008011500003703986,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 9,
+      "seed": 54009,
+      "seating": [
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'"
+      ],
+      "winner": 2,
+      "no_winner": false,
+      "ranks": {
+        "2": 1.0,
+        "1": 2.0,
+        "0": 3.5,
+        "3": 3.5
+      },
+      "plies": 31,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "V(5,7)",
+        "P(4,7)",
+        "P(8,3)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 8,
+          "total_nodes": 420,
+          "total_time_s": 1.8238043999990623,
+          "median_time_per_move": 0.2128758500002732,
+          "mean_nodes_per_move": 52.5
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 30,
+          "total_time_s": 0.006565299998328555,
+          "median_time_per_move": 0.0008428499995716265,
+          "mean_nodes_per_move": 3.75
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.004860599998210091,
+          "median_time_per_move": 0.0005771500000264496,
+          "mean_nodes_per_move": 3.875
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 349,
+          "total_time_s": 1.4484362000021065,
+          "median_time_per_move": 0.1899345000001631,
+          "mean_nodes_per_move": 49.857142857142854
+        }
+      }
+    },
+    {
+      "game_idx": 10,
+      "seed": 54010,
+      "seating": [
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 286,
+          "total_time_s": 1.8186982999995962,
+          "median_time_per_move": 0.2548698000009608,
+          "mean_nodes_per_move": 40.857142857142854
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.0046017000004212605,
+          "median_time_per_move": 0.0008049999996728729,
+          "mean_nodes_per_move": 3.8333333333333335
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 283,
+          "total_time_s": 1.4639385000009497,
+          "median_time_per_move": 0.25043224999990343,
+          "mean_nodes_per_move": 47.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004520599999523256,
+          "median_time_per_move": 0.0008001000005606329,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 11,
+      "seed": 54011,
+      "seating": [
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'"
+      ],
+      "winner": 2,
+      "no_winner": false,
+      "ranks": {
+        "2": 1.0,
+        "1": 2.0,
+        "0": 3.5,
+        "3": 3.5
+      },
+      "plies": 31,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "V(5,7)",
+        "P(4,7)",
+        "P(8,3)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 8,
+          "total_nodes": 420,
+          "total_time_s": 1.8678503000046476,
+          "median_time_per_move": 0.21124610000151733,
+          "mean_nodes_per_move": 52.5
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 30,
+          "total_time_s": 0.005104400002892362,
+          "median_time_per_move": 0.0007281000007424154,
+          "mean_nodes_per_move": 3.75
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.004160699998465134,
+          "median_time_per_move": 0.000588249999054824,
+          "mean_nodes_per_move": 3.875
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 349,
+          "total_time_s": 1.4066058000007615,
+          "median_time_per_move": 0.20275650000075984,
+          "mean_nodes_per_move": 49.857142857142854
+        }
+      }
+    },
+    {
+      "game_idx": 12,
+      "seed": 54012,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.0035170000010111835,
+          "median_time_per_move": 0.0005927000001975102,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 285,
+          "total_time_s": 1.6517805000003136,
+          "median_time_per_move": 0.2633659000002808,
+          "mean_nodes_per_move": 47.5
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 367,
+          "total_time_s": 1.5972749999964435,
+          "median_time_per_move": 0.2453392499992333,
+          "mean_nodes_per_move": 61.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004584000000249944,
+          "median_time_per_move": 0.000804749999588239,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 13,
+      "seed": 54013,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.003959699997722055,
+          "median_time_per_move": 0.000541749999683816,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 8,
+          "total_nodes": 329,
+          "total_time_s": 1.7447217000008095,
+          "median_time_per_move": 0.15651305000028515,
+          "mean_nodes_per_move": 41.125
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.006420800000341842,
+          "median_time_per_move": 0.000717699998858734,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 376,
+          "total_time_s": 1.539159900001323,
+          "median_time_per_move": 0.23304140000072948,
+          "mean_nodes_per_move": 53.714285714285715
+        }
+      }
+    },
+    {
+      "game_idx": 14,
+      "seed": 54014,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.005138599999554572,
+          "median_time_per_move": 0.0006253999999898952,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 368,
+          "total_time_s": 1.671389300001465,
+          "median_time_per_move": 0.2816035499999998,
+          "mean_nodes_per_move": 61.333333333333336
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 283,
+          "total_time_s": 1.51746070000263,
+          "median_time_per_move": 0.24810565000097995,
+          "mean_nodes_per_move": 47.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.0046416000004683156,
+          "median_time_per_move": 0.0008237999991251854,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 15,
+      "seed": 54015,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.004556600000796607,
+          "median_time_per_move": 0.0005712499996661791,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 8,
+          "total_nodes": 412,
+          "total_time_s": 1.7817054000006465,
+          "median_time_per_move": 0.1701743500007069,
+          "mean_nodes_per_move": 51.5
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.004921599998851889,
+          "median_time_per_move": 0.0007466999995813239,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 349,
+          "total_time_s": 1.4854703000000882,
+          "median_time_per_move": 0.20825040000090667,
+          "mean_nodes_per_move": 49.857142857142854
+        }
+      }
+    },
+    {
+      "game_idx": 16,
+      "seed": 54016,
+      "seating": [
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "paranoid:depth=2,eval_mode='leader'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.0039645000051677926,
+          "median_time_per_move": 0.0005474500012496719,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.00508839999747579,
+          "median_time_per_move": 0.0006696000000374625,
+          "mean_nodes_per_move": 3.875
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 318,
+          "total_time_s": 1.4701209999984712,
+          "median_time_per_move": 0.19943009999951755,
+          "mean_nodes_per_move": 45.42857142857143
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 376,
+          "total_time_s": 1.5610201000017696,
+          "median_time_per_move": 0.23410130000047502,
+          "mean_nodes_per_move": 53.714285714285715
+        }
+      }
+    },
+    {
+      "game_idx": 17,
+      "seed": 54017,
+      "seating": [
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "paranoid:depth=2,eval_mode='mean'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.0041067000001930865,
+          "median_time_per_move": 0.000535449999915727,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.005104000001665554,
+          "median_time_per_move": 0.0006843000001026667,
+          "mean_nodes_per_move": 3.875
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 402,
+          "total_time_s": 1.484208399999261,
+          "median_time_per_move": 0.1903842000010627,
+          "mean_nodes_per_move": 57.42857142857143
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 349,
+          "total_time_s": 1.4659941000008985,
+          "median_time_per_move": 0.19812129999991157,
+          "mean_nodes_per_move": 49.857142857142854
+        }
+      }
+    },
+    {
+      "game_idx": 18,
+      "seed": 54018,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.003740099999049562,
+          "median_time_per_move": 0.0005984000017633662,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 285,
+          "total_time_s": 1.6001121000008425,
+          "median_time_per_move": 0.2669851999999082,
+          "mean_nodes_per_move": 47.5
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 367,
+          "total_time_s": 1.4799044000010326,
+          "median_time_per_move": 0.24159894999957032,
+          "mean_nodes_per_move": 61.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.004846400002861628,
+          "median_time_per_move": 0.0008042499994189711,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 19,
+      "seed": 54019,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.0037697000025218586,
+          "median_time_per_move": 0.0005089000005682465,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 8,
+          "total_nodes": 329,
+          "total_time_s": 1.5043186000002606,
+          "median_time_per_move": 0.15549505000035424,
+          "mean_nodes_per_move": 41.125
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.004181100001005689,
+          "median_time_per_move": 0.0006305000006250339,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 376,
+          "total_time_s": 1.5167827999994188,
+          "median_time_per_move": 0.2861376000000746,
+          "mean_nodes_per_move": 53.714285714285715
+        }
+      }
+    },
+    {
+      "game_idx": 20,
+      "seed": 54020,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "paranoid:depth=2,eval_mode='mean'",
+        "greedy"
+      ],
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "1": 3.0,
+        "2": 3.0,
+        "3": 3.0
+      },
+      "plies": 25,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "P(3,2)",
+        "P(0,4)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.0035963999998784857,
+          "median_time_per_move": 0.0006089999988034833,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 6,
+          "total_nodes": 368,
+          "total_time_s": 1.5006833000024926,
+          "median_time_per_move": 0.284365649999927,
+          "mean_nodes_per_move": 61.333333333333336
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 6,
+          "total_nodes": 283,
+          "total_time_s": 1.548028200002591,
+          "median_time_per_move": 0.29339450000043144,
+          "mean_nodes_per_move": 47.166666666666664
+        },
+        "3": {
+          "spec": "greedy",
+          "moves_played": 6,
+          "total_nodes": 23,
+          "total_time_s": 0.0047347999970952515,
+          "median_time_per_move": 0.0008341499997186475,
+          "mean_nodes_per_move": 3.8333333333333335
+        }
+      }
+    },
+    {
+      "game_idx": 21,
+      "seed": 54021,
+      "seating": [
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.003909099999873433,
+          "median_time_per_move": 0.000537850000000617,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 8,
+          "total_nodes": 412,
+          "total_time_s": 1.5718351999967126,
+          "median_time_per_move": 0.193866949999574,
+          "mean_nodes_per_move": 51.5
+        },
+        "2": {
+          "spec": "greedy",
+          "moves_played": 7,
+          "total_nodes": 27,
+          "total_time_s": 0.004632400001355563,
+          "median_time_per_move": 0.0006828000005043577,
+          "mean_nodes_per_move": 3.857142857142857
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 349,
+          "total_time_s": 1.5484975000017585,
+          "median_time_per_move": 0.22358549999989918,
+          "mean_nodes_per_move": 49.857142857142854
+        }
+      }
+    },
+    {
+      "game_idx": 22,
+      "seed": 54022,
+      "seating": [
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='mean'",
+        "paranoid:depth=2,eval_mode='leader'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.003918500002328074,
+          "median_time_per_move": 0.00048505000086151995,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.005663300000378513,
+          "median_time_per_move": 0.0007634000003235997,
+          "mean_nodes_per_move": 3.875
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 318,
+          "total_time_s": 1.4663122999991174,
+          "median_time_per_move": 0.20596610000029614,
+          "mean_nodes_per_move": 45.42857142857143
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 376,
+          "total_time_s": 1.6028406000004907,
+          "median_time_per_move": 0.2650389999998879,
+          "mean_nodes_per_move": 53.714285714285715
+        }
+      }
+    },
+    {
+      "game_idx": 23,
+      "seed": 54023,
+      "seating": [
+        "greedy",
+        "greedy",
+        "paranoid:depth=2,eval_mode='leader'",
+        "paranoid:depth=2,eval_mode='mean'"
+      ],
+      "winner": 1,
+      "no_winner": false,
+      "ranks": {
+        "1": 1.0,
+        "2": 2.0,
+        "0": 3.0,
+        "3": 4.0
+      },
+      "plies": 30,
+      "moves": [
+        "P(7,4)",
+        "P(4,1)",
+        "P(1,4)",
+        "P(4,7)",
+        "P(6,4)",
+        "P(4,2)",
+        "P(2,4)",
+        "P(4,6)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(4,5)",
+        "P(4,4)",
+        "P(5,4)",
+        "P(4,3)",
+        "P(3,4)",
+        "P(2,4)",
+        "P(5,5)",
+        "P(5,3)",
+        "P(3,3)",
+        "P(1,4)",
+        "P(5,6)",
+        "P(6,3)",
+        "H(0,4)",
+        "P(1,3)",
+        "P(5,7)",
+        "P(7,3)",
+        "H(0,2)",
+        "P(1,2)",
+        "P(5,8)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 29,
+          "total_time_s": 0.004360999999335036,
+          "median_time_per_move": 0.000683049999679497,
+          "mean_nodes_per_move": 3.625
+        },
+        "1": {
+          "spec": "greedy",
+          "moves_played": 8,
+          "total_nodes": 31,
+          "total_time_s": 0.005731400000513531,
+          "median_time_per_move": 0.0008482500006721239,
+          "mean_nodes_per_move": 3.875
+        },
+        "2": {
+          "spec": "paranoid:depth=2,eval_mode='leader'",
+          "moves_played": 7,
+          "total_nodes": 402,
+          "total_time_s": 1.6613131999965844,
+          "median_time_per_move": 0.3095884999984264,
+          "mean_nodes_per_move": 57.42857142857143
+        },
+        "3": {
+          "spec": "paranoid:depth=2,eval_mode='mean'",
+          "moves_played": 7,
+          "total_nodes": 349,
+          "total_time_s": 1.4419995000007475,
+          "median_time_per_move": 0.2100308999997651,
+          "mean_nodes_per_move": 49.857142857142854
+        }
+      }
+    }
+  ]
+}

@@ -14,7 +14,7 @@ from .constants import (
     V,
 )
 from .pathfinding import has_path
-from .types import Move, PawnMove, WallMove
+from .types import Move, PawnMove, WallMove, PassMove
 
 if TYPE_CHECKING:
     from .state import GameState
@@ -61,7 +61,29 @@ def legal_pawn_moves(state: GameState) -> list[PawnMove]:
     return moves
 
 
-def is_wall_legal(state: GameState, wall: WallMove) -> bool:
+def wall_blocks_edge(wall: WallMove, a: tuple[int, int], b: tuple[int, int]) -> bool:
+    """True if wall directly intersects the physical step between adjacent cells a and b."""
+    r, c, o = wall.r, wall.c, wall.o
+    ar, ac = a
+    br, bc = b
+    if o == "H":
+        # Horizontal wall spans groove below row r for columns c and c+1
+        if ac == bc and (ac == c or ac == c + 1):
+            if (ar == r and br == r + 1) or (ar == r + 1 and br == r):
+                return True
+    else:  # "V"
+        # Vertical wall spans groove right of col c for rows r and r+1
+        if ar == br and (ar == r or ar == r + 1):
+            if (ac == c and bc == c + 1) or (ac == c + 1 and bc == c):
+                return True
+    return False
+
+
+def is_wall_legal(
+    state: GameState,
+    wall: WallMove,
+    known_paths: dict[int, list[tuple[int, int]]] | None = None,
+) -> bool:
     """Validate wall legality including bounds, overlap, crossing, and path existence for all players."""
     if state.is_terminal():
         return False
@@ -87,9 +109,25 @@ def is_wall_legal(state: GameState, wall: WallMove) -> bool:
         if (r, c) in state.v_walls or (r - 1, c) in state.v_walls or (r + 1, c) in state.v_walls:
             return False
 
+    # Fast path: on an open board without existing walls, a single wall cannot disconnect any player
+    if not state.h_walls and not state.v_walls:
+        return True
+
     # Fair-play invariant: ensure every active player still has a path to their goal side
     nxt = state.apply(wall)
     for p in state.players:
+        # Check if known path for player p remains unblocked
+        if known_paths is not None and p in known_paths:
+            path = known_paths[p]
+            if path and len(path) >= 2:
+                path_intact = True
+                for i in range(len(path) - 1):
+                    if wall_blocks_edge(wall, path[i], path[i + 1]):
+                        path_intact = False
+                        break
+                if path_intact:
+                    continue  # Known path is still 100% open, skip BFS
+
         if not has_path(nxt, p):
             return False
 
@@ -116,13 +154,18 @@ def legal_moves(state: GameState) -> list[Move]:
     """Pawn moves first, then legal wall placements in deterministic order."""
     if state.is_terminal():
         return []
-    return list(legal_pawn_moves(state)) + list(legal_wall_moves(state))
+    moves: list[Move] = list(legal_pawn_moves(state)) + list(legal_wall_moves(state))
+    if not moves:
+        return [PassMove()]
+    return moves
 
 
 def is_legal(state: GameState, move: Move) -> bool:
     """True if move is legal in the current position."""
     if state.is_terminal():
         return False
+    if isinstance(move, PassMove):
+        return len(legal_pawn_moves(state)) == 0 and len(legal_wall_moves(state)) == 0
     if isinstance(move, PawnMove):
         return move in legal_pawn_moves(state)
     if isinstance(move, WallMove):

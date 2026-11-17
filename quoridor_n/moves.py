@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from . import pathfinding, rules
-from .types import Move, WallMove
+from .types import Move, WallMove, PassMove
 
 if TYPE_CHECKING:
     from .state import GameState
@@ -48,8 +48,15 @@ def candidate_walls(state: GameState, target: str = "all") -> list[WallMove]:
     seen: set[WallMove] = set()
     result: list[WallMove] = []
 
+    # Pre-fetch shortest paths for active players to accelerate legality checking
+    known_paths: dict[int, list[tuple[int, int]]] = {}
+    for p in state.players:
+        p_path = pathfinding.shortest_path(state, p)
+        if p_path:
+            known_paths[p] = p_path
+
     for opp in target_players:
-        path = pathfinding.shortest_path(state, opp)
+        path = known_paths.get(opp)
         if path is None or len(path) < 2:
             continue
 
@@ -72,7 +79,7 @@ def candidate_walls(state: GameState, target: str = "all") -> list[WallMove]:
                     continue
                 if not (0 <= w.r <= 7 and 0 <= w.c <= 7):
                     continue
-                if rules.is_wall_legal(state, w):
+                if rules.is_wall_legal(state, w, known_paths=known_paths):
                     seen.add(w)
                     result.append(w)
 
@@ -81,6 +88,11 @@ def candidate_walls(state: GameState, target: str = "all") -> list[WallMove]:
 
 def candidate_moves(state: GameState, target: str = "all") -> list[Move]:
     """Legal pawn moves followed by candidate wall placements."""
+    if state.is_terminal():
+        return []
     pawn_moves = rules.legal_pawn_moves(state)
     wall_moves = candidate_walls(state, target=target)
-    return list(pawn_moves) + list(wall_moves)
+    moves: list[Move] = list(pawn_moves) + list(wall_moves)
+    if not moves:
+        return [PassMove()]
+    return moves

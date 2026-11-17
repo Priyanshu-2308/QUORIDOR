@@ -99,7 +99,8 @@ class MaxnAgent(Agent):
         else:
             ordered_walls = []
 
-        combined = ordered_pawns + ordered_walls
+        other_moves = [m for m in moves if not isinstance(m, (PawnMove, WallMove))]
+        combined = ordered_pawns + ordered_walls + other_moves
 
         if tt_move is not None and tt_move in combined:
             combined.remove(tt_move)

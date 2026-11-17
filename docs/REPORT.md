@@ -218,3 +218,11 @@ uvicorn server.app:app --port 8000                   # play in the browser
 ```
 
 Existing result files are skipped unless `--force` is given. Reruns use the same seeds, but the timing columns will differ from ours.
+
+## 13. Four-player extension
+
+Following presentation feedback, the project was extended to four players on a dedicated branch `four-player` without modifying the two-player engine. The extension includes:
+- An immutable four-player engine in `quoridor_n/` supporting both 4-player games (5 walls each, clockwise turn order, jumping rules) and 2-player mode.
+- Four-player adaptations of search algorithms: Paranoid Alpha-Beta (`ParanoidAgent`), $Max^n$ multi-agent search (`MaxnAgent`), vector-payoff Monte Carlo Tree Search (`MCTSAgent`), and Greedy baseline (`GreedyAgent`).
+- A seating permutation tournament harness and statistical inference module in `quoridor_n/tournament.py` and `quoridor_n/stats.py`.
+- Complete pre-registered hypotheses, experiments (E0 to E4), ablations (A1 to A6), and slide facts documented in `docs/FOUR_PLAYER.md` and `results_n/slide_facts.md`.

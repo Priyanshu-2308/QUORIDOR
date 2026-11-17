@@ -1,0 +1,18 @@
+ablation,variant,games,wins,win_rate,mean_rank
+A1: Wall Target Strategy,greedy,48,12,0.25,2.4375
+A1: Wall Target Strategy,"paranoid:depth=2,wall_target='all'",24,6,0.25,2.625
+A1: Wall Target Strategy,"paranoid:depth=2,wall_target='leader'",24,6,0.25,2.5
+A4: Evaluation Function,greedy,48,12,0.25,2.4166666666666665
+A4: Evaluation Function,"paranoid:depth=2,eval_mode='leader'",24,6,0.25,2.5833333333333335
+A4: Evaluation Function,"paranoid:depth=2,eval_mode='mean'",24,6,0.25,2.5833333333333335
+A5: Wall Inventory (3 Walls),greedy,24,2,0.08333333333333333,3.25
+A5: Wall Inventory (3 Walls),maxn:depth=2,24,11,0.4583333333333333,1.7083333333333333
+A5: Wall Inventory (3 Walls),mcts:iterations=250,24,5,0.20833333333333334,2.9166666666666665
+A5: Wall Inventory (3 Walls),paranoid:depth=2,24,6,0.25,2.125
+A5: Wall Inventory (10 Walls),greedy,24,5,0.20833333333333334,2.6458333333333335
+A5: Wall Inventory (10 Walls),maxn:depth=2,24,9,0.375,2.1458333333333335
+A5: Wall Inventory (10 Walls),mcts:iterations=250,24,0,0.0,3.3125
+A5: Wall Inventory (10 Walls),paranoid:depth=2,24,10,0.4166666666666667,1.8958333333333333
+A6: MCTS Rollout Policy,greedy,48,22,0.4583333333333333,1.8229166666666667
+A6: MCTS Rollout Policy,"mcts:iterations=250,rollout_policy='path_biased'",24,1,0.041666666666666664,3.1041666666666665
+A6: MCTS Rollout Policy,"mcts:iterations=250,rollout_policy='random'",24,1,0.041666666666666664,3.25

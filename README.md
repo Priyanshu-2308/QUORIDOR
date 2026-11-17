@@ -58,6 +58,34 @@ python -m quoridor.tournament --ablation
 
 See `docs/REPORT.md` for the experimental setup, win rates, and ablation results.
 
+## Four-player mode
+
+The four-player extension lives in `quoridor_n/` and preserves the original two-player engine.
+
+Watch a game in the terminal:
+```bash
+python -m quoridor_n.play --table "greedy,paranoid:depth=2,maxn:depth=2,mcts:iterations=250" --seed 42
+```
+
+Run a four-player tournament table:
+```bash
+python -m quoridor_n.tournament --table "greedy,paranoid:depth=2,maxn:depth=2,mcts:iterations=250" --seating perms --reps 1
+```
+
+Run the four-player test suite:
+```bash
+python -m pytest tests/n -q
+```
+
+Reproduce the experiments:
+```bash
+python -m quoridor_n.experiments --profile full --workers 6
+python results_n/analysis.py
+python results_n/plot_figures.py
+```
+
+See `docs/FOUR_PLAYER.md` for detailed rules, pre-registered hypotheses, and results.
+
 ## Layout
 
 - `quoridor/`: engine and agents

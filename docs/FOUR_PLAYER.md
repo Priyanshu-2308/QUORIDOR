@@ -100,16 +100,76 @@ Any difference with an adjusted p-value $p > 0.05$ or a 95% confidence interval 
 
 ## 4. Results
 
-*(Populated after executing experiments).*
+All experiments were executed under fixed seeds with balanced seating schedules across 8 parallel worker processes (`os.cpu_count() == 8`). Summaries are compiled from `results_n/stats_n.txt`, `results_n/summary.csv`, and `results_n/pairwise_sign_tests.csv`.
+
+### 4.1 Experiment E0: Seating Bias Baseline
+- **Four Greedy Agents ($N = 8$ games):**
+  - Seat 0: $8/8$ wins ($100.0\%$, 95% Wilson CI [$67.6\%, 100.0\%$], $p_{\text{adj}} = 0.0001$).
+  - Seats 1, 2, 3: $0/8$ wins ($0.0\%$, 95% Wilson CI [$0.0\%, 32.4\%$], $p_{\text{adj}} = 0.6418$).
+- **Four Paranoid(d=2) Agents ($N = 4$ games):**
+  - Seat 2: $4/4$ wins ($100.0\%$, 95% Wilson CI [$51.0\%, 100.0\%$], $p_{\text{adj}} = 0.0156$).
+  - Seats 0, 1, 3: $0/4$ wins ($0.0\%$, 95% Wilson CI [$0.0\%, 49.0\%$], $p_{\text{adj}} = 1.0000$).
+- *Interpretation:* Without wall coordination, identical agents exhibit massive first-mover or deterministic symmetry advantage. Balanced permutation seating ($24$ permutations) is mandatory to eliminate seating bias.
+
+### 4.2 Experiment E1: Skill Ladder vs Three Greedy Baselines
+Each search agent was seated against three Greedy baselines across balanced rotations:
+- **Max^n ($d=2$):** $2/8$ wins ($25.0\%$, 95% CI [$7.1\%, 59.1\%$]), mean rank $2.75$ [$2.00, 3.50$], $1709.5$ms/move.
+- **Paranoid ($d=2$):** $2/8$ wins ($25.0\%$, 95% CI [$7.1\%, 59.1\%$]), mean rank $2.75$ [$2.00, 3.50$], $327.2$ms/move.
+- **Paranoid ($d=3$):** $1/4$ wins ($25.0\%$, 95% CI [$4.6\%, 69.9\%$]), mean rank $3.00$ [$1.75, 4.00$], $967.0$ms/move.
+- **MCTS ($250$ iterations):** $1/8$ wins ($12.5\%$, 95% CI [$2.2\%, 47.1\%$]), mean rank $3.12$ [$2.38, 3.75$], $571.6$ms/move.
+
+### 4.3 Experiment E2: Main Round Robin (Four Families, Balanced Permutations)
+All 24 seating permutations of the four core families were executed ($N = 24$ games, 20 walls total):
+
+| Agent Family | Wins / Games | Win Rate | 95% Wilson CI | Mean Rank [95% CI] | Mean Nodes/Move | Mean Time/Move |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Max^n ($d=2$)** | 11 / 24 | **45.8%** | [27.9%, 64.9%] | 2.04 [1.62, 2.46] | 138 | 859.7 ms |
+| **Paranoid ($d=2$)** | 7 / 24 | **29.2%** | [14.9%, 49.2%] | 2.17 [1.79, 2.52] | 44 | 327.2 ms |
+| **Greedy** | 3 / 24 | **12.5%** | [4.3%, 31.0%] | 2.77 [2.38, 3.17] | 3 | 1.0 ms |
+| **MCTS (250)** | 3 / 24 | **12.5%** | [4.3%, 31.0%] | 3.02 [2.56, 3.46] | 248 | 939.2 ms |
+
+**Pairwise Paired Sign Tests on Game Ranks ($m = 6$ comparisons):**
+- **Max^n vs MCTS:** $18-5$ ($p_{\text{raw}} = 0.0106, p_{\text{adj}} = 0.0637$, marginal / near-significant).
+- **Paranoid vs MCTS:** $17-6$ ($p_{\text{raw}} = 0.0347, p_{\text{adj}} = 0.1734$, inconclusive after Holm correction).
+- **Max^n vs Paranoid:** $13-10$ ($p_{\text{raw}} = 0.6776, p_{\text{adj}} = 1.0000$, inconclusive).
+- **Greedy vs Max^n:** $8-14$ ($p_{\text{raw}} = 0.2863, p_{\text{adj}} = 0.8588$).
+- **Greedy vs Paranoid:** $7-15$ ($p_{\text{raw}} = 0.1338, p_{\text{adj}} = 0.5352$).
+- **Greedy vs MCTS:** $12-11$ ($p_{\text{raw}} = 1.0000, p_{\text{adj}} = 1.0000$).
+
+### 4.4 Experiment E3: Family Comparison (2 Paranoid vs 2 MCTS)
+Across $24$ games with balanced permutations of two Paranoid and two MCTS agents:
+- **Paranoid Family:** 21 wins ($87.5\%$, 95% Wilson CI [$69.0\%, 95.7\%$]).
+- **MCTS Family:** 3 wins ($12.5\%$).
+- **Exact Binomial Test ($H_0: p = 0.50$):** $p = 0.0003$ (statistically significant advantage for Paranoid over MCTS in 2v2 family play).
+
+### 4.5 Experiment E4: Wall Placement Targeting Analysis
+Across 778 wall placements recorded across tournaments:
+- Walls directly lengthening the current leader's shortest path: **58.4%**.
+- Random expectation baseline ($p_0 = 1/3 = 33.3\%$):
+- Exact Binomial Test: $p = 3.47 \times 10^{-12}$ (statistically significant confirmation of leader targeting).
+
+### 4.6 Key Ablations (A1, A4, A5, A6)
+- **A1 (Wall Target Pruning, $N = 24$):** `leader` pruning achieved identical win rate ($25.0\%$, mean rank $2.50$) to `all` pruning ($25.0\%$, mean rank $2.62$) while reducing wall candidates evaluated by $34\%$.
+- **A4 (Heuristic Evaluation Mode, $N = 24$):** `mean` mode ($25.0\%$, mean rank $2.58$) and `leader` mode ($25.0\%$, mean rank $2.58$) exhibited identical performance.
+- **A5 (Wall Inventory Impact, $N = 24$ each):**
+  - **3 Walls per player:** Max^n won $11/24$ ($45.8\%$), Paranoid won $6/24$ ($25.0\%$), MCTS won $5/24$ ($20.8\%$), Greedy won $2/24$ ($8.3\%$).
+  - **10 Walls per player:** Paranoid won $10/24$ ($41.7\%$), Max^n won $9/24$ ($37.5\%$), Greedy won $5/24$ ($20.8\%$), MCTS won $0/24$ ($0.0\%$).
+  - *Observation:* With larger wall inventories, Paranoid's coalition defense and alpha-beta cutoff efficiency become increasingly potent, overtaking Max^n.
+- **A6 (MCTS Rollout Policy, $N = 24$):** `path_biased` ($4.2\%$, mean rank $3.10$) performed comparably to `random` ($4.2\%$, mean rank $3.25$) at 250 iterations.
 
 ---
 
 ## 5. Limitations
 
-*(Documented in Phase 8).*
+1. **Unpruned Max^n Computational Ceiling:** Max^n evaluates full 4-player payoff vectors without alpha-beta cutoffs. Because the effective branching factor is $\approx 19$ candidate moves per ply, searching depth $d=4$ requires evaluating $19^4 \approx 130,000$ leaves per move, which is computationally prohibitive in pure Python without branch pruning.
+2. **MCTS Iteration Budget:** At 250 iterations per move, MCTS explores only a fraction of the $19$-branch tree and relies on distance-difference heuristic cutoffs. In four-player tactical races, this was insufficient to match shallow alpha-beta tree search ($12.5\%$ vs $87.5\%$ in E3).
+3. **Four-Player Cul-de-Sac Deadlocks:** In 4-player Quoridor, pawns can be temporarily immobilized in cul-de-sacs when adjacent cells are blocked by walls and a stack of multiple opponent pawns, leaving the player with 0 legal pawn moves. When the player also has 0 walls left, they must pass their turn (`PassMove`). While our engine gracefully handles this, a pass rule was not present in the original 2-player specification.
+4. **Sample Size & Statistical Power:** With $N = 24$ games per table, small win-rate differences (such as Max^n $45.8\%$ vs Paranoid $29.2\%$) have wide confidence intervals and adjusted $p > 0.05$. Resolving whether Max^n is definitively superior to Paranoid would require $N \ge 168$ games.
+5. **No Human or External Engine Grounding:** All evaluations are purely internal head-to-head matches between student search agents under identical rules and wall budgets. No human user testing or external master bots were benchmarked.
 
 ---
 
 ## 6. Amendments
 
-*(No amendments to pre-registered plan prior to execution).*
+1. **Cul-de-Sac Pass Handling (Game 21 of A5):** Fuzz testing and tournament play revealed that in 4-player games, an active player with 0 walls can have all adjacent cells blocked by a combination of walls, board edges, and opponent pawns whose straight and diagonal jump landing cells are simultaneously occupied or walled off. In such positions, the player has zero legal moves. We formally introduced `PassMove` in `quoridor_n/types.py` and `quoridor_n/rules.py` to allow the player to pass their turn without violating game loop invariants.
+2. **MCTS Rollout Policy Optimization:** Initial MCTS rollouts evaluated all 128 board walls with full BFS on random exploratory steps, introducing a severe performance bottleneck ($27$s per move). The rollout simulation policy was streamlined to select among legal pawn movements using $O(1)$ Manhattan goal distances, reducing move latency to $\approx 430$ms per move ($60\times$ speedup) without altering search semantics.

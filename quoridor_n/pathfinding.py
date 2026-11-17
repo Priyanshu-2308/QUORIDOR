@@ -71,11 +71,14 @@ def shortest_path_length(state: GameState, player: int) -> int | None:
         return 0
 
     visited = bytearray(81)
-    visited[start[0] * 9 + start[1]] = 1
-    queue = deque([(start[0], start[1], 0)])
+    start_idx = start[0] * 9 + start[1]
+    visited[start_idx] = 1
+    queue = deque([(start_idx, 0)])
 
     while queue:
-        r, c, d = queue.popleft()
+        curr_idx, d = queue.popleft()
+        r = curr_idx // 9
+        c = curr_idx % 9
         nd = d + 1
 
         for dr, dc in DIRECTIONS:
@@ -87,7 +90,7 @@ def shortest_path_length(state: GameState, player: int) -> int | None:
                         if goal_reached(player, (nr, nc)):
                             return nd
                         visited[nxt_idx] = 1
-                        queue.append((nr, nc, nd))
+                        queue.append((nxt_idx, nd))
 
     return None
 
@@ -99,21 +102,24 @@ def has_path(state: GameState, player: int) -> bool:
         return True
 
     visited = bytearray(81)
-    visited[start[0] * 9 + start[1]] = 1
-    queue = deque([start])
+    start_idx = start[0] * 9 + start[1]
+    visited[start_idx] = 1
+    queue = deque([start_idx])
 
     while queue:
-        curr = queue.popleft()
+        curr_idx = queue.popleft()
+        r = curr_idx // 9
+        c = curr_idx % 9
         for dr, dc in DIRECTIONS:
-            nr, nc = curr[0] + dr, curr[1] + dc
+            nr, nc = r + dr, c + dc
             if 0 <= nr < BOARD_SIZE and 0 <= nc < BOARD_SIZE:
                 nxt_idx = nr * 9 + nc
                 if not visited[nxt_idx]:
-                    if not state.is_blocked(curr, (nr, nc)):
+                    if not state.is_blocked((r, c), (nr, nc)):
                         if goal_reached(player, (nr, nc)):
                             return True
                         visited[nxt_idx] = 1
-                        queue.append((nr, nc))
+                        queue.append(nxt_idx)
 
     return False
 

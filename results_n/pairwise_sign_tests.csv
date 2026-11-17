@@ -1,0 +1,7 @@
+agent_a,agent_b,wins_a,wins_b,ties,n_effective,p_raw,p_adj
+greedy,maxn:depth=2,8,14,2,22,0.2862787246704092,0.8588361740112276
+greedy,mcts:iterations=250,12,11,1,23,1.0,1.0
+greedy,paranoid:depth=2,7,15,2,22,0.13380050659179654,0.5352020263671862
+maxn:depth=2,mcts:iterations=250,18,5,1,23,0.01062202453613286,0.06373214721679715
+maxn:depth=2,paranoid:depth=2,13,10,1,23,0.6776394844055218,1.0
+mcts:iterations=250,paranoid:depth=2,6,17,1,23,0.03468966484069833,0.17344832420349166

@@ -9,6 +9,7 @@ import json
 import math
 import os
 from pathlib import Path
+import random
 import statistics
 import time
 from typing import Any, Sequence
@@ -220,15 +221,15 @@ def run_timing_benchmark(specs: Sequence[str], repeats: int = 3) -> dict[str, An
     base_state = GameState.initial(num_players=4)
     positions.append(base_state)
 
-    # Generate 5 diverse mid-game positions
-    rng = random.Random(12345) if "random" in globals() else __import__("random").Random(12345)
+    # Generate 5 diverse mid-game positions fast
+    rng = random.Random(12345)
     for _ in range(5):
         s = base_state
         for _ in range(8):
-            legal = s.legal_moves()
-            if not legal:
+            avail = candidate_moves(s, target="all")
+            if not avail:
                 break
-            s = s.apply(rng.choice(legal))
+            s = s.apply(rng.choice(avail))
         positions.append(s)
 
     benchmark_results: dict[str, Any] = {}

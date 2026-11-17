@@ -9,7 +9,7 @@ from typing import Any
 from .base import Agent, default_stats
 from .. import moves as move_gen, pathfinding, rules
 from ..state import GameState
-from ..types import Move, PawnMove
+from ..types import Move, PawnMove, PassMove
 
 
 class MCTSNode:
@@ -33,7 +33,6 @@ class MCTSNode:
         parent: MCTSNode | None = None,
         move_from_parent: Move | None = None,
         mover: int | None = None,
-        unexpanded_moves: list[Move] | None = None,
     ):
         self.state = state
         self.parent = parent
@@ -41,12 +40,9 @@ class MCTSNode:
         self.mover = mover
         self.player_to_move = state.current
         self.children: dict[Move, MCTSNode] = {}
-        self.unexpanded_moves = unexpanded_moves if unexpanded_moves is not None else []
+        self.unexpanded_moves: list[Move] | None = None
         self.visits = 0
         self.total_rewards: dict[int, float] = {p: 0.0 for p in state.players}
-
-    def is_fully_expanded(self) -> bool:
-        return len(self.unexpanded_moves) == 0
 
     def is_terminal(self) -> bool:
         return self.state.is_terminal()
@@ -103,9 +99,10 @@ class MCTSAgent(Agent):
                 self.last_stats["depth"] = 1
                 return m
 
+        root = MCTSNode(state=state)
         root_moves = self._get_candidate_moves(state)
         self.rng.shuffle(root_moves)
-        root = MCTSNode(state=state, unexpanded_moves=root_moves)
+        root.unexpanded_moves = root_moves
 
         max_depth_reached = 0
 
@@ -114,7 +111,17 @@ class MCTSAgent(Agent):
             depth = 0
 
             # 1. Selection
-            while node.is_fully_expanded() and not node.is_terminal():
+            while not node.is_terminal():
+                if node.unexpanded_moves is None:
+                    moves = self._get_candidate_moves(node.state)
+                    self.rng.shuffle(moves)
+                    node.unexpanded_moves = moves
+
+                if node.unexpanded_moves:
+                    break
+                if not node.children:
+                    break
+
                 node = self._select_best_child(node)
                 depth += 1
 
@@ -122,23 +129,26 @@ class MCTSAgent(Agent):
                 max_depth_reached = depth
 
             # 2. Expansion
-            if not node.is_terminal() and node.unexpanded_moves:
-                move = node.unexpanded_moves.pop()
-                next_state = node.state.apply(move)
-                next_moves = self._get_candidate_moves(next_state)
-                self.rng.shuffle(next_moves)
-                child = MCTSNode(
-                    state=next_state,
-                    parent=node,
-                    move_from_parent=move,
-                    mover=node.player_to_move,
-                    unexpanded_moves=next_moves,
-                )
-                node.children[move] = child
-                node = child
-                depth += 1
-                if depth > max_depth_reached:
-                    max_depth_reached = depth
+            if not node.is_terminal():
+                if node.unexpanded_moves is None:
+                    moves = self._get_candidate_moves(node.state)
+                    self.rng.shuffle(moves)
+                    node.unexpanded_moves = moves
+
+                if node.unexpanded_moves:
+                    move = node.unexpanded_moves.pop()
+                    next_state = node.state.apply(move)
+                    child = MCTSNode(
+                        state=next_state,
+                        parent=node,
+                        move_from_parent=move,
+                        mover=node.player_to_move,
+                    )
+                    node.children[move] = child
+                    node = child
+                    depth += 1
+                    if depth > max_depth_reached:
+                        max_depth_reached = depth
 
             # 3. Simulation (Rollout)
             rewards = self._simulate(node.state)
@@ -152,7 +162,8 @@ class MCTSAgent(Agent):
                 curr_node = curr_node.parent
 
         if not root.children:
-            chosen = self.rng.choice(rules.legal_moves(state))
+            avail = rules.legal_moves(state)
+            chosen = self.rng.choice(avail) if avail else PassMove()
             best_eval = 0.0
         else:
             # Pick the most-visited root child
@@ -198,46 +209,31 @@ class MCTSAgent(Agent):
         sim_state = state
         steps = 0
 
+        def goal_dist(p: int, cell: tuple[int, int]) -> int:
+            if p == 0:
+                return cell[0]
+            if p == 1:
+                return 8 - cell[1]
+            if p == 2:
+                return 8 - cell[0]
+            return cell[1]
+
         while not sim_state.is_terminal() and steps < self.rollout_depth:
             curr = sim_state.current
+            pawn_moves = rules.legal_pawn_moves(sim_state)
+            if not pawn_moves:
+                break
 
             if (
                 self.rollout_policy == "path_biased"
                 and self.rng.random() < self.rollout_greedy_share
             ):
-                # Greedy path step
-                path = pathfinding.shortest_path(sim_state, curr)
-                step_done = False
-                if path is not None and len(path) >= 2:
-                    direct_step = PawnMove(to=path[1])
-                    if rules.is_legal(sim_state, direct_step):
-                        sim_state = sim_state.apply(direct_step)
-                        step_done = True
-                if not step_done:
-                    # Pick legal pawn move minimizing distance
-                    pawn_moves = rules.legal_pawn_moves(sim_state)
-                    if pawn_moves:
-                        best_pm = min(
-                            pawn_moves,
-                            key=lambda pm: (
-                                pathfinding.shortest_path_length(sim_state.apply(pm), curr)
-                                or 99
-                            ),
-                        )
-                        sim_state = sim_state.apply(best_pm)
-                        step_done = True
-
-                if not step_done:
-                    avail = rules.legal_moves(sim_state)
-                    if not avail:
-                        break
-                    sim_state = sim_state.apply(self.rng.choice(avail))
+                # Pick pawn move that strictly reduces distance to goal line
+                best_pm = min(pawn_moves, key=lambda pm: goal_dist(curr, pm.to))
+                sim_state = sim_state.apply(best_pm)
             else:
-                # Random rollout policy
-                avail = rules.legal_moves(sim_state)
-                if not avail:
-                    break
-                sim_state = sim_state.apply(self.rng.choice(avail))
+                # Random pawn step (uniform exploration or random rollout policy)
+                sim_state = sim_state.apply(self.rng.choice(pawn_moves))
 
             steps += 1
 

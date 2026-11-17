@@ -13,7 +13,7 @@ from .constants import (
     V,
     goal_reached,
 )
-from .types import Cell, Move, PawnMove, WallMove
+from .types import Cell, Move, PawnMove, WallMove, PassMove
 
 if TYPE_CHECKING:
     from .render import render_board
@@ -120,6 +120,13 @@ class GameState:
                 walls_left=tuple(new_walls_left),
                 h_walls=h_walls,
                 v_walls=v_walls,
+                current=next_player,
+                turn_count=self.turn_count + 1,
+            )
+
+        if isinstance(move, PassMove):
+            return replace(
+                self,
                 current=next_player,
                 turn_count=self.turn_count + 1,
             )
