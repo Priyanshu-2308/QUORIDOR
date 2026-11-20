@@ -218,3 +218,7 @@ uvicorn server.app:app --port 8000                   # play in the browser
 ```
 
 Existing result files are skipped unless `--force` is given. Reruns use the same seeds, but the timing columns will differ from ours.
+
+## 13. Dynamic board extension ($7 \times 7$ to $12 \times 12$, 2 or 4 players)
+
+An extension supporting selectable board dimensions from $7 \times 7$ to $12 \times 12$ and 4-player games is implemented in `quoridor_n/`, tested in `tests/n/`, and documented in `docs/DYNAMIC_BOARD.md`. It includes multiplayer search agents (Paranoid and Max^n), dynamic web interface scaling, board size scaling experiments, and ablation suites in `results_n/`. See `docs/DYNAMIC_BOARD.md` for the complete rules specification, pre-registered hypotheses, and empirical results.

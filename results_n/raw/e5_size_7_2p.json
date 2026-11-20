@@ -1,0 +1,218 @@
+{
+  "profile": "quick",
+  "games_planned": 2,
+  "games_played": 2,
+  "table": [
+    "paranoid:depth=2",
+    "mcts:iterations=35"
+  ],
+  "seating_mode": "perms",
+  "reps": 1,
+  "board_size": 7,
+  "num_players": 2,
+  "walls_per_player": 8,
+  "max_turns": 280,
+  "base_seed": 50700,
+  "elapsed_s": 1.0661979999858886,
+  "total_passes": 0,
+  "total_no_winners": 0,
+  "summary": {
+    "paranoid:depth=2": {
+      "games_played": 2,
+      "wins": 2,
+      "ranks": [
+        1.0,
+        1.0
+      ],
+      "total_nodes": 908,
+      "total_time_s": 0.5800950002158061,
+      "total_moves": 38,
+      "win_rate": 1.0,
+      "mean_rank": 1.0,
+      "mean_nodes_per_move": 23.894736842105264,
+      "mean_time_per_move": 0.015265657900415949
+    },
+    "mcts:iterations=35": {
+      "games_played": 2,
+      "wins": 0,
+      "ranks": [
+        2.0,
+        2.0
+      ],
+      "total_nodes": 1218,
+      "total_time_s": 0.8540177000686526,
+      "total_moves": 37,
+      "win_rate": 0.0,
+      "mean_rank": 2.0,
+      "mean_nodes_per_move": 32.91891891891892,
+      "mean_time_per_move": 0.023081559461314936
+    }
+  },
+  "games": [
+    {
+      "game_idx": 0,
+      "seed": 50700,
+      "seating": [
+        "paranoid:depth=2",
+        "mcts:iterations=35"
+      ],
+      "size": 7,
+      "players": 2,
+      "walls": 8,
+      "winner": 0,
+      "no_winner": false,
+      "ranks": {
+        "0": 1.0,
+        "2": 2.0
+      },
+      "plies": 49,
+      "pass_count": 0,
+      "moves": [
+        "P(5,3)",
+        "H(2,2)",
+        "P(4,3)",
+        "P(1,3)",
+        "P(3,3)",
+        "P(1,2)",
+        "V(1,1)",
+        "H(1,4)",
+        "P(3,4)",
+        "V(1,3)",
+        "H(0,1)",
+        "P(1,3)",
+        "P(3,5)",
+        "H(2,4)",
+        "P(3,6)",
+        "H(0,5)",
+        "V(0,2)",
+        "P(0,3)",
+        "H(3,5)",
+        "P(0,4)",
+        "H(3,3)",
+        "P(0,3)",
+        "H(3,1)",
+        "P(0,4)",
+        "V(2,0)",
+        "P(1,4)",
+        "H(4,0)",
+        "P(0,4)",
+        "P(2,6)",
+        "P(1,4)",
+        "P(3,6)",
+        "H(0,3)",
+        "P(3,5)",
+        "P(1,5)",
+        "P(3,4)",
+        "P(1,6)",
+        "P(3,3)",
+        "P(1,5)",
+        "P(3,2)",
+        "P(1,4)",
+        "P(3,1)",
+        "P(1,5)",
+        "P(2,1)",
+        "P(1,6)",
+        "P(1,1)",
+        "P(2,6)",
+        "P(1,0)",
+        "P(1,6)",
+        "P(0,0)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "paranoid:depth=2",
+          "moves_count": 25,
+          "total_nodes": 524,
+          "total_time_s": 0.30565480020595714,
+          "mean_nodes_per_move": 20.96,
+          "mean_time_per_move": 0.012226192008238285,
+          "tt_hits": 3,
+          "cutoffs": 133,
+          "iterations": 0
+        },
+        "2": {
+          "spec": "mcts:iterations=35",
+          "moves_count": 24,
+          "total_nodes": 787,
+          "total_time_s": 0.49547049996908754,
+          "mean_nodes_per_move": 32.791666666666664,
+          "mean_time_per_move": 0.02064460416537865,
+          "tt_hits": 0,
+          "cutoffs": 0,
+          "iterations": 770
+        }
+      }
+    },
+    {
+      "game_idx": 1,
+      "seed": 50701,
+      "seating": [
+        "mcts:iterations=35",
+        "paranoid:depth=2"
+      ],
+      "size": 7,
+      "players": 2,
+      "walls": 8,
+      "winner": 2,
+      "no_winner": false,
+      "ranks": {
+        "2": 1.0,
+        "0": 2.0
+      },
+      "plies": 26,
+      "pass_count": 0,
+      "moves": [
+        "P(6,4)",
+        "P(1,3)",
+        "H(4,2)",
+        "P(2,3)",
+        "H(5,3)",
+        "V(5,4)",
+        "H(2,2)",
+        "P(2,4)",
+        "H(4,4)",
+        "H(2,0)",
+        "H(3,4)",
+        "P(3,4)",
+        "V(3,5)",
+        "P(3,3)",
+        "V(4,1)",
+        "P(3,2)",
+        "H(3,1)",
+        "P(3,1)",
+        "P(6,3)",
+        "P(3,0)",
+        "P(6,2)",
+        "P(4,0)",
+        "P(6,3)",
+        "P(5,0)",
+        "P(6,4)",
+        "P(6,0)"
+      ],
+      "seat_stats": {
+        "0": {
+          "spec": "mcts:iterations=35",
+          "moves_count": 13,
+          "total_nodes": 431,
+          "total_time_s": 0.3585472000995651,
+          "mean_nodes_per_move": 33.15384615384615,
+          "mean_time_per_move": 0.0275805538538127,
+          "tt_hits": 0,
+          "cutoffs": 0,
+          "iterations": 420
+        },
+        "2": {
+          "spec": "paranoid:depth=2",
+          "moves_count": 13,
+          "total_nodes": 384,
+          "total_time_s": 0.2744402000098489,
+          "mean_nodes_per_move": 29.53846153846154,
+          "mean_time_per_move": 0.021110784616142225,
+          "tt_hits": 1,
+          "cutoffs": 127,
+          "iterations": 0
+        }
+      }
+    }
+  ]
+}

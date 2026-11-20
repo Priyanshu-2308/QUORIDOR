@@ -314,10 +314,9 @@ def run_timing_benchmark(
         times_per_move: list[float] = []
         nodes_per_move: list[int] = []
 
-        agent = make_agent(spec_with_seed(spec, 42))
-
         for rep in range(repeats):
             for pos in positions:
+                agent = make_agent(spec_with_seed(spec, 42 + rep * 100))
                 t0 = time.perf_counter()
                 _ = agent.choose_move(pos)
                 elapsed = time.perf_counter() - t0

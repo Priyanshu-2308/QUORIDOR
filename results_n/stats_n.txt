@@ -1,0 +1,131 @@
+================================================================================
+DYNAMIC-BOARD QUORIDOR: STATISTICAL REPORT AND HYPOTHESIS EVALUATION
+================================================================================
+
+--------------------------------------------------------------------------------
+1. EXPERIMENT E0: SEAT BIAS ANALYSIS (9x9)
+--------------------------------------------------------------------------------
+
+4P Greedy (4 games planned vs played: 4):
+  Seat 0: win rate = 100.0% (4/4), 95% CI [51.0%, 100.0%], p = 0.0039
+  Seat 1: win rate = 0.0% (0/4), 95% CI [0.0%, 49.0%], p = 0.5781
+  Seat 2: win rate = 0.0% (0/4), 95% CI [0.0%, 49.0%], p = 0.5781
+  Seat 3: win rate = 0.0% (0/4), 95% CI [0.0%, 49.0%], p = 0.5781
+
+4P Paranoid (4 games planned vs played: 4):
+  Seat 0: win rate = 0.0% (0/4), 95% CI [0.0%, 49.0%], p = 0.5781
+  Seat 1: win rate = 0.0% (0/4), 95% CI [0.0%, 49.0%], p = 0.5781
+  Seat 2: win rate = 100.0% (4/4), 95% CI [51.0%, 100.0%], p = 0.0039
+  Seat 3: win rate = 0.0% (0/4), 95% CI [0.0%, 49.0%], p = 0.5781
+
+2P Greedy (2 games planned vs played: 2):
+  Seat 0: win rate = 0.0% (0/2), 95% CI [0.0%, 65.8%], p = 0.5000
+  Seat 2: win rate = 100.0% (2/2), 95% CI [34.2%, 100.0%], p = 0.5000
+
+2P Paranoid (2 games planned vs played: 2):
+  Seat 0: win rate = 0.0% (0/2), 95% CI [0.0%, 65.8%], p = 0.5000
+  Seat 2: win rate = 100.0% (2/2), 95% CI [34.2%, 100.0%], p = 0.5000
+
+--------------------------------------------------------------------------------
+2. EXPERIMENT E1: SKILL LADDER (vs Greedy Baselines)
+--------------------------------------------------------------------------------
+  4P paranoid: win rate = 25.0% (1/4), 95% CI [4.6%, 69.9%], raw p = 1.0000e+00, adj p = 1.0000e+00 
+  4P maxn: win rate = 25.0% (1/4), 95% CI [4.6%, 69.9%], raw p = 1.0000e+00, adj p = 1.0000e+00 
+  4P mcts: win rate = 0.0% (0/4), 95% CI [0.0%, 49.0%], raw p = 5.7812e-01, adj p = 1.0000e+00 
+  2P paranoid: win rate = 100.0% (2/2), 95% CI [34.2%, 100.0%], raw p = 5.0000e-01, adj p = 1.0000e+00 
+  2P mcts: win rate = 100.0% (2/2), 95% CI [34.2%, 100.0%], raw p = 5.0000e-01, adj p = 1.0000e+00 
+
+--------------------------------------------------------------------------------
+3. EXPERIMENT E2: MAIN ROUND ROBIN (4P 9x9 Omniverse Table)
+--------------------------------------------------------------------------------
+Planned games: 24, Played: 24
+  greedy                   : wins= 2/24 (8.3%, 95% CI [2.3%, 25.8%], p=0.0611) | mean rank=2.69 [2.31, 3.08] | time/move=0.0002s
+  paranoid:depth=2         : wins= 9/24 (37.5%, 95% CI [21.2%, 57.3%], p=0.1611) | mean rank=2.00 [1.67, 2.33] | time/move=0.2334s
+  maxn:depth=2             : wins=11/24 (45.8%, 95% CI [27.9%, 64.9%], p=0.0304) | mean rank=2.02 [1.62, 2.48] | time/move=0.5849s
+  mcts:iterations=35       : wins= 2/24 (8.3%, 95% CI [2.3%, 25.8%], p=0.0611) | mean rank=3.29 [2.90, 3.65] | time/move=0.2366s
+
+  Pairwise Paired Sign Tests across 6 Pairings:
+    greedy vs paranoid: 7 vs 17 (decisive n=24) | raw p=6.3915e-02, adj p=2.5566e-01 
+    greedy vs maxn    : 7 vs 15 (decisive n=22) | raw p=1.3380e-01, adj p=2.7942e-01 
+    greedy vs mcts    : 16 vs 7 (decisive n=23) | raw p=9.3140e-02, adj p=2.7942e-01 
+    paranoid vs maxn    : 11 vs 13 (decisive n=24) | raw p=8.3882e-01, adj p=8.3882e-01 
+    paranoid vs mcts    : 20 vs 4 (decisive n=24) | raw p=1.5439e-03, adj p=9.2633e-03 *
+    maxn vs mcts    : 18 vs 5 (decisive n=23) | raw p=1.0622e-02, adj p=5.3110e-02 
+
+--------------------------------------------------------------------------------
+4. EXPERIMENT E3 & E3b: FAMILY & 2-PLAYER HEAD-TO-HEAD
+--------------------------------------------------------------------------------
+
+E3: 2 Paranoid vs 2 MCTS (Played 24 games):
+  Paranoid Family: 22/24 (91.7%, 95% CI [74.2%, 97.7%], p=0.0000)
+
+E3b: 2P Alpha-Beta vs MCTS (Played 4 games):
+  Alpha-Beta win rate: 4/4 (100.0%, 95% CI [51.0%, 100.0%], p=0.1250)
+
+--------------------------------------------------------------------------------
+5. EXPERIMENT E4: LEADER TARGETING BEHAVIORAL ANALYSIS
+--------------------------------------------------------------------------------
+Total Walls Placed Analyzed: 302 across 24 games
+  Share lengthening leader path: 57.3% (Clustered 95% CI: [50.0%, 64.3%])
+  Share where leader was ONLY opponent affected: 38.1%
+  Placebo baseline (random legal candidate wall hit leader): 37.8% (3189/8443)
+  Advantage over placebo: +19.5 percentage points
+
+--------------------------------------------------------------------------------
+6. EXPERIMENT E5: BOARD SIZE SCALING (N in 7..12)
+--------------------------------------------------------------------------------
+Board Size Scaling 2-Player (Paranoid vs MCTS):
+  N= 7: Paranoid win rate = 50.0% (1/2, 95% CI [9.5%, 90.5%]) | mean plies = 37.5
+  N= 8: Paranoid win rate = 50.0% (1/2, 95% CI [9.5%, 90.5%]) | mean plies = 48.5
+  N= 9: Paranoid win rate = 50.0% (1/2, 95% CI [9.5%, 90.5%]) | mean plies = 45.5
+  N=10: Paranoid win rate = 50.0% (1/2, 95% CI [9.5%, 90.5%]) | mean plies = 74.5
+  N=11: Paranoid win rate = 50.0% (1/2, 95% CI [9.5%, 90.5%]) | mean plies = 54.5
+  N=12: Paranoid win rate = 50.0% (1/2, 95% CI [9.5%, 90.5%]) | mean plies = 68.5
+
+Board Size Scaling 4-Player (Seat 0 Advantage):
+  N= 7: Seat 0 win rate = 29.2% (7/24, 95% CI [14.9%, 49.2%]) | mean plies = 46.5
+  N= 8: Seat 0 win rate = 25.0% (6/24, 95% CI [12.0%, 44.9%]) | mean plies = 55.8
+  N= 9: Seat 0 win rate = 16.7% (4/24, 95% CI [6.7%, 35.9%]) | mean plies = 60.0
+  N=10: Seat 0 win rate = 20.8% (5/24, 95% CI [9.2%, 40.5%]) | mean plies = 75.0
+  N=11: Seat 0 win rate = 20.8% (5/24, 95% CI [9.2%, 40.5%]) | mean plies = 77.2
+  N=12: Seat 0 win rate = 20.8% (5/24, 95% CI [9.2%, 40.5%]) | mean plies = 87.0
+
+Inferential contrast (H6: N=7 vs N=12 4P Seat 0 Win Rate):
+  N=7:  7/24 (29.2%)
+  N=12: 5/24 (20.8%)
+
+--------------------------------------------------------------------------------
+7. ABLATIONS A1-A6 ANALYSIS
+--------------------------------------------------------------------------------
+
+A1: Wall Target Pruning (Leader vs All):
+  paranoid:depth=2,wall_target=all   : win_rate=25.0% (6/24) | mean_rank=2.62
+  paranoid:depth=2,wall_target=leader: win_rate=25.0% (6/24) | mean_rank=2.50
+  greedy                             : win_rate=25.0% (12/48) | mean_rank=2.44
+
+A2: Search Paradigm (Paranoid vs Maxn):
+  paranoid:depth=2                   : win_rate=25.0% (6/24) | mean_rank=2.58
+  maxn:depth=2                       : win_rate=25.0% (6/24) | mean_rank=2.58
+  greedy                             : win_rate=25.0% (12/48) | mean_rank=2.42
+
+A3: Search Enhancements Position Benchmark (60 positions):
+  baseline       : mean_nodes=  54.9 | med_time=401.07ms | move_agreement=100.0%
+  no_ordering    : mean_nodes= 269.8 | med_time=534.40ms | move_agreement=58.3%
+  no_tt          : mean_nodes=  54.9 | med_time=412.64ms | move_agreement=100.0%
+  wall_cap_4     : mean_nodes=  23.8 | med_time=173.84ms | move_agreement=88.3%
+  wall_cap_8     : mean_nodes=  39.5 | med_time=274.70ms | move_agreement=96.7%
+  wall_cap_none  : mean_nodes= 221.6 | med_time=998.46ms | move_agreement=60.0%
+
+A4: Evaluation Function (Leader vs Mean):
+  paranoid:depth=2,eval_mode=mean    : win_rate=25.0% (6/24) | mean_rank=2.58
+  paranoid:depth=2,eval_mode=leader  : win_rate=25.0% (6/24) | mean_rank=2.58
+  greedy                             : win_rate=25.0% (12/48) | mean_rank=2.42
+
+A5: Wall Inventory Sensitivity (3 walls vs 10 walls):
+  3 walls:  mean_plies = 45.9
+  10 walls: mean_plies = 92.2
+
+A6: MCTS Rollout Strategy (Path-Biased vs Random):
+  mcts:iterations=35,rollout_policy=path_biased: win_rate=0.0% (0/24) | mean_rank=3.65
+  mcts:iterations=35,rollout_policy=random     : win_rate=0.0% (0/24) | mean_rank=3.33
+  greedy                                       : win_rate=50.0% (24/48) | mean_rank=1.51

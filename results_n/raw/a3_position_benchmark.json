@@ -1,0 +1,38 @@
+{
+  "baseline": {
+    "mean_nodes": 54.9,
+    "median_time_s": 0.4010668999981135,
+    "agreement_rate": 1.0,
+    "positions_tested": 60
+  },
+  "no_ordering": {
+    "mean_nodes": 269.76666666666665,
+    "median_time_s": 0.5343956000288017,
+    "agreement_rate": 0.5833333333333334,
+    "positions_tested": 60
+  },
+  "no_tt": {
+    "mean_nodes": 54.9,
+    "median_time_s": 0.41264430002775043,
+    "agreement_rate": 1.0,
+    "positions_tested": 60
+  },
+  "wall_cap_4": {
+    "mean_nodes": 23.833333333333332,
+    "median_time_s": 0.17384310002671555,
+    "agreement_rate": 0.8833333333333333,
+    "positions_tested": 60
+  },
+  "wall_cap_8": {
+    "mean_nodes": 39.46666666666667,
+    "median_time_s": 0.27470310003263876,
+    "agreement_rate": 0.9666666666666667,
+    "positions_tested": 60
+  },
+  "wall_cap_none": {
+    "mean_nodes": 221.58333333333334,
+    "median_time_s": 0.9984649000107311,
+    "agreement_rate": 0.6,
+    "positions_tested": 60
+  }
+}

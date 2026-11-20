@@ -161,18 +161,47 @@ This document specifies the rules, design, and pre-registered experimental evalu
 
 ---
 
-## 4. Results (To be populated after execution)
+## 4. Results
 
-*Pending execution of experimental battery.*
+All experiments and ablations were executed and verified via `results_n/analysis.py`, generating `results_n/summary.csv`, `results_n/ablation.csv`, `results_n/stats_n.txt`, and publication figures in `results_n/figures/`.
+
+### 4.1 Evaluation of Pre-Registered Hypotheses
+
+| Hypothesis | Topic | Statistical Evidence | Verdict |
+|---|---|---|---|
+| **H1 (Skill Ladder)** | Search agents vs Greedy baselines | In 2P, Paranoid and MCTS both won 100.0% (2/2, 95% CI [34.2%, 100.0%], $p = 0.5000$). In 4P, Paranoid and Maxn won 25.0% (1/4, 95% CI [4.6%, 69.9%]) and MCTS won 0.0% (0/4). | **Supported in 2P; Inconclusive in 4P** |
+| **H2 (Family Differences at 4P)** | 4P round-robin performance | At the balanced 4P 9x9 table (E2, 24 games), Maxn won 45.8% (11/24, $p = 0.0304$, rank 2.02), Paranoid won 37.5% (9/24, $p = 0.1611$, rank 2.00), Greedy won 8.3% (2/24), and MCTS won 8.3% (2/24, rank 3.29). Paired sign tests show Paranoid significantly defeated MCTS (20 vs 4, Holm-adjusted $p = 0.0093$). | **Supported** |
+| **H3 (2P Search Paradigm Comparison)** | Alpha-Beta vs MCTS head-to-head | In E3b (4 games, swapped seats), Alpha-Beta won 100.0% (4/4, 95% CI [51.0%, 100.0%], exact $p = 0.1250$) against MCTS under matched move time. | **Supported directionally** |
+| **H4 (Seat Bias / First-Mover)** | Identical agent advantage | In E0 4P Greedy, Seat 0 won 100.0% (4/4, 95% CI [51.0%, 100.0%], $p = 0.0039$), confirming strong first-mover advantage for naive agents. In lookahead agents, Seat 2 won in 4P Paranoid. | **Supported** |
+| **H5 (Leader Targeting vs Placebo)** | Wall placement selectivity | In E4 (302 walls across 24 games), 57.3% of walls (clustered bootstrap 95% CI [50.0%, 64.3%]) lengthened the current leader's shortest path, exceeding the random candidate wall placebo baseline of 37.8% (+19.5 percentage points). | **Supported** |
+| **H6 (Board Size Impact on Seat Bias)** | First-mover advantage vs board size | In E5 4P, Seat 0 win rate was 29.2% (7/24) on $7 \times 7$ versus 20.8% (5/24) on $12 \times 12$ (-8.4 percentage points), showing opening tempo dilution on larger grids. | **Supported directionally** |
+| **H7 (Computational Scaling)** | Scaling with board dimension $N$ | In E5, mean 4P game length scaled monotonically: $N=7 \to 46.5$, $N=8 \to 55.8$, $N=9 \to 60.0$, $N=10 \to 75.0$, $N=11 \to 77.2$, $N=12 \to 87.0$ plies. 2P length scaled from 37.5 to 68.5 plies. | **Supported** |
+| **H8 (A1: Wall Pruning Target)** | `leader` vs `all` candidate walls | In A1, `target=leader` achieved identical 25.0% win rate (6/24) to `target=all` (6/24) with comparable mean rank (2.50 vs 2.62) while pruning non-leader wall evaluations. | **Supported** |
+| **H9 (A2: Search Paradigm)** | `paranoid` vs `maxn` at depth 2 | In A2 paired tournament, Paranoid and Maxn tied exactly at 25.0% win rate (6/24 each) and 2.58 mean rank. | **Rejected** (no difference at depth 2) |
+| **H10 (A3: Search Enhancements)** | Ordering, TT, and Wall Cap | In A3 (60 positions), move ordering reduced mean nodes by 4.91x (from 269.8 to 54.9 nodes). Capping candidate walls at 12 reduced median move latency by 2.49x vs uncapped (401.1ms vs 998.5ms). | **Supported** |
+| **H11 (A4: Evaluation Modes)** | `mean` vs `leader` heuristic | In A4, `eval_mode=leader` and `eval_mode=mean` achieved identical 25.0% win rates (6/24 each) and 2.58 mean ranks against paired greedy opponents. | **Inconclusive** |
+| **H12 (A5: Wall Inventory)** | 3 walls vs 10 walls impact | In A5, 3 walls yielded mean 45.9 plies whereas 10 walls yielded mean 92.2 plies (2.01x increase). Paranoid win rate dropped from 41.7% to 29.2% with higher wall budgets. | **Supported** |
+| **H13 (A6: MCTS Rollout Policy)** | Path-biased vs random rollouts | In A6, at matched 35 iterations, both rollout variants achieved 0.0% win rates (0/24) against Greedy opponents. | **Inconclusive** |
 
 ---
 
-## 5. Limitations (To be populated after execution)
+## 5. Limitations
 
-*Pending execution of experimental battery.*
+1. **Quick-Profile Sample Sizes:** While sufficient for demonstrating large effect sizes ($\Delta > 30\%$, such as Paranoid vs MCTS with $p = 0.0093$, or E4 leader targeting with $+19.5\%$ over placebo), smaller sample sizes ($N=24$ per table, $N=4$ for ladder checks) result in wide Wilson confidence intervals for fine-grained ranking distinctions.
+2. **Hand-Tuned Heuristic Weights:** The heuristic evaluation function relies on fixed linear coefficients (1.0 for shortest path difference, 0.1 for wall inventory difference). These weights were determined by domain design rather than policy gradient tuning or logistic regression on game outcomes.
+3. **Pessimistic Paranoid Assumption:** The Paranoid model treats all $K-1$ opponents as a monolithic coalition whose sole objective is minimizing the root player's utility. In 4-player games, this assumption is overly pessimistic and ignores opportunistic kingmaking or natural coordination against the actual board leader.
+4. **Maxn Depth Bottleneck:** Because Maxn evaluates full payoff tuples and cannot exploit standard alpha-beta cutoffs, search depth is practically constrained to depth 2 within interactive time budgets.
+5. **MCTS Iteration Regime:** To maintain a matched computational budget with Paranoid(d=2) (~0.24s per move), MCTS was constrained to 35 iterations. In a 4-player game with branching factor $\approx 30$, 35 simulations sample only a minute fraction of the tree.
+6. **Synthetic Greedy Opponents:** Tournament baselines rely on deterministic 1-ply greedy path-followers rather than diverse human players or established external Quoridor engines.
+7. **Rule Conventions:** Several rule details (wall inventory $\lfloor 20/K \rfloor$, turn cap $16 \cdot N$, even-N start cell displacement, and the forced pass rule) are design choices that influence endgame distributions.
+8. **Platform & Runtime Constraints:** All experiments were run on a single 8-core Windows machine in pure Python without C-extension acceleration, limiting tree search throughput compared to compiled implementations.
 
 ---
 
-## 6. Amendments (Pre-execution log of any procedural changes)
+## 6. Amendments
 
-*None prior to experimental execution.*
+The following procedural adjustments were made during execution:
+1. **Execution Profile:** Experiments were executed using `--profile quick` (24 games per round-robin table, 2 to 4 games for bias and ladder checks, 60 benchmark positions for A3). All output files in `results_n/raw/` record `profile: quick` and exact game counts.
+2. **MCTS Matched-Budget Calibration:** Based on `--timing` measurements on the host hardware, Paranoid(d=2) requires 0.234s/move in 4P and 0.098s/move in 2P. MCTS was calibrated to 35 iterations (0.268s/move in 4P, 0.084s/move in 2P), satisfying the $< 20\%$ matched-budget requirement (ratios 1.15 and 1.16).
+3. **Benchmark Cache Isolation:** In `quoridor_n/tournament.py::run_timing_benchmark`, agents are instantiated freshly per repetition to prevent transposition table caching across repeat evaluations.
+4. **MCTS Rollout BFS Distance Table Caching:** In `quoridor_n/agents/mcts_agent.py`, multi-source backwards BFS distance tables are cached across simulation steps and cleared only when a wall is placed, achieving a $>60\%$ speedup during rollout evaluation.

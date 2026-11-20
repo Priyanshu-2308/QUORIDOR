@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from .base import Agent, default_stats
 from .. import moves as move_gen, pathfinding, rules
-from ..types import Move, PawnMove
+from ..types import Move, PawnMove, WallMove
 
 if TYPE_CHECKING:
     from ..state import GameState
@@ -202,38 +202,71 @@ class MCTSAgent(Agent):
         """Perform simulation using wall-respecting BFS rollouts."""
         sim = state
         players = sim.config.players
+        bs = sim.config.board_size
+
+        dist_tables: dict[int, list[int | None]] = {}
 
         for _ in range(max_depth):
             if sim.is_terminal():
                 break
 
             curr = sim.current
+
+            if curr not in dist_tables:
+                dist_tables[curr] = pathfinding.multi_source_distances(sim, curr)
+            d_curr = dist_tables[curr]
+
+            step: Move | None = None
             if self.rollout_policy == "path_biased":
                 if self.rng.random() < self.rollout_greedy_share:
-                    # Step along shortest path respecting walls
-                    sp = pathfinding.shortest_path(sim, curr)
-                    if sp and len(sp) >= 2:
-                        desired = PawnMove(to=sp[1])
-                        if desired in rules.legal_pawn_moves(sim):
-                            sim = sim.apply(desired)
-                            continue
-
-                # Uniform among candidate moves (pawn steps and pruned candidate walls)
-                candidates = move_gen.candidate_moves(sim, target=self.wall_target)
-                sim = sim.apply(self.rng.choice(candidates))
+                    p_moves = rules.legal_pawn_moves(sim)
+                    if p_moves:
+                        best_d = 999
+                        best_pm: list[PawnMove] = []
+                        for pm in p_moves:
+                            d = d_curr[pm.to[0] * bs + pm.to[1]]
+                            if d is None:
+                                d = 99
+                            if d < best_d:
+                                best_d = d
+                                best_pm = [pm]
+                            elif d == best_d:
+                                best_pm.append(pm)
+                        step = self.rng.choice(best_pm)
+                    else:
+                        c_moves = move_gen.candidate_moves(sim, target=self.wall_target)
+                        step = self.rng.choice(c_moves) if c_moves else None
+                else:
+                    c_moves = move_gen.candidate_moves(sim, target=self.wall_target)
+                    step = self.rng.choice(c_moves) if c_moves else None
             elif self.rollout_policy == "random":
-                candidates = move_gen.candidate_moves(sim, target=self.wall_target)
-                sim = sim.apply(self.rng.choice(candidates))
+                c_moves = move_gen.candidate_moves(sim, target=self.wall_target)
+                step = self.rng.choice(c_moves) if c_moves else None
             else:
                 raise ValueError(f"unknown rollout policy: {self.rollout_policy!r}")
+
+            if step is None:
+                break
+
+            if isinstance(step, WallMove):
+                dist_tables.clear()
+
+            sim = sim.apply(step)
 
         w = sim.winner()
         if w is not None:
             return {p: (1.0 if p == w else 0.0) for p in players}
 
         # Cutoff heuristic scoring
-        d_dict = {p: (pathfinding.shortest_path_length(sim, p) or 99) for p in players}
         scores: dict[int, float] = {}
+        d_dict: dict[int, int] = {}
+        for p in players:
+            if p not in dist_tables:
+                dist_tables[p] = pathfinding.multi_source_distances(sim, p)
+            cell = sim.pawn(p)
+            d = dist_tables[p][cell[0] * bs + cell[1]]
+            d_dict[p] = 99 if d is None else d
+
         for p in players:
             own_d = d_dict[p]
             opponents = [o for o in players if o != p]
@@ -241,7 +274,6 @@ class MCTSAgent(Agent):
                 opp_d = min(d_dict[o] for o in opponents)
             else:  # vs_mean
                 opp_d = sum(d_dict[o] for o in opponents) / len(opponents)
-            # Softmax/sigmoid scaling around distance difference
             scores[p] = 0.5 + 0.5 * math.tanh((opp_d - own_d) / 4.0)
 
         return scores

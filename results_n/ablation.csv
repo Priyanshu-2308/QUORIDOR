@@ -1,0 +1,27 @@
+ablation_id,factor,variant,mode,games_or_positions,metric,value,ci_low,ci_high,p_value,mean_nodes,median_ms,agreement_rate
+A1,wall_target,"paranoid:depth=2,wall_target=all",4P 9x9,24,win_rate,0.2500,0.1200,0.4490,1.0000,,,
+A1,wall_target,"paranoid:depth=2,wall_target=leader",4P 9x9,24,win_rate,0.2500,0.1200,0.4490,1.0000,,,
+A1,wall_target,greedy,4P 9x9,48,win_rate,0.2500,0.1492,0.3878,1.0000,,,
+A2,search_paradigm,paranoid:depth=2,4P 9x9,24,win_rate,0.2500,0.1200,0.4490,1.0000,,,
+A2,search_paradigm,maxn:depth=2,4P 9x9,24,win_rate,0.2500,0.1200,0.4490,1.0000,,,
+A2,search_paradigm,greedy,4P 9x9,48,win_rate,0.2500,0.1492,0.3878,1.0000,,,
+A3,search_enhancements,baseline,4P 9x9 Benchmark,60,move_agreement,1.0000,,,,54.9,401.07,1.0000
+A3,search_enhancements,no_ordering,4P 9x9 Benchmark,60,move_agreement,0.5833,,,,269.8,534.40,0.5833
+A3,search_enhancements,no_tt,4P 9x9 Benchmark,60,move_agreement,1.0000,,,,54.9,412.64,1.0000
+A3,search_enhancements,wall_cap_4,4P 9x9 Benchmark,60,move_agreement,0.8833,,,,23.8,173.84,0.8833
+A3,search_enhancements,wall_cap_8,4P 9x9 Benchmark,60,move_agreement,0.9667,,,,39.5,274.70,0.9667
+A3,search_enhancements,wall_cap_none,4P 9x9 Benchmark,60,move_agreement,0.6000,,,,221.6,998.46,0.6000
+A4,eval_mode,"paranoid:depth=2,eval_mode=mean",4P 9x9,24,win_rate,0.2500,0.1200,0.4490,1.0000,,,
+A4,eval_mode,"paranoid:depth=2,eval_mode=leader",4P 9x9,24,win_rate,0.2500,0.1200,0.4490,1.0000,,,
+A4,eval_mode,greedy,4P 9x9,48,win_rate,0.2500,0.1492,0.3878,1.0000,,,
+A5_walls_3,wall_inventory_walls_3,greedy,4P 9x9,24,win_rate,0.0417,0.0074,0.2024,0.0162,,,
+A5_walls_3,wall_inventory_walls_3,paranoid:depth=2,4P 9x9,24,win_rate,0.4167,0.2447,0.6117,0.0945,,,
+A5_walls_3,wall_inventory_walls_3,maxn:depth=2,4P 9x9,24,win_rate,0.4583,0.2789,0.6493,0.0304,,,
+A5_walls_3,wall_inventory_walls_3,mcts:iterations=35,4P 9x9,24,win_rate,0.0833,0.0232,0.2585,0.0611,,,
+A5_walls_10,wall_inventory_walls_10,greedy,4P 9x9,24,win_rate,0.0417,0.0074,0.2024,0.0162,,,
+A5_walls_10,wall_inventory_walls_10,paranoid:depth=2,4P 9x9,24,win_rate,0.2917,0.1491,0.4917,0.6392,,,
+A5_walls_10,wall_inventory_walls_10,maxn:depth=2,4P 9x9,24,win_rate,0.4583,0.2789,0.6493,0.0304,,,
+A5_walls_10,wall_inventory_walls_10,mcts:iterations=35,4P 9x9,24,win_rate,0.2083,0.0924,0.4047,0.8147,,,
+A6,mcts_rollout,"mcts:iterations=35,rollout_policy=path_biased",4P 9x9,24,win_rate,0.0000,0.0000,0.1380,0.0015,,,
+A6,mcts_rollout,"mcts:iterations=35,rollout_policy=random",4P 9x9,24,win_rate,0.0000,0.0000,0.1380,0.0015,,,
+A6,mcts_rollout,greedy,4P 9x9,48,win_rate,0.5000,0.3639,0.6361,0.0002,,,

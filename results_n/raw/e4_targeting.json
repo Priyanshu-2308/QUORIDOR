@@ -1,0 +1,202 @@
+{
+  "games_analyzed": 24,
+  "total_walls": 302,
+  "total_leader_delayed": 173,
+  "total_leader_only": 115,
+  "total_placebo_hits": 3189,
+  "total_placebo_candidates": 8443,
+  "game_records": [
+    {
+      "game_idx": 0,
+      "total_walls": 6,
+      "leader_delayed": 3,
+      "leader_only": 3,
+      "placebo_hits": 60,
+      "placebo_candidates": 146
+    },
+    {
+      "game_idx": 1,
+      "total_walls": 15,
+      "leader_delayed": 9,
+      "leader_only": 5,
+      "placebo_hits": 158,
+      "placebo_candidates": 456
+    },
+    {
+      "game_idx": 2,
+      "total_walls": 15,
+      "leader_delayed": 4,
+      "leader_only": 4,
+      "placebo_hits": 136,
+      "placebo_candidates": 395
+    },
+    {
+      "game_idx": 3,
+      "total_walls": 6,
+      "leader_delayed": 1,
+      "leader_only": 1,
+      "placebo_hits": 74,
+      "placebo_candidates": 173
+    },
+    {
+      "game_idx": 4,
+      "total_walls": 15,
+      "leader_delayed": 5,
+      "leader_only": 5,
+      "placebo_hits": 94,
+      "placebo_candidates": 354
+    },
+    {
+      "game_idx": 5,
+      "total_walls": 15,
+      "leader_delayed": 5,
+      "leader_only": 2,
+      "placebo_hits": 147,
+      "placebo_candidates": 444
+    },
+    {
+      "game_idx": 6,
+      "total_walls": 15,
+      "leader_delayed": 8,
+      "leader_only": 6,
+      "placebo_hits": 106,
+      "placebo_candidates": 327
+    },
+    {
+      "game_idx": 7,
+      "total_walls": 15,
+      "leader_delayed": 10,
+      "leader_only": 4,
+      "placebo_hits": 162,
+      "placebo_candidates": 406
+    },
+    {
+      "game_idx": 8,
+      "total_walls": 15,
+      "leader_delayed": 10,
+      "leader_only": 6,
+      "placebo_hits": 150,
+      "placebo_candidates": 464
+    },
+    {
+      "game_idx": 9,
+      "total_walls": 13,
+      "leader_delayed": 10,
+      "leader_only": 7,
+      "placebo_hits": 152,
+      "placebo_candidates": 369
+    },
+    {
+      "game_idx": 10,
+      "total_walls": 11,
+      "leader_delayed": 8,
+      "leader_only": 4,
+      "placebo_hits": 137,
+      "placebo_candidates": 325
+    },
+    {
+      "game_idx": 11,
+      "total_walls": 8,
+      "leader_delayed": 3,
+      "leader_only": 2,
+      "placebo_hits": 63,
+      "placebo_candidates": 212
+    },
+    {
+      "game_idx": 12,
+      "total_walls": 15,
+      "leader_delayed": 9,
+      "leader_only": 6,
+      "placebo_hits": 203,
+      "placebo_candidates": 434
+    },
+    {
+      "game_idx": 13,
+      "total_walls": 15,
+      "leader_delayed": 7,
+      "leader_only": 5,
+      "placebo_hits": 145,
+      "placebo_candidates": 399
+    },
+    {
+      "game_idx": 14,
+      "total_walls": 15,
+      "leader_delayed": 9,
+      "leader_only": 7,
+      "placebo_hits": 122,
+      "placebo_candidates": 356
+    },
+    {
+      "game_idx": 15,
+      "total_walls": 11,
+      "leader_delayed": 10,
+      "leader_only": 3,
+      "placebo_hits": 101,
+      "placebo_candidates": 324
+    },
+    {
+      "game_idx": 16,
+      "total_walls": 14,
+      "leader_delayed": 7,
+      "leader_only": 4,
+      "placebo_hits": 132,
+      "placebo_candidates": 384
+    },
+    {
+      "game_idx": 17,
+      "total_walls": 13,
+      "leader_delayed": 6,
+      "leader_only": 3,
+      "placebo_hits": 109,
+      "placebo_candidates": 420
+    },
+    {
+      "game_idx": 18,
+      "total_walls": 14,
+      "leader_delayed": 9,
+      "leader_only": 7,
+      "placebo_hits": 132,
+      "placebo_candidates": 367
+    },
+    {
+      "game_idx": 19,
+      "total_walls": 10,
+      "leader_delayed": 5,
+      "leader_only": 4,
+      "placebo_hits": 116,
+      "placebo_candidates": 301
+    },
+    {
+      "game_idx": 20,
+      "total_walls": 9,
+      "leader_delayed": 9,
+      "leader_only": 7,
+      "placebo_hits": 122,
+      "placebo_candidates": 252
+    },
+    {
+      "game_idx": 21,
+      "total_walls": 15,
+      "leader_delayed": 9,
+      "leader_only": 5,
+      "placebo_hits": 193,
+      "placebo_candidates": 426
+    },
+    {
+      "game_idx": 22,
+      "total_walls": 7,
+      "leader_delayed": 5,
+      "leader_only": 5,
+      "placebo_hits": 106,
+      "placebo_candidates": 207
+    },
+    {
+      "game_idx": 23,
+      "total_walls": 15,
+      "leader_delayed": 12,
+      "leader_only": 10,
+      "placebo_hits": 269,
+      "placebo_candidates": 502
+    }
+  ]
+}

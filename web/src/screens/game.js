@@ -228,8 +228,8 @@ export function createGameScreen({
     const boardContainer = el.querySelector('#board-svg-container');
     if (!boardContainer || !gameState) return;
 
-    const N = gameState.config.board_size;
-    const numP = gameState.config.num_players;
+    const N = (gameState.config && gameState.config.board_size) || gameState.board_size || 9;
+    const numP = (gameState.config && gameState.config.num_players) || gameState.num_players || 2;
     const pad = 12;
     const pitch = 44;
     const gridDim = N * 44 - 8;
@@ -449,7 +449,7 @@ export function createGameScreen({
     const panelsContainer = el.querySelector('#player-panels');
     if (!panelsContainer || !gameState) return;
 
-    const numP = gameState.config.num_players;
+    const numP = (gameState.config && gameState.config.num_players) || gameState.num_players || 2;
     const activeSeats = numP === 4 ? [0, 1, 2, 3] : [0, 2];
 
     panelsContainer.innerHTML = activeSeats

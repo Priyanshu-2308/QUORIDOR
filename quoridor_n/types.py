@@ -69,3 +69,18 @@ def move_to_str(m: Move) -> str:
     if isinstance(m, PassMove):
         return "PASS"
     raise TypeError(f"not a move: {m!r}")
+
+
+def move_from_str(s: str) -> Move:
+    """Parse concise string: P(r,c), H(r,c), V(r,c), or PASS."""
+    s = s.strip()
+    if s == "PASS":
+        return PassMove()
+    if s.startswith("P(") and s.endswith(")"):
+        parts = s[2:-1].split(",")
+        return PawnMove((int(parts[0]), int(parts[1])))
+    if (s.startswith("H(") or s.startswith("V(")) and s.endswith(")"):
+        o = s[0]
+        parts = s[2:-1].split(",")
+        return WallMove(int(parts[0]), int(parts[1]), o)
+    raise ValueError(f"cannot parse move string: {s!r}")

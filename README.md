@@ -58,6 +58,28 @@ python -m quoridor.tournament --ablation
 
 See `docs/REPORT.md` for the experimental setup, win rates, and ablation results.
 
+## Dynamic board and multiplayer extension (7x7 to 12x12, 2 or 4 players)
+
+The repository includes a generalized game engine (`quoridor_n/`) and responsive interface supporting selectable board dimensions from 7x7 to 12x12 and 2 or 4 players.
+
+### Controls and gameplay
+- **Setup**: Select board dimension ($N \in [7, 12]$) and player count (2 or 4). In 4-player games, configure each opponent's agent type (Random, Greedy, Paranoid, Maxn, MCTS).
+- **In-game**: Click highlighted dots or use arrow keys to move your pawn. Hover wall slots and click to place walls (press R or right-click to rotate orientation). Press U to undo a full turn cycle, or P to toggle shortest-path overlays.
+- **Pass rule**: If a player is completely trapped with zero legal pawn steps and zero remaining walls, a pass move is handled automatically.
+
+### Running dynamic board experiments
+Run the pre-registered experiment battery and ablations:
+```bash
+python -m quoridor_n.experiments --profile quick --workers 6
+```
+
+Generate the statistical summaries, tables, and publication figures:
+```bash
+python -m results_n.analysis
+```
+
+See `docs/DYNAMIC_BOARD.md` for the formal rules specification, pre-registered hypotheses, and complete statistical report.
+
 ## Layout
 
 - `quoridor/`: engine and agents
