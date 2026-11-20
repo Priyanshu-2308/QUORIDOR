@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Quoridor</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "primary-fixed-dim": "#c8c6c5", "secondary": "#2e4bdb", "background": "#fdf9f2", "on-tertiary-fixed-variant": "#891e00", "on-tertiary-fixed": "#3c0800", "on-error-container": "#93000a", "inverse-on-surface": "#f4f0e9", "surface-tint": "#5f5e5e", "on-primary-fixed": "#1c1b1b", "on-primary-container": "#858383", "primary-fixed": "#e5e2e1", "surface-container": "#f1ede6", "on-secondary": "#ffffff", "surface-container-highest": "#e5e2db", "on-background": "#1c1c18", "surface-dim": "#dddad3", "tertiary": "#000000", "error-container": "#ffdad6", "surface": "#fdf9f2", "surface-variant": "#e5e2db", "on-secondary-fixed": "#00105c", "on-secondary-container": "#fffbff", "on-surface": "#1c1c18", "on-primary-fixed-variant": "#474646", "outline-variant": "#c4c7c7", "on-surface-variant": "#444748", "primary-container": "#1c1b1b", "surface-bright": "#fdf9f2", "surface-container-low": "#f7f3ec", "tertiary-fixed-dim": "#ffb4a2", "outline": "#747878", "on-secondary-fixed-variant": "#0930c6", "secondary-fixed": "#dee0ff", "on-primary": "#ffffff", "on-tertiary-container": "#e5532d", "on-error": "#ffffff", "surface-container-high": "#ebe8e1", "secondary-container": "#4c66f5", "tertiary-fixed": "#ffdbd2", "inverse-primary": "#c8c6c5", "secondary-fixed-dim": "#bac3ff", "primary": "#000000", "tertiary-container": "#3c0800", "inverse-surface": "#31302c", "on-tertiary": "#ffffff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-sm": "0.5rem", "margin-tablet": "1.5rem", "margin-desktop": "2.5rem", "space-xl": "2rem", "space-xs": "0.25rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1.25rem", "gutter-desktop": "1.5rem", "space-md": "0.75rem" }, "fontFamily": { "headline-lg": ["Inter"], "headline-sm": ["Inter"], "body-md": ["Inter"], "body-sm": ["Inter"], "headline-lg-mobile": ["Inter"], "headline-md": ["Inter"], "label-lg": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"] }, "fontSize": { "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "500"}], "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400"}], "body-sm": ["12px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400"}], "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}], "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "500"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}], "label-sm": ["10px", {"lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500"}] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-background/90 backdrop-blur-md border-b border-outline-variant"><div class="h-16 w-full px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><a class="font-label-lg text-label-lg tracking-widest text-primary uppercase select-none" data-path="live-match" href="#">QUORIDOR</a><nav class="hidden md:flex items-center gap-space-lg" data-active-classes="text-primary font-medium"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-match" href="#">Arena</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="match-archive" href="#">Archive</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="rules-and-tactics" href="#">Treatise</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="leaderboard" href="#">Standings</a></nav></div><div class="flex items-center gap-space-lg"><div class="hidden sm:flex items-center gap-space-md border border-outline-variant px-space-md py-space-xs rounded bg-surface-container-lowest"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Active Match</span><span class="font-label-md text-label-md text-primary font-medium">MOVE 24</span></div><div class="flex items-center gap-space-sm pl-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full">
+<div class="w-full flex justify-center px-margin sm:px-margin-tablet lg:px-margin-desktop py-space-xl">
+<div class="w-full max-w-[700px] flex flex-col gap-space-xl">
+<!-- Header & Intro -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Archival Match Protocol</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Pure Matrix v4.2</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">New game</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Configure board dimensions, seat assignments, and strategic archetypes.</p>
+</div>
+<!-- Spatial Matrix Dimensions -->
+<section class="bg-surface-container-lowest p-space-lg rounded shadow-sm flex flex-col gap-space-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Board size</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Custom matrix corridors from 7×7 to 12×12</p>
+</div>
+<!-- Board Size Segmented Controller -->
+<div class="inline-flex p-1 bg-surface-container rounded gap-1" id="board-size-group">
+<button class="size-btn px-3 py-1 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-colors" data-size="7" onclick="setBoardSize(7)" type="button">7</button>
+<button class="size-btn px-3 py-1 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-colors" data-size="8" onclick="setBoardSize(8)" type="button">8</button>
+<button class="size-btn px-3 py-1 font-label-md text-label-md rounded bg-primary text-on-primary font-medium" data-size="9" onclick="setBoardSize(9)" type="button">9</button>
+<button class="size-btn px-3 py-1 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-colors" data-size="10" onclick="setBoardSize(10)" type="button">10</button>
+<button class="size-btn px-3 py-1 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-colors" data-size="11" onclick="setBoardSize(11)" type="button">11</button>
+<button class="size-btn px-3 py-1 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-colors" data-size="12" onclick="setBoardSize(12)" type="button">12</button>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pt-space-xs">
+<div>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Player Count</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Quadrilateral cross or bilateral duel</p>
+</div>
+<!-- 2p vs 4p selector -->
+<div class="inline-flex p-1 bg-surface-container rounded gap-1">
+<button class="px-4 py-1.5 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary transition-colors" id="btn-2p" onclick="setPlayerCount(2)" type="button">2 players</button>
+<button class="px-4 py-1.5 font-label-md text-label-md rounded bg-primary text-on-primary font-medium" id="btn-4p" onclick="setPlayerCount(4)" type="button">4 players</button>
+</div>
+</div>
+<!-- Live Miniature Board & Spec Summary -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<!-- Miniature Graphic -->
+<div class="w-24 h-24 bg-surface-container-lowest p-2 rounded shadow-sm flex items-center justify-center relative">
+<svg class="w-full h-full text-surface-container-highest" fill="currentColor" viewbox="0 0 90 90">
+<!-- 9x9 miniature dot matrix -->
+<g fill="currentColor">
+<circle cx="9" cy="9" r="1.5"></circle><circle cx="18" cy="9" r="1.5"></circle><circle cx="27" cy="9" r="1.5"></circle><circle cx="36" cy="9" r="1.5"></circle><circle cx="45" cy="9" r="1.5"></circle><circle cx="54" cy="9" r="1.5"></circle><circle cx="63" cy="9" r="1.5"></circle><circle cx="72" cy="9" r="1.5"></circle><circle cx="81" cy="9" r="1.5"></circle>
+<circle cx="9" cy="18" r="1.5"></circle><circle cx="18" cy="18" r="1.5"></circle><circle cx="27" cy="18" r="1.5"></circle><circle cx="36" cy="18" r="1.5"></circle><circle cx="45" cy="18" r="1.5"></circle><circle cx="54" cy="18" r="1.5"></circle><circle cx="63" cy="18" r="1.5"></circle><circle cx="72" cy="18" r="1.5"></circle><circle cx="81" cy="18" r="1.5"></circle>
+<circle cx="9" cy="27" r="1.5"></circle><circle cx="18" cy="27" r="1.5"></circle><circle cx="27" cy="27" r="1.5"></circle><circle cx="36" cy="27" r="1.5"></circle><circle cx="45" cy="27" r="1.5"></circle><circle cx="54" cy="27" r="1.5"></circle><circle cx="63" cy="27" r="1.5"></circle><circle cx="72" cy="27" r="1.5"></circle><circle cx="81" cy="27" r="1.5"></circle>
+<circle cx="9" cy="36" r="1.5"></circle><circle cx="18" cy="36" r="1.5"></circle><circle cx="27" cy="36" r="1.5"></circle><circle cx="36" cy="36" r="1.5"></circle><circle cx="45" cy="36" r="1.5"></circle><circle cx="54" cy="36" r="1.5"></circle><circle cx="63" cy="36" r="1.5"></circle><circle cx="72" cy="36" r="1.5"></circle><circle cx="81" cy="36" r="1.5"></circle>
+<circle cx="9" cy="45" r="1.5"></circle><circle cx="18" cy="45" r="1.5"></circle><circle cx="27" cy="45" r="1.5"></circle><circle cx="36" cy="45" r="1.5"></circle><circle cx="45" cy="45" r="1.5"></circle><circle cx="54" cy="45" r="1.5"></circle><circle cx="63" cy="45" r="1.5"></circle><circle cx="72" cy="45" r="1.5"></circle><circle cx="81" cy="45" r="1.5"></circle>
+<circle cx="9" cy="54" r="1.5"></circle><circle cx="18" cy="54" r="1.5"></circle><circle cx="27" cy="54" r="1.5"></circle><circle cx="36" cy="54" r="1.5"></circle><circle cx="45" cy="54" r="1.5"></circle><circle cx="54" cy="54" r="1.5"></circle><circle cx="63" cy="54" r="1.5"></circle><circle cx="72" cy="54" r="1.5"></circle><circle cx="81" cy="54" r="1.5"></circle>
+<circle cx="9" cy="63" r="1.5"></circle><circle cx="18" cy="63" r="1.5"></circle><circle cx="27" cy="63" r="1.5"></circle><circle cx="36" cy="63" r="1.5"></circle><circle cx="45" cy="63" r="1.5"></circle><circle cx="54" cy="63" r="1.5"></circle><circle cx="63" cy="63" r="1.5"></circle><circle cx="72" cy="63" r="1.5"></circle><circle cx="81" cy="63" r="1.5"></circle>
+<circle cx="9" cy="72" r="1.5"></circle><circle cx="18" cy="72" r="1.5"></circle><circle cx="27" cy="72" r="1.5"></circle><circle cx="36" cy="72" r="1.5"></circle><circle cx="45" cy="72" r="1.5"></circle><circle cx="54" cy="72" r="1.5"></circle><circle cx="63" cy="72" r="1.5"></circle><circle cx="72" cy="72" r="1.5"></circle><circle cx="81" cy="72" r="1.5"></circle>
+<circle cx="9" cy="81" r="1.5"></circle><circle cx="18" cy="81" r="1.5"></circle><circle cx="27" cy="81" r="1.5"></circle><circle cx="36" cy="81" r="1.5"></circle><circle cx="45" cy="81" r="1.5"></circle><circle cx="54" cy="81" r="1.5"></circle><circle cx="63" cy="81" r="1.5"></circle><circle cx="72" cy="81" r="1.5"></circle><circle cx="81" cy="81" r="1.5"></circle>
+</g>
+<!-- Player Markers -->
+<!-- South / Human (Blue circle ●) -->
+<circle class="fill-secondary" cx="45" cy="81" r="5"></circle>
+<!-- North / Prune (Vermilion square ■) -->
+<rect class="fill-on-tertiary-container" height="9" width="9" x="40.5" y="4.5"></rect>
+<!-- West / Dash (Amber triangle ▲) -->
+<polygon fill="#c97700" id="mini-left" points="9,40.5 4,49.5 14,49.5"></polygon>
+<!-- East / Pat (Plum diamond ◆) -->
+<polygon fill="#75359c" id="mini-right" points="81,40.5 86,45 81,49.5 76,45"></polygon>
+</svg>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-medium text-primary" id="summary-line">9×9 · 4 players · 5 walls each</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Allocated inventory balanced according to official formula</span>
+</div>
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant text-right hidden sm:block">
+<span>Goal: Opposite Rim</span>
+</div>
+</div>
+</section>
+<!-- Seats & Opponent Configuration -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Seats &amp; Opponents</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">· 3 automatons active</span>
+</div>
+<!-- Global Archetype Preset Selector -->
+<div class="relative group">
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" type="button">
+              [Same for all: Sharp <span class="material-symbols-outlined text-[14px]">expand_more</span>]
+            </button>
+</div>
+</div>
+<!-- Opponent Seats Grid -->
+<div class="grid grid-cols-1 gap-space-sm" id="opponents-container">
+<!-- Left Seat: Dash -->
+<div class="bg-surface-container-lowest p-space-md rounded shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-start sm:items-center gap-space-md">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center shrink-0">
+<span class="text-[14px] font-bold" style="color: #c97700;">▲</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md font-medium text-primary">Dash</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">West · Col 1 → Col 9</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Zero walls. All speed. Pure direct sprint pathing.</span>
+</div>
+</div>
+<!-- Personality Switcher -->
+<div class="flex items-center gap-space-xs self-end sm:self-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2 py-1 bg-surface-container rounded">Sprinter</span>
+</div>
+</div>
+<!-- Top Seat: Professor Prune -->
+<div class="bg-surface-container-lowest p-space-md rounded shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-start sm:items-center gap-space-md">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center shrink-0">
+<span class="text-[14px] font-bold text-on-tertiary-container">■</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md font-medium text-primary">Professor Prune</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">North · Row 1 → Row 9</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Thinks first. Snips bad ideas with analytical precision.</span>
+</div>
+</div>
+<!-- Strength Stepper -->
+<div class="inline-flex p-1 bg-surface-container rounded gap-1 self-end sm:self-center">
+<button class="px-2.5 py-0.5 font-label-sm text-label-sm rounded text-on-surface-variant hover:text-primary transition-colors" type="button">Easy</button>
+<button class="px-2.5 py-0.5 font-label-sm text-label-sm rounded text-on-surface-variant hover:text-primary transition-colors" type="button">Medium</button>
+<button class="px-2.5 py-0.5 font-label-sm text-label-sm rounded bg-primary text-on-primary font-medium" type="button">Hard</button>
+</div>
+</div>
+<!-- Right Seat: Paranoid Pat -->
+<div class="bg-surface-container-lowest p-space-md rounded shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-start sm:items-center gap-space-md">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center shrink-0">
+<span class="text-[14px] font-bold" style="color: #75359c;">◆</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-body-md text-body-md font-medium text-primary">Paranoid Pat</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">East · Col 9 → Col 1</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Trusts nobody at the table. Anticipates flank barricades.</span>
+</div>
+</div>
+<!-- Strength Stepper -->
+<div class="inline-flex p-1 bg-surface-container rounded gap-1 self-end sm:self-center">
+<button class="px-2.5 py-0.5 font-label-sm text-label-sm rounded text-on-surface-variant hover:text-primary transition-colors" type="button">Easy</button>
+<button class="px-2.5 py-0.5 font-label-sm text-label-sm rounded bg-primary text-on-primary font-medium" type="button">Medium</button>
+<button class="px-2.5 py-0.5 font-label-sm text-label-sm rounded text-on-surface-variant hover:text-primary transition-colors" type="button">Hard</button>
+</div>
+</div>
+</div>
+<!-- Archival Roster Notes / Drawer -->
+<div class="flex items-center justify-between pt-space-xs px-space-xs text-on-surface-variant">
+<span class="font-label-sm text-label-sm">Reserve bench: Lone Wolf Lou, Wobbles, The Gambler</span>
+<button class="font-label-sm text-label-sm hover:text-primary transition-colors" type="button">[Swap Roster]</button>
+</div>
+</section>
+<!-- Move Order / Who Moves First -->
+<section class="bg-surface-container-lowest p-space-lg rounded shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Who moves first?</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Clockwise rotation follows standard rules</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm" id="first-move-group">
+<!-- Option: You -->
+<button class="first-mover-btn p-space-sm rounded bg-primary text-on-primary flex items-center justify-center gap-space-xs transition-colors" onclick="setFirstMover(0)" type="button">
+<span class="text-[12px] font-bold text-secondary">●</span>
+<span class="font-label-md text-label-md font-medium">You (South)</span>
+</button>
+<!-- Option: Dash -->
+<button class="first-mover-btn p-space-sm rounded bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center gap-space-xs transition-colors" onclick="setFirstMover(1)" type="button">
+<span class="text-[12px] font-bold" style="color: #c97700;">▲</span>
+<span class="font-label-md text-label-md">Dash</span>
+</button>
+<!-- Option: Prune -->
+<button class="first-mover-btn p-space-sm rounded bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center gap-space-xs transition-colors" onclick="setFirstMover(2)" type="button">
+<span class="text-[12px] font-bold text-on-tertiary-container">■</span>
+<span class="font-label-md text-label-md">Prune</span>
+</button>
+<!-- Option: Pat -->
+<button class="first-mover-btn p-space-sm rounded bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center gap-space-xs transition-colors" onclick="setFirstMover(3)" type="button">
+<span class="text-[12px] font-bold" style="color: #75359c;">◆</span>
+<span class="font-label-md text-label-md">Pat</span>
+</button>
+</div>
+</section>
+<!-- Launch Action & Essential Rule Axiom -->
+<div class="flex flex-col items-center gap-space-md pt-space-xs">
+<a class="w-full sm:w-auto min-w-[280px] bg-primary text-on-primary py-3.5 px-space-xl rounded font-label-lg text-label-lg font-medium text-center hover:bg-primary-container transition-colors shadow-sm" data-path="live-match" href="#">
+          Start game →
+        </a>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-center max-w-[460px]">
+          Reach the opposite side first. Place walls to slow your opponents without completely sealing every available escape path.
+        </p>
+</div>
+</div>
+</div>
+</div>
+<script>
+  let currentSize = 9;
+  let currentPlayers = 4;
+
+  const wallTable2P = { 7: 8, 8: 9, 9: 10, 10: 11, 11: 12, 12: 13 };
+  const wallTable4P = { 7: 4, 8: 5, 9: 5, 10: 6, 11: 6, 12: 7 };
+
+  function updateSummary() {
+    const walls = currentPlayers === 2 ? wallTable2P[currentSize] : wallTable4P[currentSize];
+    const summary = document.getElementById('summary-line');
+    if (summary) {
+      summary.textContent = `${currentSize}×${currentSize} · ${currentPlayers} players · ${walls} walls each`;
+    }
+  }
+
+  function setBoardSize(sz) {
+    currentSize = sz;
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      if (parseInt(btn.getAttribute('data-size')) === sz) {
+        btn.className = "size-btn px-3 py-1 font-label-md text-label-md rounded bg-primary text-on-primary font-medium";
+      } else {
+        btn.className = "size-btn px-3 py-1 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary hover:bg-surface-bright transition-colors";
+      }
+    });
+    updateSummary();
+  }
+
+  function setPlayerCount(count) {
+    currentPlayers = count;
+    const btn2p = document.getElementById('btn-2p');
+    const btn4p = document.getElementById('btn-4p');
+    const miniLeft = document.getElementById('mini-left');
+    const miniRight = document.getElementById('mini-right');
+
+    if (count === 2) {
+      btn2p.className = "px-4 py-1.5 font-label-md text-label-md rounded bg-primary text-on-primary font-medium";
+      btn4p.className = "px-4 py-1.5 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary transition-colors";
+      if (miniLeft) miniLeft.setAttribute('display', 'none');
+      if (miniRight) miniRight.setAttribute('display', 'none');
+    } else {
+      btn4p.className = "px-4 py-1.5 font-label-md text-label-md rounded bg-primary text-on-primary font-medium";
+      btn2p.className = "px-4 py-1.5 font-label-md text-label-md rounded text-on-surface-variant hover:text-primary transition-colors";
+      if (miniLeft) miniLeft.removeAttribute('display');
+      if (miniRight) miniRight.removeAttribute('display');
+    }
+    updateSummary();
+  }
+
+  function setFirstMover(index) {
+    const buttons = document.querySelectorAll('.first-mover-btn');
+    buttons.forEach((btn, i) => {
+      if (i === index) {
+        btn.classList.remove('bg-surface-container', 'text-on-surface');
+        btn.classList.add('bg-primary', 'text-on-primary');
+      } else {
+        btn.classList.remove('bg-primary', 'text-on-primary');
+        btn.classList.add('bg-surface-container', 'text-on-surface');
+      }
+    });
+  }
+</script></main><footer class="w-full border-t border-outline-variant bg-surface-container-low py-space-lg"><div class="w-full px-margin-desktop flex flex-col sm:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Quoridor Pure Matrix 9x9</span><span class="text-outline-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">Standard FIDE Notation Protocol</span></div><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 Quoridor Archival Project. All rights reserved.</div></div></footer></body></html>

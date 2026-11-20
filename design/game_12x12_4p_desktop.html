@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Quoridor</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "primary-fixed-dim": "#c8c6c5", "secondary": "#2e4bdb", "background": "#fdf9f2", "on-tertiary-fixed-variant": "#891e00", "on-tertiary-fixed": "#3c0800", "on-error-container": "#93000a", "inverse-on-surface": "#f4f0e9", "surface-tint": "#5f5e5e", "on-primary-fixed": "#1c1b1b", "on-primary-container": "#858383", "primary-fixed": "#e5e2e1", "surface-container": "#f1ede6", "on-secondary": "#ffffff", "surface-container-highest": "#e5e2db", "on-background": "#1c1c18", "surface-dim": "#dddad3", "tertiary": "#000000", "error-container": "#ffdad6", "surface": "#fdf9f2", "surface-variant": "#e5e2db", "on-secondary-fixed": "#00105c", "on-secondary-container": "#fffbff", "on-surface": "#1c1c18", "on-primary-fixed-variant": "#474646", "outline-variant": "#c4c7c7", "on-surface-variant": "#444748", "primary-container": "#1c1b1b", "surface-bright": "#fdf9f2", "surface-container-low": "#f7f3ec", "tertiary-fixed-dim": "#ffb4a2", "outline": "#747878", "on-secondary-fixed-variant": "#0930c6", "secondary-fixed": "#dee0ff", "on-primary": "#ffffff", "on-tertiary-container": "#e5532d", "on-error": "#ffffff", "surface-container-high": "#ebe8e1", "secondary-container": "#4c66f5", "tertiary-fixed": "#ffdbd2", "inverse-primary": "#c8c6c5", "secondary-fixed-dim": "#bac3ff", "primary": "#000000", "tertiary-container": "#3c0800", "inverse-surface": "#31302c", "on-tertiary": "#ffffff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-sm": "0.5rem", "margin-tablet": "1.5rem", "margin-desktop": "2.5rem", "space-xl": "2rem", "space-xs": "0.25rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1.25rem", "gutter-desktop": "1.5rem", "space-md": "0.75rem" }, "fontFamily": { "headline-lg": ["Inter"], "headline-sm": ["Inter"], "body-md": ["Inter"], "body-sm": ["Inter"], "headline-lg-mobile": ["Inter"], "headline-md": ["Inter"], "label-lg": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"] }, "fontSize": { "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "500"}], "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400"}], "body-sm": ["12px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400"}], "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}], "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "500"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}], "label-sm": ["10px", {"lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500"}] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-background/90 backdrop-blur-md border-b border-outline-variant"><div class="h-16 w-full px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><a class="font-label-lg text-label-lg tracking-widest text-primary uppercase select-none" data-path="live-match" href="#">QUORIDOR</a><nav class="hidden md:flex items-center gap-space-lg" data-active-classes="text-primary font-medium"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-match" href="#">Arena</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="match-archive" href="#">Archive</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="rules-and-tactics" href="#">Treatise</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="leaderboard" href="#">Standings</a></nav></div><div class="flex items-center gap-space-lg"><div class="hidden sm:flex items-center gap-space-md border border-outline-variant px-space-md py-space-xs rounded bg-surface-container-lowest"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Active Match</span><span class="font-label-md text-label-md text-primary font-medium">MOVE 24</span></div><div class="flex items-center gap-space-sm pl-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full">
+<div class="w-full max-w-[1440px] mx-auto px-margin-desktop py-space-md">
+<!-- Top Quiet Notice Strip -->
+<div class="w-full mb-space-md flex items-center justify-between bg-surface-container-low px-space-md py-space-xs rounded border border-outline-variant">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Arbitration Note:</span>
+<span class="font-body-sm text-body-sm text-on-surface">Dash: No legal move, turn skipped. Play advances clockwise to South.</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">TABLEAU: 12×12 QUAD-SANCTION</span>
+<span class="text-outline-variant">|</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">STANDARD RULESET v4.2</span>
+</div>
+</div>
+<!-- Main 2-Panel Architectural Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+<!-- LEFT / CENTER: 12x12 Dense Board Canvas (8 cols on desktop) -->
+<div class="lg:col-span-8 flex flex-col items-center bg-surface-container-lowest p-space-lg rounded border border-outline-variant relative">
+<!-- Target Goal Indicators (Subtle Perimeter Tint Bars) -->
+<!-- North Goal (You target Row 12, Prune starts at Row 12 targeting Row 1) -->
+<div class="w-full max-w-[620px] mb-space-xs flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm px-6">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-[#151515] inline-block"></span> ■ Prune Goal (Row 1)</span>
+<span class="tracking-widest uppercase text-[9px] text-outline">Opposite Edge: South</span>
+</div>
+<div class="relative flex items-center justify-center p-2 bg-surface-container-low rounded border border-outline-variant select-none">
+<!-- West Goal Line Marker (Dash target) -->
+<div class="absolute left-1 top-8 bottom-8 w-1 bg-secondary/20 rounded-full" title="Dash Goal: Column L"></div>
+<!-- East Goal Line Marker (Pat target) -->
+<div class="absolute right-1 top-8 bottom-8 w-1 bg-[#d97706]/20 rounded-full" title="Pat Goal: Column A"></div>
+<div class="flex flex-col">
+<!-- Column Coordinates (a-l) -->
+<div class="grid grid-cols-12 w-[576px] pl-6 mb-1 text-center font-label-sm text-label-sm text-on-surface-variant">
+<span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span>
+<span>g</span><span>h</span><span>i</span><span>j</span><span>k</span><span>l</span>
+</div>
+<div class="flex">
+<!-- Row Coordinates (12 down to 1) -->
+<div class="flex flex-col justify-between w-6 py-2 text-right pr-2 font-label-sm text-label-sm text-on-surface-variant">
+<span>12</span><span>11</span><span>10</span><span>9</span><span>8</span><span>7</span>
+<span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+</div>
+<!-- 12x12 Quoridor Board Grid -->
+<div class="relative w-[576px] h-[576px] bg-surface-container-lowest border border-outline-variant grid grid-cols-12 grid-rows-12 gap-[4px] p-[3px]" id="quoridor-board">
+<!-- Win Perimeter Top Wash (Row 12 - South's Target) -->
+<div class="absolute top-0 left-0 right-0 h-[48px] bg-secondary/5 pointer-events-none z-0 border-b border-secondary/15"></div>
+<!-- Win Perimeter Bottom Wash (Row 1 - North's Target) -->
+<div class="absolute bottom-0 left-0 right-0 h-[48px] bg-on-tertiary-container/5 pointer-events-none z-0 border-t border-on-tertiary-container/15"></div>
+<!-- 144 Cells dynamically represented with semantic board coordinates -->
+<!-- Cells (sample layout across 12 rows x 12 cols with realistic mid-game state) -->
+<!-- Row 12 (Top) -->
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="a12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="b12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="c12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="d12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="e12"></div>
+<!-- Prune (■ North) has advanced down to e10, row 12 has starting marker trace -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center" data-coord="f12">
+<div class="w-2 h-2 border border-outline-variant rounded-[1px]"></div>
+</div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="g12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="h12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="i12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="j12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="k12"></div>
+<div class="w-full h-full bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer transition-colors" data-coord="l12"></div>
+<!-- Rows 11-10: Player ■ Prune positioned at e10 -->
+<!-- Generating row cells with visual markers -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 10 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Prune Marker (■ North, solid charcoal square) -->
+<div class="w-full h-full bg-surface-container-high border border-outline rounded-[1px] relative flex items-center justify-center shadow-xs" data-coord="e10" title="Player 3: Prune (North)">
+<div class="w-6 h-6 bg-primary flex items-center justify-center rounded-[2px]">
+<span class="font-label-sm text-[10px] text-on-primary font-bold">■</span>
+</div>
+</div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 9 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 8: Dash (▲ West) cornered at c8 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-high border border-outline rounded-[1px] relative flex items-center justify-center shadow-xs" data-coord="c8" title="Player 2: Dash (West) - Turn Skipped">
+<div class="w-6 h-6 bg-secondary flex items-center justify-center rounded-[2px] opacity-75">
+<span class="font-label-sm text-[11px] text-on-secondary font-bold">▲</span>
+</div>
+</div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 7: Pat (◆ East) positioned at j7 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-high border border-outline rounded-[1px] relative flex items-center justify-center shadow-xs" data-coord="j7" title="Player 4: Pat (East)">
+<div class="w-6 h-6 bg-[#b45309] flex items-center justify-center rounded-[2px]">
+<span class="font-label-sm text-[12px] text-white font-bold">◆</span>
+</div>
+</div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 6 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 5: South (● You) advanced to g5 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Valid Move Dot Indicator: f5 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer hover:bg-surface-container transition-colors" data-coord="f5">
+<div class="w-2.5 h-2.5 rounded-full bg-primary/25 border border-primary/40"></div>
+</div>
+<!-- South (● You) Main Pawn at g5 -->
+<div class="w-full h-full bg-surface-container-highest border-2 border-primary rounded-[1px] relative flex items-center justify-center ring-2 ring-primary/20 z-10" data-coord="g5" title="You (South Pawn)">
+<div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="font-label-sm text-[11px] font-bold">●</span>
+</div>
+</div>
+<!-- Valid Move Dot Indicator: h5 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer hover:bg-surface-container transition-colors" data-coord="h5">
+<div class="w-2.5 h-2.5 rounded-full bg-primary/25 border border-primary/40"></div>
+</div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Rows 4, 3, 2, 1 empty tiles fill -->
+<!-- Row 4 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Valid Move Dot Indicator: g4 (downwards) -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center cursor-pointer hover:bg-surface-container transition-colors" data-coord="g4">
+<div class="w-2.5 h-2.5 rounded-full bg-primary/25 border border-primary/40"></div>
+</div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 3 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 2 -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- Row 1 (South Base) -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- South start square marker -->
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px] relative flex items-center justify-center">
+<div class="w-2 h-2 rounded-full border border-outline-variant"></div>
+</div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<div class="w-full h-full bg-surface-container-lowest border border-outline-variant/60 rounded-[1px]"></div>
+<!-- COMMITTED ARCHITECTURAL WALLS (12x12 Precise hairline placement) -->
+<!-- Wall 1: Horizontal blocking Dash at c8-d8 -->
+<div class="absolute top-[188px] left-[92px] w-[95px] h-[5px] bg-primary rounded-[1px] z-20" title="Wall: c8h"></div>
+<!-- Wall 2: Vertical blocking Prune at e10-e11 -->
+<div class="absolute top-[48px] left-[237px] w-[5px] h-[95px] bg-primary rounded-[1px] z-20" title="Wall: e10v"></div>
+<!-- Wall 3: Horizontal wall at h6-i6 -->
+<div class="absolute top-[284px] left-[333px] w-[95px] h-[5px] bg-primary rounded-[1px] z-20" title="Wall: h6h"></div>
+<!-- Wall 4: Vertical wall at j6-j7 (near Pat) -->
+<div class="absolute top-[236px] left-[477px] w-[5px] h-[95px] bg-primary rounded-[1px] z-20" title="Wall: j6v"></div>
+<!-- FEATURE 1: MAGNETIC CORRIDOR CROSSHAIRS & ACTIVE FIRST-TAP PREVIEW -->
+<!-- Active Staged Wall Preview at f5-g5 Vertical Corridor -->
+<div class="absolute top-[284px] left-[285px] w-[5px] h-[95px] bg-primary/70 ring-2 ring-primary ring-offset-1 rounded-[1px] z-30 transition-all cursor-pointer animate-pulse" title="Active Staged Wall Preview: f5v">
+<!-- Magnetic Guide Lines extending out faintly -->
+<div class="absolute -left-[140px] top-1/2 w-[285px] h-[1px] border-t border-dashed border-primary/30 pointer-events-none -z-10"></div>
+</div>
+<!-- Subtle Magnetic Intersect Crosshairs on Unoccupied Corridors (Dense 12x12 Hitbox Helpers) -->
+<div class="absolute top-[141px] left-[141px] w-[9px] h-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-outline-variant/50 hover:border-primary/80 hover:bg-primary/20 cursor-pointer pointer-events-auto" title="Wall Slot: c9"></div>
+<div class="absolute top-[141px] left-[333px] w-[9px] h-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-outline-variant/50 hover:border-primary/80 hover:bg-primary/20 cursor-pointer pointer-events-auto" title="Wall Slot: g9"></div>
+<div class="absolute top-[380px] left-[189px] w-[9px] h-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-outline-variant/50 hover:border-primary/80 hover:bg-primary/20 cursor-pointer pointer-events-auto" title="Wall Slot: d4"></div>
+<div class="absolute top-[380px] left-[381px] w-[9px] h-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-outline-variant/50 hover:border-primary/80 hover:bg-primary/20 cursor-pointer pointer-events-auto" title="Wall Slot: h4"></div>
+<!-- FEATURE 2: FLOATING TWO-STEP CONFIRMATION INDICATOR OVER SELECTED WALL -->
+<div class="absolute top-[252px] left-[200px] z-40 bg-surface-container-lowest border border-primary px-space-sm py-1.5 rounded shadow-sm flex items-center gap-space-sm pointer-events-auto">
+<div class="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-[11px] font-semibold text-primary uppercase tracking-tight">Wall: f5-vertical</span>
+<span class="font-body-sm text-[10px] text-on-surface-variant leading-none">Tap again to confirm (or tap elsewhere to cancel)</span>
+</div>
+<button class="ml-1 px-1.5 py-0.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant text-[10px] font-label-sm font-semibold uppercase text-primary transition-colors">
+                    Flip [R]
+                  </button>
+</div>
+</div>
+</div>
+<!-- South Goal Line Marker (You start at Row 1, Win at Row 12) -->
+<div class="w-full max-w-[576px] pl-6 mt-space-xs flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span> ● You Goal (Row 12)</span>
+<span class="tracking-widest uppercase text-[9px] text-outline">Pawn at g5 · Dist: 7</span>
+</div>
+</div>
+</div>
+<!-- Board Micro Navigation Footer -->
+<div class="w-full max-w-[620px] mt-space-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm pt-space-xs border-t border-outline-variant/60">
+<div class="flex items-center gap-space-md">
+<span>GRID: 12 × 12 CELLS</span>
+<span>TOTAL CORRIDORS: 121 SLOTS</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>WALL HITBOX ASSIST: ACTIVE</span>
+</div>
+</div>
+</div>
+<!-- RIGHT PANEL: Editorial Match Ledger & Multi-Player Roster (4 cols on desktop) -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<!-- Status Line Card -->
+<div class="bg-surface-container-lowest p-space-md rounded border border-outline-variant">
+<div class="flex items-center justify-between pb-space-xs border-b border-outline-variant">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-md text-label-md text-primary font-semibold uppercase tracking-wider">YOUR MOVE · PLY 36</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded border border-outline-variant">TURN 9.4</span>
+</div>
+<!-- Two-step Placement Flag -->
+<div class="mt-space-sm p-space-xs bg-surface-container-low rounded border border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">touch_app</span>
+<span class="font-body-sm text-body-sm text-on-surface">Two-step placement:</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-semibold uppercase">ON (Preview → Confirm)</span>
+</div>
+</div>
+<!-- 4 Players Status Matrix (7 Walls Max each) -->
+<div class="bg-surface-container-lowest p-space-md rounded border border-outline-variant flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">4-Player Standing</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">7 Walls Max</span>
+</div>
+<!-- Player 1: You (South) - Active Turn -->
+<div class="p-space-sm rounded bg-surface-container-low border-2 border-primary flex flex-col gap-1 relative">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-sm text-[10px] font-bold">●</span>
+<span class="font-body-md text-body-md font-semibold text-primary">You (South)</span>
+<span class="font-label-sm text-[9px] bg-primary text-on-primary px-1.5 py-0.2 rounded font-medium">ACTIVE</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-medium">Dist: 7</span>
+</div>
+<!-- Wall inventory bars: 4 remaining out of 7 -->
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Walls: 4 / 7</span>
+<div class="flex gap-1">
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+</div>
+</div>
+</div>
+<!-- Player 2: Dash (West) - Skipped -->
+<div class="p-space-sm rounded bg-surface-container-lowest border border-outline-variant flex flex-col gap-1 opacity-75">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded-[2px] bg-secondary text-on-secondary flex items-center justify-center font-label-sm text-[10px] font-bold">▲</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Dash (West)</span>
+<span class="font-label-sm text-[9px] border border-outline-variant text-on-surface-variant px-1 rounded">SKIPPED</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Dist: 9</span>
+</div>
+<!-- Wall inventory: 2 remaining out of 7 -->
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Walls: 2 / 7</span>
+<div class="flex gap-1">
+<span class="w-3 h-3 bg-secondary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-secondary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+</div>
+</div>
+</div>
+<!-- Player 3: Prune (North) -->
+<div class="p-space-sm rounded bg-surface-container-lowest border border-outline-variant flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded-[2px] bg-[#333333] text-white flex items-center justify-center font-label-sm text-[10px] font-bold">■</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Prune (North)</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Dist: 9</span>
+</div>
+<!-- Wall inventory: 5 remaining out of 7 -->
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Walls: 5 / 7</span>
+<div class="flex gap-1">
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-primary rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+</div>
+</div>
+</div>
+<!-- Player 4: Pat (East) -->
+<div class="p-space-sm rounded bg-surface-container-lowest border border-outline-variant flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded-[2px] bg-[#b45309] text-white flex items-center justify-center font-label-sm text-[10px] font-bold">◆</span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Pat (East)</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Dist: 8</span>
+</div>
+<!-- Wall inventory: 3 remaining out of 7 -->
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Walls: 3 / 7</span>
+<div class="flex gap-1">
+<span class="w-3 h-3 bg-[#b45309] rounded-[1px]"></span>
+<span class="w-3 h-3 bg-[#b45309] rounded-[1px]"></span>
+<span class="w-3 h-3 bg-[#b45309] rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+<span class="w-3 h-3 bg-surface-container-highest border border-outline-variant rounded-[1px]"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Controls (Single Primary Button Rule Adhered To) -->
+<div class="bg-surface-container-lowest p-space-md rounded border border-outline-variant flex flex-col gap-space-sm">
+<!-- Primary Commitment Action -->
+<button class="w-full py-2.5 px-space-md bg-primary hover:bg-[#333333] text-on-primary rounded font-body-md text-body-md font-medium transition-colors flex items-center justify-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Confirm Placement (f5-vertical)</span>
+</button>
+<!-- Outlined Actions Strip -->
+<div class="grid grid-cols-3 gap-space-sm pt-space-xs">
+<button class="py-2 px-space-xs bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant rounded font-label-sm text-label-sm text-primary transition-colors text-center">
+              [Undo]
+            </button>
+<button class="py-2 px-space-xs bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant rounded font-label-sm text-label-sm text-primary transition-colors text-center">
+              [Show paths]
+            </button>
+<button class="py-2 px-space-xs bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant rounded font-label-sm text-label-sm text-primary transition-colors text-center">
+              [New game]
+            </button>
+</div>
+</div>
+<!-- Notation Snippet & Shortcuts Reference -->
+<div class="bg-surface-container-lowest p-space-md rounded border border-outline-variant flex flex-col gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center justify-between pb-1 border-b border-outline-variant/60 font-semibold text-primary">
+<span>SHORTCUTS REFERENCE</span>
+<span>KEY</span>
+</div>
+<div class="flex items-center justify-between py-0.5">
+<span>Confirm / Commit Move</span>
+<span class="font-mono text-primary font-medium">[Enter] / [Space]</span>
+</div>
+<div class="flex items-center justify-between py-0.5">
+<span>Rotate Staged Wall</span>
+<span class="font-mono text-primary font-medium">[R]</span>
+</div>
+<div class="flex items-center justify-between py-0.5">
+<span>Cancel Active Preview</span>
+<span class="font-mono text-primary font-medium">[Esc]</span>
+</div>
+<div class="flex items-center justify-between py-0.5">
+<span>Toggle Shortest Paths Overlay</span>
+<span class="font-mono text-primary font-medium">[P]</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main><footer class="w-full border-t border-outline-variant bg-surface-container-low py-space-lg"><div class="w-full px-margin-desktop flex flex-col sm:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Quoridor Pure Matrix 9x9</span><span class="text-outline-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">Standard FIDE Notation Protocol</span></div><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 Quoridor Archival Project. All rights reserved.</div></div></footer></body></html>

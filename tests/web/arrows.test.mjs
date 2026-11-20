@@ -75,3 +75,26 @@ test('legal sideways step is not mistaken for a diagonal', () => {
   assert.deepEqual(pickArrowMove(pawn, legalMoves, 'up'), { kind: 'none' });
 });
 
+test('pawn on dynamic board edges (7x7 and 12x12)', () => {
+  // 7x7 board bottom edge [6, 3]
+  assert.deepEqual(pickArrowMove([6, 3], [[5, 3], [6, 2], [6, 4]], 'down'), { kind: 'none' });
+  assert.deepEqual(pickArrowMove([6, 3], [[5, 3], [6, 2], [6, 4]], 'up'), { kind: 'move', to: [5, 3] });
+
+  // 12x12 board top edge [0, 5]
+  assert.deepEqual(pickArrowMove([0, 5], [[1, 5], [0, 4], [0, 6]], 'up'), { kind: 'none' });
+  assert.deepEqual(pickArrowMove([0, 5], [[1, 5], [0, 4], [0, 6]], 'down'), { kind: 'move', to: [1, 5] });
+  // 12x12 board right edge [5, 11]
+  assert.deepEqual(pickArrowMove([5, 11], [[4, 11], [6, 11], [5, 10]], 'right'), { kind: 'none' });
+});
+
+test('diagonal jump when 3rd pawn blocks straight jump in 4-player', () => {
+  // Human at [5, 5], P1 at [4, 5], P2 at [3, 5]
+  // Straight jump to [3, 5] is blocked by P2, diagonals [4, 4] and [4, 6] are legal
+  const pawn = [5, 5];
+  const legalMoves = [[4, 4], [4, 6], [6, 5], [5, 4], [5, 6]];
+  assert.deepEqual(pickArrowMove(pawn, legalMoves, 'up'), {
+    kind: 'choose',
+    options: [[4, 4], [4, 6]],
+  });
+});
+

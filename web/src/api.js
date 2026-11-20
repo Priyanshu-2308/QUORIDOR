@@ -1,4 +1,4 @@
-// REST API client for game sessions, legal moves, path calculations, and AI decision queries.
+// REST API client for dynamic-board game sessions, legal moves, path calculations, and AI decision queries.
 
 const BASE_URL = '';
 
@@ -18,10 +18,25 @@ async function fetchJson(url, options = {}) {
   return await resp.json();
 }
 
-export async function createGame(opponent = 'alphabeta:depth=3', humanPlayer = 0) {
+export async function createGame(options = {}) {
+  let payload = {};
+  if (typeof options === 'string') {
+    payload = { opponent: options, human_player: 0 };
+  } else {
+    payload = {
+      board_size: options.boardSize || 9,
+      num_players: options.numPlayers || 2,
+      human_player: options.humanPlayer !== undefined ? options.humanPlayer : 0,
+    };
+    if (options.opponents) {
+      payload.opponents = options.opponents;
+    } else if (options.opponent) {
+      payload.opponent = options.opponent;
+    }
+  }
   return await fetchJson(`${BASE_URL}/api/new`, {
     method: 'POST',
-    body: JSON.stringify({ opponent, human_player: humanPlayer }),
+    body: JSON.stringify(payload),
   });
 }
 
@@ -55,4 +70,3 @@ export async function undoMove(gameId) {
     method: 'POST',
   });
 }
-

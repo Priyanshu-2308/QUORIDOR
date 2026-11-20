@@ -1,4 +1,4 @@
-// Post-match summary dialog displaying outcome, ply count, duration, and rematch controls.
+// Post-match summary dialog for 2P and 4P modes, supporting decisive victories, turn limit draws, and 1-4 rank lists.
 
 export function createResultScreen({ onRematch, onReview, onNewGame }) {
   const el = document.createElement('div');
@@ -7,12 +7,21 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
 
   let currentResult = {
     winner: 0,
+    noWinner: false,
+    ranks: null, // e.g. { "0": 1, "1": 3, "2": 2, "3": 4 }
+    distances: null, // e.g. { "0": 0, "1": 4, "2": 2, "3": 7 }
+    numPlayers: 2,
     humanPlayer: 0,
-    opponentInfo: { name: 'Professor Prune', displayName: 'Professor Prune (Depth 3)' },
     turnCount: 24,
     wallsPlaced: 8,
     durationSeconds: 184,
-    lastNotation: 'e9#',
+    playerNames: { 0: 'You', 2: 'Professor Prune' },
+    playerColors: {
+      0: { fill: '#2E4BDB', marker: '●' },
+      1: { fill: '#C05621', marker: '▲' },
+      2: { fill: '#E5532D', marker: '■' },
+      3: { fill: '#7C3AED', marker: '◆' },
+    },
   };
 
   function formatDuration(secs) {
@@ -22,62 +31,117 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
   }
 
   function render() {
-    const isHumanWin = (currentResult.winner === currentResult.humanPlayer);
-    const resultTitle = isHumanWin ? 'You won' : `${currentResult.opponentInfo.name} won`;
-    const themeColor = isHumanWin ? '#2E4BDB' : '#E5532D';
+    const { winner, noWinner, ranks, distances, numPlayers, humanPlayer, turnCount, wallsPlaced, durationSeconds, playerNames, playerColors } = currentResult;
+    const isHumanWin = winner === humanPlayer;
 
-    el.innerHTML = `
-      <div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-space-lg flex flex-col relative shadow-xl modal-enter" style="outline: 1px solid #D9D7D0;">
-        
-        <div class="flex items-center justify-between pb-space-md mb-space-md bg-surface-container-low -mx-space-lg -mt-space-lg px-space-lg pt-space-md rounded-t-xl border-b border-surface-container-highest">
-          <div class="flex items-center gap-space-xs">
-            <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${themeColor};"></span>
-            <span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider">Match Concluded</span>
-          </div>
-          <span class="font-label-sm text-label-sm text-outline font-mono">Notation: ${currentResult.lastNotation}</span>
-        </div>
+    let headerHtml = '';
+    let bodyHtml = '';
 
-        <div class="mb-space-lg">
-          <div class="flex items-center gap-space-sm mb-1">
-            <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight font-semibold">${resultTitle}</h2>
-            ${isHumanWin ? '<span class="material-symbols-outlined text-secondary text-[24px]">verified</span>' : '<span class="material-symbols-outlined text-on-tertiary-container text-[24px]">smart_toy</span>'}
+    if (numPlayers === 4 && ranks) {
+      // 4-Player Mode: 1-4 Ranking Leaderboard
+      const isDraw = noWinner || winner === null;
+      headerHtml = `
+        <div class="flex flex-col text-center mb-space-md">
+          <div class="flex items-center justify-center gap-space-xs ${isDraw ? 'text-on-surface-variant' : 'text-secondary'} mb-1">
+            <span class="material-symbols-outlined text-[20px]">${isDraw ? 'hourglass_bottom' : 'emoji_events'}</span>
+            <span class="font-label-sm text-label-sm tracking-widest uppercase">${isDraw ? 'Pace Terminated' : 'Match Concluded'}</span>
           </div>
-          <p class="font-body-md text-body-md text-on-surface-variant">
-            ${currentResult.turnCount} plies, ${currentResult.wallsPlaced} walls placed
+          <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">
+            ${isDraw ? 'Draw · Turn limit reached' : isHumanWin ? 'You won' : `${playerNames[winner] || 'Opponent'} won`}
+          </h2>
+          <p class="font-label-md text-label-md text-on-surface-variant mt-1">
+            ${turnCount} plies · ${wallsPlaced} walls placed · ${formatDuration(durationSeconds)}
           </p>
         </div>
+      `;
 
+      // Sort seats by rank ascending
+      const sortedSeats = Object.keys(ranks)
+        .map((k) => parseInt(k, 10))
+        .sort((a, b) => ranks[a] - ranks[b]);
+
+      bodyHtml = `
+        <div class="flex flex-col gap-space-xs mb-space-lg">
+          ${sortedSeats
+            .map((seat) => {
+              const rnk = ranks[seat];
+              const pColor = playerColors[seat] || { fill: '#888', marker: '●' };
+              const pName = playerNames[seat] || `Player ${seat}`;
+              const dist = distances ? distances[seat] : null;
+              const isWinnerSeat = !isDraw && seat === winner;
+
+              return `
+              <div class="flex items-center justify-between p-space-sm rounded ${
+                rnk === 1 ? 'bg-surface-container-low border border-primary/20' : 'bg-surface-container-lowest'
+              }">
+                <div class="flex items-center gap-space-sm">
+                  <span class="font-label-md text-label-md font-bold text-primary w-4 text-center">${rnk}</span>
+                  <div class="w-7 h-7 rounded flex items-center justify-center font-bold text-[13px]" style="background: ${pColor.fill}20; color: ${pColor.fill}">
+                    ${pColor.marker}
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="font-body-md text-body-md font-medium text-primary">${pName}</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">
+                      ${isWinnerSeat ? 'Reached goal rim' : dist !== null ? `${dist} steps to go` : ''}
+                    </span>
+                  </div>
+                </div>
+                ${
+                  isWinnerSeat
+                    ? '<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-primary font-semibold uppercase">Winner</span>'
+                    : ''
+                }
+              </div>
+            `;
+            })
+            .join('')}
+        </div>
+      `;
+    } else {
+      // 2-Player Mode: Direct Victory Summary
+      const resultTitle = noWinner ? 'Draw · Turn limit reached' : isHumanWin ? 'You won' : `${playerNames[winner] || 'Opponent'} won`;
+      const themeColor = isHumanWin ? '#2E4BDB' : '#E5532D';
+
+      headerHtml = `
+        <div class="flex flex-col mb-space-md">
+          <div class="flex items-center gap-space-xs mb-1">
+            <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${themeColor};"></span>
+            <span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider">Match Concluded</span>
+          </div>
+          <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight font-semibold">${resultTitle}</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            ${turnCount} plies · ${wallsPlaced} walls placed · ${formatDuration(durationSeconds)}
+          </p>
+        </div>
+      `;
+
+      bodyHtml = `
         <div class="bg-surface-container-low rounded-lg p-space-md mb-space-lg flex flex-col gap-space-sm border border-surface-container-highest">
           <div class="flex items-center justify-between">
-            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Duration</span>
-            <span class="font-label-md text-label-md text-on-surface font-medium font-mono">${formatDuration(currentResult.durationSeconds)}</span>
-          </div>
-          <div class="h-[1px] bg-surface-variant w-full"></div>
-          <div class="flex items-center justify-between">
             <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Opponent</span>
-            <span class="font-label-md text-label-md text-on-surface font-medium truncate max-w-[180px]">${currentResult.opponentInfo.displayName || currentResult.opponentInfo.name}</span>
+            <span class="font-label-md text-label-md text-on-surface font-medium">${playerNames[2] || 'Opponent'}</span>
           </div>
           <div class="h-[1px] bg-surface-variant w-full"></div>
           <div class="flex items-center justify-between">
-            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Result</span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Outcome</span>
             <span class="font-label-md text-label-md font-semibold" style="color: ${themeColor};">
-              ${isHumanWin ? 'Victory (Corridor Mastered)' : 'Defeat (Opponent Reached Goal)'}
+              ${noWinner ? 'Draw (Turn cap reached)' : isHumanWin ? 'Victory (Goal rim reached)' : 'Defeat'}
             </span>
           </div>
         </div>
+      `;
+    }
 
-        <div class="flex flex-col gap-space-sm w-full">
-          <button id="btn-rematch" class="w-full min-h-[44px] bg-primary text-on-primary font-label-md text-label-md py-space-sm px-space-md rounded transition-colors active:bg-neutral-800 flex items-center justify-center gap-space-xs cursor-pointer shadow-sm" type="button">
+    el.innerHTML = `
+      <div class="w-full max-w-md bg-surface-container-lowest rounded-xl p-space-lg flex flex-col relative shadow-xl modal-enter border border-outline-variant/60">
+        ${headerHtml}
+        ${bodyHtml}
+        <div class="flex flex-col gap-space-xs w-full">
+          <button id="btn-rematch" class="w-full min-h-[44px] bg-primary text-on-primary font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:opacity-90 flex items-center justify-center gap-space-xs cursor-pointer shadow-sm" type="button">
             <span class="material-symbols-outlined text-[18px]">replay</span>
-            <span>Rematch</span>
+            <span>Play again</span>
           </button>
-
-          <button id="btn-review" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low active:bg-surface-container flex items-center justify-center gap-space-xs cursor-pointer" type="button" style="outline: 1px solid #D9D7D0;">
-            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">history_edu</span>
-            <span>Review match</span>
-          </button>
-
-          <button id="btn-newgame" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container-low active:bg-surface-container flex items-center justify-center gap-space-xs cursor-pointer" type="button" style="outline: 1px solid #D9D7D0;">
+          <button id="btn-newgame" class="w-full min-h-[44px] bg-surface-container-lowest text-on-surface font-label-md text-label-md py-space-sm px-space-md rounded transition-colors hover:bg-surface-container border border-outline-variant/50 flex items-center justify-center gap-space-xs cursor-pointer" type="button">
             <span class="material-symbols-outlined text-[18px] text-on-surface-variant">add_circle_outline</span>
             <span>New game</span>
           </button>
@@ -86,27 +150,20 @@ export function createResultScreen({ onRematch, onReview, onNewGame }) {
     `;
 
     el.querySelector('#btn-rematch')?.addEventListener('click', () => {
+      el.classList.add('hidden');
       if (onRematch) onRematch();
     });
 
-    el.querySelector('#btn-review')?.addEventListener('click', () => {
-      el.classList.add('hidden');
-      if (onReview) onReview();
-    });
-
     el.querySelector('#btn-newgame')?.addEventListener('click', () => {
+      el.classList.add('hidden');
       if (onNewGame) onNewGame();
     });
   }
 
-  el.showResult = function (data) {
-    currentResult = { ...currentResult, ...data };
-    el.classList.remove('hidden');
+  el.showResult = function (res) {
+    currentResult = { ...currentResult, ...res };
     render();
-  };
-
-  el.hide = function () {
-    el.classList.add('hidden');
+    el.classList.remove('hidden');
   };
 
   render();

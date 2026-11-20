@@ -12,15 +12,12 @@ class QuoridorApp {
     this.gameId = null;
     this.gameState = null;
     this.humanPlayer = 0;
-    this.opponentSpec = 'alphabeta:depth=3';
-    this.opponentInfo = {
-      name: 'Professor Prune',
-      displayName: 'Professor Prune (Depth 3)',
-      badge: 'P',
-      id: 'alphabeta',
-    };
+    this.boardSize = 9;
+    this.numPlayers = 2;
+    this.lastStartConfig = null;
+    this.opponentInfo = null;
+    this.opponentInfos = [];
     this.legalMoves = [];
-    this.lastStats = null;
     this.isAiThinking = false;
     this.isRequestInFlight = false;
     this.currentScreenKey = null;
@@ -41,8 +38,7 @@ class QuoridorApp {
 
     this.resultOverlay = createResultScreen({
       onRematch: () => this.restartGame(),
-      onReview: () => {
-      },
+      onReview: () => {},
       onNewGame: () => this.navigate('#/setup'),
     });
     this.resultOverlay.classList.add('hidden');
@@ -94,28 +90,37 @@ class QuoridorApp {
     }
   }
 
-  async startGame({ opponent, humanPlayer, opponentInfo }) {
-    this.opponentSpec = opponent;
-    this.humanPlayer = humanPlayer;
-    if (opponentInfo) this.opponentInfo = opponentInfo;
-    this.lastStats = null;
+  async startGame(cfg) {
+    this.lastStartConfig = cfg;
+    this.boardSize = cfg.boardSize || 9;
+    this.numPlayers = cfg.numPlayers || 2;
+    this.humanPlayer = cfg.humanPlayer !== undefined ? cfg.humanPlayer : 0;
+    this.opponentInfo = cfg.opponentInfo || null;
+    this.opponentInfos = cfg.opponentInfos || [];
 
     try {
-      const data = await api.createGame(opponent, humanPlayer);
+      const data = await api.createGame({
+        boardSize: this.boardSize,
+        numPlayers: this.numPlayers,
+        humanPlayer: this.humanPlayer,
+        opponent: cfg.opponent,
+        opponents: cfg.opponents,
+      });
+
       this.gameId = data.game_id;
       this.gameState = data.state;
 
       const legalData = await api.getLegalMoves(this.gameId);
       this.legalMoves = legalData.moves;
 
-      this.screens.game.initGame(this.gameState, this.humanPlayer, this.opponentInfo);
+      this.screens.game.initGame(this.gameState, this.humanPlayer, this.opponentInfo, this.opponentInfos);
       this.screens.game.updateState(this.gameState, this.humanPlayer, false, this.legalMoves);
 
       this.navigate('#/game');
       await this.refreshPaths();
 
       if (this.gameState.current !== this.humanPlayer) {
-        await this.triggerAiMove();
+        await this.triggerAiSequence();
       }
     } catch (err) {
       console.error('Failed to create game:', err);
@@ -124,107 +129,149 @@ class QuoridorApp {
   }
 
   async restartGame() {
-    await this.startGame({
-      opponent: this.opponentSpec,
-      humanPlayer: this.humanPlayer,
-      opponentInfo: this.opponentInfo,
-    });
+    if (this.lastStartConfig) {
+      await this.startGame(this.lastStartConfig);
+    }
   }
 
   async handlePawnMove(r, c) {
-    if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
+    if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null || this.gameState.no_winner) return;
     if (this.gameState.current !== this.humanPlayer) return;
 
     this.isRequestInFlight = true;
-    this.screens.game.setRequestInFlight?.(true);
+    this.screens.game.setRequestInFlight(true);
     try {
       const move = { type: 'pawn', to: [r, c] };
       const data = await api.makeMove(this.gameId, move);
       this.screens.game.addHistoryMove(this.humanPlayer, move);
       this.gameState = data.state;
-      await this.onMoveFinished();
+      await this.onMoveFinished(data.ranks);
     } catch (err) {
       console.warn('Pawn move error:', err.message);
     } finally {
       this.isRequestInFlight = false;
-      this.screens.game.setRequestInFlight?.(false);
+      this.screens.game.setRequestInFlight(false);
     }
   }
 
   async handleWallMove(r, c, o) {
-    if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
+    if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null || this.gameState.no_winner) return;
     if (this.gameState.current !== this.humanPlayer) return;
 
     this.isRequestInFlight = true;
-    this.screens.game.setRequestInFlight?.(true);
+    this.screens.game.setRequestInFlight(true);
     try {
       const move = { type: 'wall', r, c, o };
       const data = await api.makeMove(this.gameId, move);
       this.screens.game.addHistoryMove(this.humanPlayer, move);
       this.gameState = data.state;
-      await this.onMoveFinished();
+      await this.onMoveFinished(data.ranks);
     } catch (err) {
       console.warn('Wall move error:', err.message);
     } finally {
       this.isRequestInFlight = false;
-      this.screens.game.setRequestInFlight?.(false);
+      this.screens.game.setRequestInFlight(false);
     }
   }
 
-  async onMoveFinished() {
-    if (this.gameState.winner !== null) {
+  async handlePassMove() {
+    if (this.isRequestInFlight || this.isAiThinking || !this.gameState) return;
+    this.isRequestInFlight = true;
+    this.screens.game.setRequestInFlight(true);
+    try {
+      const move = { type: 'pass' };
+      const data = await api.makeMove(this.gameId, move);
+      this.screens.game.addHistoryMove(this.humanPlayer, move);
+      this.screens.game.showPassAlert('You had no legal moves. Turn skipped.');
+      this.gameState = data.state;
+      await this.onMoveFinished(data.ranks);
+    } catch (err) {
+      console.warn('Pass move error:', err.message);
+    } finally {
+      this.isRequestInFlight = false;
+      this.screens.game.setRequestInFlight(false);
+    }
+  }
+
+  async onMoveFinished(ranks = null) {
+    if (this.gameState.winner !== null || this.gameState.no_winner) {
       this.screens.game.updateState(this.gameState, this.humanPlayer, false, []);
       await this.refreshPaths();
-      this.showGameOverModal();
+      this.showGameOverModal(ranks);
       return;
     }
 
     const legalData = await api.getLegalMoves(this.gameId);
     this.legalMoves = legalData.moves;
-    this.screens.game.updateState(this.gameState, this.humanPlayer, true, this.legalMoves);
+
+    // Check if human must pass
+    if (this.gameState.current === this.humanPlayer && this.legalMoves.length === 1 && this.legalMoves[0].type === 'pass') {
+      await this.handlePassMove();
+      return;
+    }
+
+    this.screens.game.updateState(this.gameState, this.humanPlayer, false, this.legalMoves);
     await this.refreshPaths();
 
     if (this.gameState.current !== this.humanPlayer) {
-      await this.triggerAiMove();
+      await this.triggerAiSequence();
     }
   }
 
-  async triggerAiMove() {
-    this.isAiThinking = true;
-    this.screens.game.updateState(this.gameState, this.humanPlayer, true, []);
+  async triggerAiSequence() {
+    while (
+      this.gameState &&
+      this.gameState.winner === null &&
+      !this.gameState.no_winner &&
+      this.gameState.current !== this.humanPlayer
+    ) {
+      this.isAiThinking = true;
+      this.screens.game.updateState(this.gameState, this.humanPlayer, true, []);
 
-    try {
-      const data = await api.getAiMove(this.gameId);
-      if (data.move) {
-        this.screens.game.addHistoryMove(1 - this.humanPlayer, data.move);
-      }
-      this.gameState = data.state;
-      this.lastStats = data.stats;
-      this.screens.game.setStats(data.stats);
+      // Pause 400ms between AI turns so moves are clearly visible
+      await new Promise((r) => setTimeout(r, 400));
 
-      if (this.gameState.winner !== null) {
-        this.screens.game.updateState(this.gameState, this.humanPlayer, false, []);
+      try {
+        const data = await api.getAiMove(this.gameId);
+        if (data.move) {
+          this.screens.game.addHistoryMove(data.mover, data.move);
+          if (data.move.type === 'pass') {
+            this.screens.game.showPassAlert('No legal move, turn skipped.');
+          }
+        }
+        this.gameState = data.state;
+        this.screens.game.updateState(this.gameState, this.humanPlayer, true, []);
         await this.refreshPaths();
-        this.showGameOverModal();
-        return;
-      }
 
+        if (data.is_terminal || this.gameState.winner !== null || this.gameState.no_winner) {
+          this.isAiThinking = false;
+          this.showGameOverModal(data.ranks);
+          return;
+        }
+      } catch (err) {
+        console.error('AI move sequence error:', err);
+        break;
+      }
+    }
+
+    this.isAiThinking = false;
+    if (this.gameState && this.gameState.winner === null && !this.gameState.no_winner) {
       const legalData = await api.getLegalMoves(this.gameId);
       this.legalMoves = legalData.moves;
-    } catch (err) {
-      console.error('AI move error:', err);
-    } finally {
-      this.isAiThinking = false;
       this.screens.game.updateState(this.gameState, this.humanPlayer, false, this.legalMoves);
-      await this.refreshPaths();
+
+      // Check if human must pass
+      if (this.legalMoves.length === 1 && this.legalMoves[0].type === 'pass') {
+        await this.handlePassMove();
+      }
     }
   }
 
   async handleUndo() {
-    if (this.isRequestInFlight || this.isAiThinking || !this.gameId || (this.gameState && this.gameState.winner !== null)) return;
+    if (this.isRequestInFlight || this.isAiThinking || !this.gameId || (this.gameState && (this.gameState.winner !== null || this.gameState.no_winner))) return;
 
     this.isRequestInFlight = true;
-    this.screens.game.setRequestInFlight?.(true);
+    this.screens.game.setRequestInFlight(true);
     try {
       const data = await api.undoMove(this.gameId);
       this.gameState = data.state;
@@ -236,7 +283,7 @@ class QuoridorApp {
       console.warn('Undo error:', err.message);
     } finally {
       this.isRequestInFlight = false;
-      this.screens.game.setRequestInFlight?.(false);
+      this.screens.game.setRequestInFlight(false);
     }
   }
 
@@ -248,21 +295,32 @@ class QuoridorApp {
     } catch (_) {}
   }
 
-  showGameOverModal() {
-    const history = this.screens.game.getMoveHistory();
-    const lastMove = history.length > 0 ? history[history.length - 1].notation : 'e9#';
-    const totalWallsPlaced = (this.gameState.h_walls ? this.gameState.h_walls.length : 0) + (this.gameState.v_walls ? this.gameState.v_walls.length : 0);
+  showGameOverModal(ranks = null) {
+    const totalWallsPlaced =
+      (this.gameState.h_walls ? this.gameState.h_walls.length : 0) +
+      (this.gameState.v_walls ? this.gameState.v_walls.length : 0);
     const duration = this.screens.game.getElapsedSeconds();
+
+    const playerNames = { 0: 'You' };
+    if (this.numPlayers === 4 && this.opponentInfos.length > 0) {
+      this.opponentInfos.forEach((o) => {
+        playerNames[o.seat] = o.name;
+      });
+    } else if (this.opponentInfo) {
+      playerNames[2] = this.opponentInfo.name;
+    }
 
     setTimeout(() => {
       this.resultOverlay.showResult({
         winner: this.gameState.winner,
+        noWinner: this.gameState.no_winner,
+        ranks: ranks,
+        numPlayers: this.numPlayers,
         humanPlayer: this.humanPlayer,
-        opponentInfo: this.opponentInfo,
         turnCount: this.gameState.turn_count,
         wallsPlaced: totalWallsPlaced,
         durationSeconds: duration,
-        lastNotation: lastMove,
+        playerNames,
       });
     }, 500);
   }
@@ -296,7 +354,7 @@ class QuoridorApp {
       if (dir) {
         event.preventDefault();
         if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
-        if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null) return;
+        if (this.isRequestInFlight || this.isAiThinking || !this.gameState || this.gameState.winner !== null || this.gameState.no_winner) return;
         if (this.gameState.current !== this.humanPlayer) return;
 
         this.screens.game.moveByArrow(dir);

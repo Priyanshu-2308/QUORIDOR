@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-container": "#858383", "inverse-on-surface": "#f4f0e9", "secondary-fixed-dim": "#bac3ff", "on-secondary-container": "#fffbff", "outline-variant": "#c4c7c7", "tertiary-container": "#3c0800", "surface-dim": "#dddad3", "on-surface-variant": "#444748", "on-tertiary-fixed-variant": "#891e00", "tertiary-fixed": "#ffdbd2", "outline": "#747878", "surface-bright": "#fdf9f2", "primary-fixed-dim": "#c8c6c5", "on-tertiary": "#ffffff", "surface-variant": "#e5e2db", "inverse-primary": "#c8c6c5", "surface-container": "#f1ede6", "on-tertiary-container": "#e5532d", "surface": "#fdf9f2", "on-secondary-fixed": "#00105c", "surface-tint": "#5f5e5e", "on-primary": "#ffffff", "background": "#fdf9f2", "on-primary-fixed-variant": "#474646", "inverse-surface": "#31302c", "secondary-container": "#4c66f5", "on-secondary": "#ffffff", "error": "#ba1a1a", "surface-container-low": "#f7f3ec", "on-secondary-fixed-variant": "#0930c6", "error-container": "#ffdad6", "tertiary-fixed-dim": "#ffb4a2", "on-error": "#ffffff", "on-error-container": "#93000a", "surface-container-high": "#ebe8e1", "on-background": "#1c1c18", "tertiary": "#000000", "surface-container-highest": "#e5e2db", "on-primary-fixed": "#1c1b1b", "secondary": "#2e4bdb", "primary-container": "#1c1b1b", "on-tertiary-fixed": "#3c0800", "on-surface": "#1c1c18", "secondary-fixed": "#dee0ff", "primary-fixed": "#e5e2e1", "surface-container-lowest": "#ffffff", "primary": "#000000" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-sm": "0.5rem", "margin-tablet": "1.5rem", "margin-desktop": "2.5rem", "space-md": "0.75rem", "margin": "1rem", "gutter-desktop": "1.5rem", "gutter": "1rem", "space-xs": "0.25rem", "space-xl": "2rem", "space-lg": "1.25rem" }, "fontFamily": { "body-sm": ["Inter"], "headline-sm": ["Inter"], "label-lg": ["JetBrains Mono"], "body-lg": ["Inter"], "headline-md": ["Inter"], "label-sm": ["JetBrains Mono"], "body-md": ["Inter"], "headline-lg": ["Inter"], "label-md": ["JetBrains Mono"], "headline-lg-mobile": ["Inter"] }, "fontSize": { "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "500" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "500" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500" }], "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-full"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center"><span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface font-semibold">Quoridor</span></div><div class="flex items-center"><span class="font-label-sm text-label-sm text-on-surface-variant font-medium tracking-wide">Move 24</span></div></div></header><main class="flex flex-col relative w-full pt-14 bg-surface min-h-screen"><div class="flex flex-col w-full pb-6 px-margin selection:bg-surface-dim">
+<!-- Status & Match State Banner -->
+<div class="flex items-center justify-between py-space-sm mb-space-xs">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md tracking-widest uppercase font-semibold text-on-surface">YOUR MOVE</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm leading-none">timer</span>
+<span>00:18</span>
+</div>
+</div>
+<!-- Inline Historical Alert / System Event -->
+<div class="flex items-start gap-2 bg-surface-container-low px-space-md py-space-xs rounded-lg mb-space-sm">
+<span class="material-symbols-outlined text-outline text-sm mt-0.5">info</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant leading-snug">
+      Turn 22: Dash had no legal move, turn skipped.
+    </span>
+</div>
+<!-- Board Container (strictly 328px square to fit 360px viewport with margin) -->
+<div class="relative w-full max-w-[340px] mx-auto aspect-square select-none flex flex-col justify-center items-center">
+<!-- 4-Player Goal Perimeter Edge Indicators -->
+<div class="absolute -top-1 left-3 right-3 h-[3px] bg-secondary rounded-full" title="You (South) Goal Row: North"></div>
+<div class="absolute -bottom-1 left-3 right-3 h-[3px] bg-on-tertiary-container rounded-full" title="Dash (North) Goal Row: South"></div>
+<div class="absolute -left-1 top-3 bottom-3 w-[3px] bg-secondary-container rounded-full" title="Pat (East) Goal Row: West"></div>
+<div class="absolute -right-1 top-3 bottom-3 w-[3px] bg-on-secondary-fixed-variant rounded-full" title="Prune (West) Goal Row: East"></div>
+<!-- 12x12 Quoridor Board with Corridors (SVG Canvas for crisp 0-overflow precision) -->
+<svg class="w-full h-full bg-surface-container-lowest rounded-lg shadow-sm" id="quoridor-board" viewbox="0 0 328 328" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Cell subtle pattern & tokens -->
+<filter height="140%" id="pawn-shadow" width="140%" x="-20%" y="-20%">
+<fedropshadow dx="0" dy="1" flood-opacity="0.25" stddeviation="0.8"></fedropshadow>
+</filter>
+</defs>
+<!-- Grid Cells (12x12 = 144 cells; cell size: 21px, corridor: 4.5px, pad: 12px) -->
+<!-- Perimeter Coordinate background guides -->
+<g id="cells-layer">
+<!-- Row 0 to 11 rendered mathematically via pure lightweight geometry -->
+<script>
+          // Script will populate cells in DOM or inline loop for maximum fidelity
+        </script>
+<!-- Background cell lattice (12x12) -->
+<!-- R0: Dash's baseline, North -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="12"></rect>
+<!-- Dash Starting Zone -->
+<rect class="fill-surface-container" height="21" rx="2" width="21" x="165" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="12"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="12"></rect>
+<!-- Row 1 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="37.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="37.5"></rect>
+<!-- Row 2 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="63"></rect>
+<!-- Dash Pawn is at e3 (col 5, row 2) -->
+<rect class="fill-surface-container-high" height="21" rx="2" width="21" x="139.5" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="63"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="63"></rect>
+<!-- Row 3 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="88.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="88.5"></rect>
+<!-- Row 4 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="114"></rect>
+<!-- Pat Pawn is at j5 (col 9, row 4) -->
+<rect class="fill-surface-container-high" height="21" rx="2" width="21" x="241.5" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="114"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="114"></rect>
+<!-- Row 5 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="139.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="139.5"></rect>
+<!-- Row 6 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="165"></rect>
+<!-- Prune Pawn is at d7 (col 3, row 6) -->
+<rect class="fill-surface-container-high" height="21" rx="2" width="21" x="88.5" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="165"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="165"></rect>
+<!-- Row 7 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="190.5"></rect>
+<!-- Valid Move Ahead for Player (col 6, row 7) -->
+<rect class="fill-surface-container-highest cursor-pointer" height="21" rx="2" width="21" x="165" y="190.5"></rect>
+<circle class="fill-secondary" cx="175.5" cy="201" opacity="0.6" r="3"></circle>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="190.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="190.5"></rect>
+<!-- Row 8 (Player 'You' Pawn position at g9 -> col 6, row 8) -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="216"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="216"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="216"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="216"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="216"></rect>
+<!-- Valid Move Left for Player -->
+<rect class="fill-surface-container-highest cursor-pointer" height="21" rx="2" width="21" x="139.5" y="216"></rect>
+<circle class="fill-secondary" cx="150" cy="226.5" opacity="0.6" r="3"></circle>
+<!-- You: Active Pawn Cell -->
+<rect class="fill-surface-container-highest" height="21" rx="2" width="21" x="165" y="216"></rect>
+<!-- Valid Move Right for Player -->
+<rect class="fill-surface-container-highest cursor-pointer" height="21" rx="2" width="21" x="190.5" y="216"></rect>
+<circle class="fill-secondary" cx="201" cy="226.5" opacity="0.6" r="3"></circle>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="216"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="216"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="216"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="216"></rect>
+<!-- Row 9 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="241.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="241.5"></rect>
+<!-- Row 10 -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="165" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="267"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="267"></rect>
+<!-- Row 11: South Goal Row for Dash -->
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="12" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="37.5" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="63" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="88.5" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="114" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="139.5" y="292.5"></rect>
+<rect class="fill-surface-container" height="21" rx="2" width="21" x="165" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="190.5" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="216" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="241.5" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="267" y="292.5"></rect>
+<rect class="fill-surface-container-low" height="21" rx="2" width="21" x="292.5" y="292.5"></rect>
+</g>
+<!-- Placed Walls (Historic Committed Walls) -->
+<!-- Wall 1: Horizontal at row 3 corridor (between row 3 and 4, col 4 & 5) -->
+<rect class="fill-primary" height="4.5" rx="2" width="46.5" x="114" y="109.5"></rect>
+<!-- Wall 2: Vertical at col 7 corridor (between col 7 and 8, row 1 & 2) -->
+<rect class="fill-primary" height="46.5" rx="2" width="4.5" x="186" y="37.5"></rect>
+<!-- Wall 3: Horizontal at row 7 corridor blocking direct south path -->
+<rect class="fill-primary" height="4.5" rx="2" width="46.5" x="165" y="186"></rect>
+<!-- Wall 4: Vertical at col 4 corridor (between col 4 and 5, row 7 & 8) -->
+<rect class="fill-primary" height="46.5" rx="2" width="4.5" x="109.5" y="190.5"></rect>
+<!-- Interactive Wall Channels (Preview Staged State Demo) -->
+<!-- Wall Gap Staged Preview: Horizontal corridor staged tap feedback -->
+<rect class="fill-primary cursor-pointer" height="4.5" id="staged-wall" opacity="0.45" rx="2" width="46.5" x="139.5" y="237"></rect>
+<!-- Touch-Target Corridors (Representative responsive touch intersection node) -->
+<rect class="fill-transparent cursor-pointer" height="13.5" id="corridor-target" rx="3" width="55" x="135" y="232.5"></rect>
+<!-- Four Distinct Pawns: Shape + Player Palette -->
+<!-- 1. Player (You): ● Circle (Blue / Secondary) at g9 -->
+<g filter="url(#pawn-shadow)">
+<circle class="fill-secondary" cx="175.5" cy="226.5" r="7.5"></circle>
+<circle class="fill-on-secondary" cx="175.5" cy="226.5" r="3"></circle>
+</g>
+<!-- 2. Dash: ▲ Triangle (Orange/Coral) at f3 -->
+<g filter="url(#pawn-shadow)">
+<polygon class="fill-on-tertiary-container" points="150,66.5 157,78.5 143,78.5"></polygon>
+</g>
+<!-- 3. Prune: ■ Square (Dark Indigo) at d7 -->
+<g filter="url(#pawn-shadow)">
+<rect class="fill-on-secondary-fixed-variant" height="13" rx="1.5" width="13" x="92.5" y="169"></rect>
+</g>
+<!-- 4. Pat: ◆ Diamond (Cobalt/Secondary Container) at j5 -->
+<g filter="url(#pawn-shadow)">
+<polygon class="fill-secondary-container" points="252,117.5 259,124.5 252,131.5 245,124.5"></polygon>
+</g>
+</svg>
+</div>
+<!-- Interactive Wall Placement Hint / Stage Bar -->
+<div class="flex items-center justify-between mt-space-sm px-space-md py-space-xs bg-surface-container rounded-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-on-surface">gesture</span>
+<span class="font-label-sm text-label-sm text-on-surface">Tap slot to preview · Tap again to commit</span>
+</div>
+<button class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container-highest active:bg-primary active:text-on-primary font-label-sm text-label-sm text-on-surface" id="btn-rotate">
+<span class="material-symbols-outlined text-sm">rotate_right</span>
+<span>H / V</span>
+</button>
+</div>
+<!-- 4-Player Compact Status Strip (2x2 Balanced Cards) -->
+<div class="grid grid-cols-2 gap-space-xs mt-space-sm">
+<!-- Player: You (Active Turn Highlight) -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-lowest rounded-lg border-l-2 border-secondary shadow-sm">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-3 h-3 rounded-full bg-secondary inline-block shrink-0"></span>
+<div class="min-w-0">
+<div class="font-label-md text-label-md font-semibold text-on-surface truncate">You</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">4 steps to goal</div>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="font-label-md text-label-md font-bold text-on-surface">5</span>
+<span class="font-label-sm text-label-sm text-outline">walls</span>
+</div>
+</div>
+<!-- Player: Dash -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-xs text-on-tertiary-container shrink-0 leading-none">change_history</span>
+<div class="min-w-0">
+<div class="font-label-md text-label-md text-on-surface truncate">Dash</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">6 steps</div>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="font-label-md text-label-md font-medium text-on-surface">3</span>
+<span class="font-label-sm text-label-sm text-outline">walls</span>
+</div>
+</div>
+<!-- Player: Prune -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-2.5 h-2.5 rounded-sm bg-on-secondary-fixed-variant inline-block shrink-0"></span>
+<div class="min-w-0">
+<div class="font-label-md text-label-md text-on-surface truncate">Prune</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">3 steps</div>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="font-label-md text-label-md font-medium text-on-surface">2</span>
+<span class="font-label-sm text-label-sm text-outline">walls</span>
+</div>
+</div>
+<!-- Player: Pat -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-xs text-secondary-container shrink-0 leading-none rotate-45">crop_square</span>
+<div class="min-w-0">
+<div class="font-label-md text-label-md text-on-surface truncate">Pat</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">7 steps</div>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 ml-2">
+<span class="font-label-md text-label-md font-medium text-on-surface">4</span>
+<span class="font-label-sm text-label-sm text-outline">walls</span>
+</div>
+</div>
+</div>
+<!-- Action Bar: Outlined Clean Buttons & Toggle -->
+<div class="flex items-center justify-between gap-space-sm mt-space-md">
+<!-- Undo Button -->
+<button class="flex-1 flex items-center justify-center gap-1.5 py-space-sm px-space-md bg-surface-container-lowest active:bg-surface-container text-on-surface rounded-lg font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-base">undo</span>
+<span>Undo</span>
+</button>
+<!-- Show Paths Switch / Pill Toggle -->
+<button class="flex-1 flex items-center justify-center gap-1.5 py-space-sm px-space-md bg-surface-container-lowest active:bg-surface-container text-on-surface rounded-lg font-label-md text-label-md shadow-sm" id="path-toggle">
+<span class="material-symbols-outlined text-base text-secondary">alt_route</span>
+<span class="truncate">Paths: On</span>
+</button>
+<!-- New Game Link Button -->
+<button class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface font-label-md text-label-md">
+      [New Game]
+    </button>
+</div>
+<!-- Shortcuts Hint Line -->
+<div class="mt-space-md text-center">
+<p class="font-label-sm text-label-sm text-outline tracking-wider">
+      R rotate wall  ·  U undo  ·  P paths
+    </p>
+</div>
+</div>
+<script>
+  (function() {
+    const stagedWall = document.getElementById('staged-wall');
+    const corridorTarget = document.getElementById('corridor-target');
+    const rotateBtn = document.getElementById('btn-rotate');
+    const pathToggle = document.getElementById('path-toggle');
+
+    let isHorizontal = true;
+    let isCommitted = false;
+
+    if (corridorTarget && stagedWall) {
+      corridorTarget.addEventListener('click', function() {
+        if (!isCommitted) {
+          stagedWall.setAttribute('opacity', '1.0');
+          isCommitted = true;
+        } else {
+          stagedWall.setAttribute('opacity', '0.45');
+          isCommitted = false;
+        }
+      });
+    }
+
+    if (rotateBtn && stagedWall) {
+      rotateBtn.addEventListener('click', function() {
+        isHorizontal = !isHorizontal;
+        if (isHorizontal) {
+          stagedWall.setAttribute('width', '46.5');
+          stagedWall.setAttribute('height', '4.5');
+        } else {
+          stagedWall.setAttribute('width', '4.5');
+          stagedWall.setAttribute('height', '46.5');
+        }
+      });
+    }
+
+    if (pathToggle) {
+      let pathsActive = true;
+      pathToggle.addEventListener('click', function() {
+        pathsActive = !pathsActive;
+        pathToggle.querySelector('span:last-child').textContent = pathsActive ? 'Paths: On' : 'Paths: Off';
+      });
+    }
+
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'r' || e.key === 'R') {
+        if (rotateBtn) rotateBtn.click();
+      } else if (e.key === 'p' || e.key === 'P') {
+        if (pathToggle) pathToggle.click();
+      }
+    });
+  })();
+</script></main></body></html>

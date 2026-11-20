@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Quoridor</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "primary-fixed-dim": "#c8c6c5", "secondary": "#2e4bdb", "background": "#fdf9f2", "on-tertiary-fixed-variant": "#891e00", "on-tertiary-fixed": "#3c0800", "on-error-container": "#93000a", "inverse-on-surface": "#f4f0e9", "surface-tint": "#5f5e5e", "on-primary-fixed": "#1c1b1b", "on-primary-container": "#858383", "primary-fixed": "#e5e2e1", "surface-container": "#f1ede6", "on-secondary": "#ffffff", "surface-container-highest": "#e5e2db", "on-background": "#1c1c18", "surface-dim": "#dddad3", "tertiary": "#000000", "error-container": "#ffdad6", "surface": "#fdf9f2", "surface-variant": "#e5e2db", "on-secondary-fixed": "#00105c", "on-secondary-container": "#fffbff", "on-surface": "#1c1c18", "on-primary-fixed-variant": "#474646", "outline-variant": "#c4c7c7", "on-surface-variant": "#444748", "primary-container": "#1c1b1b", "surface-bright": "#fdf9f2", "surface-container-low": "#f7f3ec", "tertiary-fixed-dim": "#ffb4a2", "outline": "#747878", "on-secondary-fixed-variant": "#0930c6", "secondary-fixed": "#dee0ff", "on-primary": "#ffffff", "on-tertiary-container": "#e5532d", "on-error": "#ffffff", "surface-container-high": "#ebe8e1", "secondary-container": "#4c66f5", "tertiary-fixed": "#ffdbd2", "inverse-primary": "#c8c6c5", "secondary-fixed-dim": "#bac3ff", "primary": "#000000", "tertiary-container": "#3c0800", "inverse-surface": "#31302c", "on-tertiary": "#ffffff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-sm": "0.5rem", "margin-tablet": "1.5rem", "margin-desktop": "2.5rem", "space-xl": "2rem", "space-xs": "0.25rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1.25rem", "gutter-desktop": "1.5rem", "space-md": "0.75rem" }, "fontFamily": { "headline-lg": ["Inter"], "headline-sm": ["Inter"], "body-md": ["Inter"], "body-sm": ["Inter"], "headline-lg-mobile": ["Inter"], "headline-md": ["Inter"], "label-lg": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"] }, "fontSize": { "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "500"}], "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400"}], "body-sm": ["12px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400"}], "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}], "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "500"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}], "label-sm": ["10px", {"lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500"}] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-background/90 backdrop-blur-md border-b border-outline-variant"><div class="h-16 w-full px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><a class="font-label-lg text-label-lg tracking-widest text-primary uppercase select-none" data-path="live-match" href="#">QUORIDOR</a><nav class="hidden md:flex items-center gap-space-lg" data-active-classes="text-primary font-medium"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-match" href="#">Arena</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="match-archive" href="#">Archive</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="rules-and-tactics" href="#">Treatise</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="leaderboard" href="#">Standings</a></nav></div><div class="flex items-center gap-space-lg"><div class="hidden sm:flex items-center gap-space-md border border-outline-variant px-space-md py-space-xs rounded bg-surface-container-lowest"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Active Match</span><span class="font-label-md text-label-md text-primary font-medium">MOVE 24</span></div><div class="flex items-center gap-space-sm pl-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full">
+<div class="w-full bg-surface-container-low px-margin-desktop py-space-sm">
+<div class="max-w-[1360px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Archival Match Log</span>
+<span class="text-on-surface-variant">/</span>
+<span class="font-label-sm text-label-sm text-primary font-medium tracking-wide">7×7 Bilateral Duel, 8 walls each</span>
+</div>
+<div class="flex items-center gap-space-md text-on-surface-variant">
+<span class="font-label-sm text-label-sm">REF: QD-7X7-2025-04</span>
+<span class="text-on-surface-variant">•</span>
+<span class="font-label-sm text-label-sm">Standard FIDE Spatial Variant</span>
+</div>
+</div>
+</div>
+<div class="w-full max-w-[1360px] mx-auto px-margin-desktop py-space-lg flex-1">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+<!-- Left Column: Match & Turn Overview Bar (Visual Scale & Dignity) -->
+<div class="lg:col-span-8 flex flex-col items-center">
+<!-- Opponent Status Ribbon Above Board -->
+<div class="w-full max-w-[580px] flex items-center justify-between py-space-xs px-space-sm mb-space-xs bg-surface-container-lowest rounded shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="inline-block w-2.5 h-2.5 bg-on-tertiary-container rounded-none"></span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Professor Prune</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">(North · Row 1 Goal)</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-on-surface-variant">5 walls</span>
+<span class="font-label-md text-label-md text-primary font-medium">04:12</span>
+</div>
+</div>
+<!-- 7x7 Main Tabletop Stage -->
+<div class="relative p-space-md bg-surface-container-lowest rounded shadow-md select-none">
+<!-- Outer Axis Container -->
+<div class="flex flex-col">
+<!-- Top Column Labels: a - g -->
+<div class="flex items-center pl-7 pr-2 mb-1.5 justify-between">
+<span class="w-12 text-center font-label-md text-label-md text-on-surface-variant uppercase">a</span>
+<span class="w-12 text-center font-label-md text-label-md text-on-surface-variant uppercase">b</span>
+<span class="w-12 text-center font-label-md text-label-md text-on-surface-variant uppercase">c</span>
+<span class="w-12 text-center font-label-md text-label-md text-on-surface-variant uppercase">d</span>
+<span class="w-12 text-center font-label-md text-label-md text-on-surface-variant uppercase">e</span>
+<span class="w-12 text-center font-label-md text-label-md text-on-surface-variant uppercase">f</span>
+<span class="w-12 text-center font-label-md text-label-md text-on-surface-variant uppercase">g</span>
+</div>
+<!-- Board Area with Row Rank Labels -->
+<div class="flex items-stretch">
+<!-- Left Row Labels: 7 down to 1 -->
+<div class="flex flex-col justify-between py-2 pr-2 text-right">
+<span class="h-12 flex items-center justify-end font-label-md text-label-md text-on-surface-variant">7</span>
+<span class="h-12 flex items-center justify-end font-label-md text-label-md text-on-surface-variant">6</span>
+<span class="h-12 flex items-center justify-end font-label-md text-label-md text-on-surface-variant">5</span>
+<span class="h-12 flex items-center justify-end font-label-md text-label-md text-on-surface-variant">4</span>
+<span class="h-12 flex items-center justify-end font-label-md text-label-md text-on-surface-variant">3</span>
+<span class="h-12 flex items-center justify-end font-label-md text-label-md text-on-surface-variant">2</span>
+<span class="h-12 flex items-center justify-end font-label-md text-label-md text-on-surface-variant">1</span>
+</div>
+<!-- Pure Geometric 7x7 Quoridor Matrix -->
+<div class="relative bg-surface-container p-2 rounded" id="quoridor-board">
+<!-- Background Goal Row Indicator Ribbons -->
+<div class="absolute top-2 left-2 right-2 h-12 bg-on-tertiary-container/10 pointer-events-none rounded-t"></div>
+<div class="absolute top-2 left-2 right-2 h-[2px] bg-on-tertiary-container pointer-events-none"></div>
+<div class="absolute bottom-2 left-2 right-2 h-12 bg-secondary/10 pointer-events-none rounded-b"></div>
+<div class="absolute bottom-2 left-2 right-2 h-[2px] bg-secondary pointer-events-none"></div>
+<!-- SVG Shortest Path Overlays -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-10 p-2" id="paths-layer" viewbox="0 0 404 404">
+<!-- You (South - Blue path toward Row 7) -->
+<path d="M 202 230 L 202 172 L 202 114 L 202 56 L 202 26" fill="none" opacity="0.85" stroke="#2e4bdb" stroke-dasharray="4 4" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Prune (North - Vermilion path toward Row 1) -->
+<path d="M 260 114 L 318 114 L 318 172 L 318 230 L 318 288 L 318 346 L 318 376" fill="none" opacity="0.85" stroke="#e5532d" stroke-dasharray="4 4" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+<!-- Cells Grid: 7 rows of 7 cells = 49 cells -->
+<div class="grid grid-cols-7 gap-2 relative z-0">
+<!-- ROW 7 (a7 - g7) Opponent Start / Goal for South -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="a7"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="b7"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="c7"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="d7"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="e7"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="f7"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="g7"></button>
+<!-- ROW 6 (a6 - g6) -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="a6"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="b6"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="c6"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="d6"></button>
+<!-- e6: Opponent Pawn (Professor Prune) -->
+<button class="cell w-12 h-12 bg-surface-container-lowest rounded flex items-center justify-center relative" data-coord="e6">
+<span class="w-6 h-6 bg-on-tertiary-container rounded-none flex items-center justify-center shadow-sm"></span>
+</button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="f6"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="g6"></button>
+<!-- ROW 5 (a5 - g5) -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="a5"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="b5"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="c5"></button>
+<!-- Valid Move highlight for South -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="d5">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary/40"></span>
+</button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="e5"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="f5"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="g5"></button>
+<!-- ROW 4 (a4 - g4) -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="a4"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="b4"></button>
+<!-- Valid Move highlight left -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="c4">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary/40"></span>
+</button>
+<!-- d4: Your Pawn (South) -->
+<button class="cell w-12 h-12 bg-surface-container-lowest rounded flex items-center justify-center relative" data-coord="d4">
+<span class="w-6 h-6 rounded-full bg-secondary flex items-center justify-center shadow-sm">
+<span class="w-2 h-2 rounded-full bg-surface-container-lowest"></span>
+</span>
+</button>
+<!-- Valid Move highlight right -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="e4">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary/40"></span>
+</button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="f4"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="g4"></button>
+<!-- ROW 3 (a3 - g3) -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="a3"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="b3"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="c3"></button>
+<!-- Valid Move highlight down -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="d3">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary/40"></span>
+</button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="e3"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="f3"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="g3"></button>
+<!-- ROW 2 (a2 - g2) -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="a2"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="b2"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="c2"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="d2"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="e2"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="f2"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="g2"></button>
+<!-- ROW 1 (a1 - g1) Your Start / Goal for North -->
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="a1"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="b1"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="c1"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="d1"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="e1"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="f1"></button>
+<button class="cell w-12 h-12 bg-surface-container-lowest hover:bg-surface-container-highest transition-colors rounded flex items-center justify-center relative" data-coord="g1"></button>
+</div>
+<!-- Placed Walls (Solid Near-Black Bars spanning 2 cells) -->
+<!-- Horizontal Wall 1: between rows 5 & 6, spanning cols d and e -->
+<div class="absolute z-20 bg-primary rounded-full pointer-events-none" style="top: 114px; left: 176px; width: 104px; height: 6px;"></div>
+<!-- Vertical Wall 2: between cols b & c, spanning rows 3 and 4 -->
+<div class="absolute z-20 bg-primary rounded-full pointer-events-none" style="top: 176px; left: 114px; width: 6px; height: 104px;"></div>
+<!-- Horizontal Wall 3: between rows 3 & 4, spanning cols e and f -->
+<div class="absolute z-20 bg-primary rounded-full pointer-events-none" style="top: 230px; left: 232px; width: 104px; height: 6px;"></div>
+<!-- Wall Placement Staging Preview (Interactive Ghost) -->
+<div class="absolute z-20 bg-primary/40 rounded-full transition-opacity opacity-0 pointer-events-none" id="wall-preview" style="top: 286px; left: 62px; width: 104px; height: 6px;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Your Player Status Ribbon Below Board -->
+<div class="w-full max-w-[580px] flex items-center justify-between py-space-xs px-space-sm mt-space-xs bg-surface-container-lowest rounded shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-headline-sm text-headline-sm text-on-surface">You</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">(South · Row 7 Goal)</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-on-surface-variant">6 walls</span>
+<span class="font-label-md text-label-md text-secondary font-medium">06:48</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Editorial Control & Match Ledger Panel -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<!-- Status & Player Metrics Card -->
+<div class="p-space-lg bg-surface-container-lowest rounded shadow-sm flex flex-col gap-space-md">
+<!-- Status Banner -->
+<div class="flex items-center justify-between pb-space-sm bg-surface-container-low px-space-md py-space-sm rounded">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary font-semibold tracking-wider uppercase">YOUR MOVE</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">TURN 15</span>
+</div>
+<!-- Two Detailed Player Rows -->
+<div class="flex flex-col gap-space-md pt-space-xs">
+<!-- You (South) -->
+<div class="flex flex-col gap-space-xs p-space-sm bg-secondary/5 rounded">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-body-md text-body-md font-medium text-on-surface">You (South)</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-medium">4 steps to goal</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">6 left</span>
+<!-- 8 Wall segments indicator -->
+<div class="flex items-center gap-1">
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-surface-container-highest rounded-none"></span>
+<span class="w-2.5 h-4 bg-surface-container-highest rounded-none"></span>
+</div>
+</div>
+</div>
+<!-- Professor Prune (North) -->
+<div class="flex flex-col gap-space-xs p-space-sm bg-surface-container rounded">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="inline-block w-2.5 h-2.5 bg-on-tertiary-container rounded-none"></span>
+<span class="font-body-md text-body-md font-medium text-on-surface">Professor Prune (North)</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5 steps to goal</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">5 left</span>
+<!-- 8 Wall segments indicator -->
+<div class="flex items-center gap-1">
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-primary rounded-none"></span>
+<span class="w-2.5 h-4 bg-surface-container-highest rounded-none"></span>
+<span class="w-2.5 h-4 bg-surface-container-highest rounded-none"></span>
+<span class="w-2.5 h-4 bg-surface-container-highest rounded-none"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Move Confirmation Action -->
+<div class="pt-space-xs flex flex-col gap-space-sm">
+<button class="w-full bg-primary text-on-primary py-space-sm px-space-md rounded font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors flex items-center justify-center gap-space-xs">
+<span>Commit Placement</span>
+<span class="font-label-sm text-label-sm opacity-60">· Space</span>
+</button>
+<div class="flex items-center justify-between gap-space-sm">
+<button class="flex-1 bg-surface-container py-space-xs px-space-sm rounded font-label-sm text-label-sm text-on-surface hover:bg-surface-container-high transition-colors text-center" id="toggle-orientation-btn">
+                Rotate Wall [H/V]
+              </button>
+<button class="flex-1 bg-surface-container py-space-xs px-space-sm rounded font-label-sm text-label-sm text-on-surface hover:bg-surface-container-high transition-colors text-center">
+                Select Pawn Move
+              </button>
+</div>
+</div>
+</div>
+<!-- Archival Move History Section -->
+<div class="p-space-lg bg-surface-container-lowest rounded shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium">Notation Log</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">7×7 Matrix</span>
+</div>
+<!-- Notation List -->
+<div class="flex flex-col gap-1 max-h-48 overflow-y-auto pr-1">
+<div class="flex items-center justify-between py-1 px-2 font-label-sm text-label-sm rounded text-on-surface-variant">
+<span class="w-8">11.</span>
+<span class="w-24">d3</span>
+<span class="w-24">e5</span>
+</div>
+<div class="flex items-center justify-between py-1 px-2 font-label-sm text-label-sm rounded text-on-surface-variant">
+<span class="w-8">12.</span>
+<span class="w-24">W:b3v</span>
+<span class="w-24">d5</span>
+</div>
+<div class="flex items-center justify-between py-1 px-2 font-label-sm text-label-sm rounded text-on-surface-variant">
+<span class="w-8">13.</span>
+<span class="w-24">d4</span>
+<span class="w-24">W:e3h</span>
+</div>
+<!-- Last Move Highlighted -->
+<div class="flex items-center justify-between py-1.5 px-2 font-label-sm text-label-sm rounded bg-surface-container text-primary font-medium">
+<span class="w-8">14.</span>
+<span class="w-24 text-on-surface-variant">W:d5h</span>
+<span class="w-24 text-on-tertiary-container font-semibold">e6 (Prune)</span>
+</div>
+</div>
+<!-- Operational Controls -->
+<div class="flex items-center justify-between pt-space-sm mt-space-xs text-on-surface-variant">
+<button class="font-label-sm text-label-sm hover:text-primary transition-colors" id="undo-btn">
+              [Undo]
+            </button>
+<button class="font-label-sm text-label-sm hover:text-primary transition-colors" id="toggle-paths-btn">
+              [Hide paths]
+            </button>
+<button class="font-label-sm text-label-sm hover:text-primary transition-colors" id="new-game-btn">
+              [New game]
+            </button>
+</div>
+<!-- Subtle Shortcuts Reference -->
+<div class="pt-space-xs text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-normal">
+              Shortcuts: <span class="font-medium text-on-surface">R</span> rotate wall · <span class="font-medium text-on-surface">U</span> undo · <span class="font-medium text-on-surface">P</span> paths
+            </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initQuoridorWorkspace() {
+    const pathsLayer = document.getElementById('paths-layer');
+    const togglePathsBtn = document.getElementById('toggle-paths-btn');
+    const wallPreview = document.getElementById('wall-preview');
+    const toggleOrientationBtn = document.getElementById('toggle-orientation-btn');
+    
+    let pathsVisible = true;
+    let isHorizontal = true;
+
+    if (togglePathsBtn && pathsLayer) {
+      togglePathsBtn.addEventListener('click', () => {
+        pathsVisible = !pathsVisible;
+        pathsLayer.style.display = pathsVisible ? 'block' : 'none';
+        togglePathsBtn.textContent = pathsVisible ? '[Hide paths]' : '[Show paths]';
+      });
+    }
+
+    if (toggleOrientationBtn && wallPreview) {
+      toggleOrientationBtn.addEventListener('click', () => {
+        isHorizontal = !isHorizontal;
+        if (isHorizontal) {
+          wallPreview.style.width = '104px';
+          wallPreview.style.height = '6px';
+        } else {
+          wallPreview.style.width = '6px';
+          wallPreview.style.height = '104px';
+        }
+      });
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'p' || e.key === 'P') {
+        if (togglePathsBtn) togglePathsBtn.click();
+      } else if (e.key === 'r' || e.key === 'R') {
+        if (toggleOrientationBtn) toggleOrientationBtn.click();
+      }
+    });
+  })();
+</script></main><footer class="w-full border-t border-outline-variant bg-surface-container-low py-space-lg"><div class="w-full px-margin-desktop flex flex-col sm:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Quoridor Pure Matrix 9x9</span><span class="text-outline-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">Standard FIDE Notation Protocol</span></div><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 Quoridor Archival Project. All rights reserved.</div></div></footer></body></html>

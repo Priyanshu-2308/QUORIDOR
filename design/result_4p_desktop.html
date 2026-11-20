@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Quoridor</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "primary-fixed-dim": "#c8c6c5", "secondary": "#2e4bdb", "background": "#fdf9f2", "on-tertiary-fixed-variant": "#891e00", "on-tertiary-fixed": "#3c0800", "on-error-container": "#93000a", "inverse-on-surface": "#f4f0e9", "surface-tint": "#5f5e5e", "on-primary-fixed": "#1c1b1b", "on-primary-container": "#858383", "primary-fixed": "#e5e2e1", "surface-container": "#f1ede6", "on-secondary": "#ffffff", "surface-container-highest": "#e5e2db", "on-background": "#1c1c18", "surface-dim": "#dddad3", "tertiary": "#000000", "error-container": "#ffdad6", "surface": "#fdf9f2", "surface-variant": "#e5e2db", "on-secondary-fixed": "#00105c", "on-secondary-container": "#fffbff", "on-surface": "#1c1c18", "on-primary-fixed-variant": "#474646", "outline-variant": "#c4c7c7", "on-surface-variant": "#444748", "primary-container": "#1c1b1b", "surface-bright": "#fdf9f2", "surface-container-low": "#f7f3ec", "tertiary-fixed-dim": "#ffb4a2", "outline": "#747878", "on-secondary-fixed-variant": "#0930c6", "secondary-fixed": "#dee0ff", "on-primary": "#ffffff", "on-tertiary-container": "#e5532d", "on-error": "#ffffff", "surface-container-high": "#ebe8e1", "secondary-container": "#4c66f5", "tertiary-fixed": "#ffdbd2", "inverse-primary": "#c8c6c5", "secondary-fixed-dim": "#bac3ff", "primary": "#000000", "tertiary-container": "#3c0800", "inverse-surface": "#31302c", "on-tertiary": "#ffffff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-sm": "0.5rem", "margin-tablet": "1.5rem", "margin-desktop": "2.5rem", "space-xl": "2rem", "space-xs": "0.25rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1.25rem", "gutter-desktop": "1.5rem", "space-md": "0.75rem" }, "fontFamily": { "headline-lg": ["Inter"], "headline-sm": ["Inter"], "body-md": ["Inter"], "body-sm": ["Inter"], "headline-lg-mobile": ["Inter"], "headline-md": ["Inter"], "label-lg": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"] }, "fontSize": { "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "500"}], "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400"}], "body-sm": ["12px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400"}], "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}], "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "500"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}], "label-sm": ["10px", {"lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500"}] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-background/90 backdrop-blur-md border-b border-outline-variant"><div class="h-16 w-full px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><a class="font-label-lg text-label-lg tracking-widest text-primary uppercase select-none" data-path="live-match" href="#">QUORIDOR</a><nav class="hidden md:flex items-center gap-space-lg" data-active-classes="text-primary font-medium"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="live-match" href="#">Arena</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="match-archive" href="#">Archive</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="rules-and-tactics" href="#">Treatise</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="leaderboard" href="#">Standings</a></nav></div><div class="flex items-center gap-space-lg"><div class="hidden sm:flex items-center gap-space-md border border-outline-variant px-space-md py-space-xs rounded bg-surface-container-lowest"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Active Match</span><span class="font-label-md text-label-md text-primary font-medium">MOVE 24</span></div><div class="flex items-center gap-space-sm pl-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full relative min-h-[calc(100vh-4rem)] overflow-hidden select-none">
+<!-- Dimmed Ambient Board Canvas in Background -->
+<div class="absolute inset-0 bg-background flex items-center justify-center p-space-md opacity-35 filter blur-[1px] pointer-events-none">
+<div class="flex flex-col items-center">
+<!-- Top Player Rim Preview (North: Orange/Red) -->
+<div class="w-[540px] flex items-center justify-between px-space-sm mb-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-tertiary-container inline-block"></span> NORTH (PROF. PRUNE)</span>
+<span>GOAL: ROW 9</span>
+</div>
+<!-- 9x9 Quoridor Board Grid Preview -->
+<div class="relative bg-surface-container-high p-space-sm rounded shadow-sm">
+<div class="grid grid-cols-9 gap-1 bg-surface-container-highest p-1 rounded">
+<!-- Row 1 to Row 9 Simulated Cells -->
+<!-- Row 1: South Victory Goal line -->
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">a9</span></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">b9</span></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">c9</span></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">d9</span></div>
+<!-- South Winner Reached Here -->
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative">
+<span class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-sm text-label-sm font-bold shadow-sm">●</span>
+</div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">f9</span></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">g9</span></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">h9</span></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center relative"><span class="font-label-sm text-label-sm text-outline-variant">i9</span></div>
+<!-- Row 2 -->
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center">
+<span class="w-5 h-5 rounded-sm bg-tertiary-container text-tertiary-fixed flex items-center justify-center font-label-sm text-label-sm">■</span>
+</div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<!-- Row 3 to 7 generic filled slots with some walls -->
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<!-- Mid row with Dash and Paranoid Pat -->
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center">
+<span class="w-5 h-5 flex items-center justify-center text-secondary font-label-md text-label-md">▲</span>
+</div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center">
+<span class="w-5 h-5 flex items-center justify-center text-outline font-label-md text-label-md">◆</span>
+</div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<!-- Remaining 4 rows -->
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+<div class="w-11 h-11 bg-surface-container-lowest flex items-center justify-center"></div>
+</div>
+</div>
+<div class="w-[540px] flex items-center justify-between px-space-sm mt-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span>GOAL: ROW 1</span>
+<span class="flex items-center gap-space-xs"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span> SOUTH (YOU)</span>
+</div>
+</div>
+</div>
+<!-- Soft Fog Scrim -->
+<div class="absolute inset-0 bg-background/60 backdrop-blur-[2px]"></div>
+<!-- Central Modal Area -->
+<div class="relative z-10 flex-1 flex flex-col items-center justify-center px-margin py-space-xl">
+<!-- State Mode Switcher (Discrete Segmented Pill) -->
+<div class="mb-space-lg flex items-center bg-surface-container-high p-1 rounded-full text-on-surface">
+<button class="px-space-md py-space-xs rounded-full font-label-sm text-label-sm tracking-wider uppercase transition-all bg-surface-container-lowest text-primary shadow-sm" id="tab-decisive" onclick="switchVariant('decisive')">
+        Decisive Victory
+      </button>
+<button class="px-space-md py-space-xs rounded-full font-label-sm text-label-sm tracking-wider uppercase text-on-surface-variant hover:text-primary transition-all" id="tab-draw" onclick="switchVariant('draw')">
+        Turn Limit Reached
+      </button>
+</div>
+<!-- The Quiet Archival Modal Card (approx 520px) -->
+<div class="w-full max-w-[520px] bg-surface-container-lowest rounded-xl shadow-xl p-space-xl sm:p-margin-desktop flex flex-col transition-all">
+<!-- Card Header: Decisive Variant -->
+<div class="flex flex-col text-center" id="header-decisive">
+<div class="flex items-center justify-center gap-space-xs text-secondary mb-space-xs">
+<span class="material-symbols-outlined text-[20px]">emoji_events</span>
+<span class="font-label-sm text-label-sm tracking-widest uppercase">Match Concluded</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">You won</h2>
+<p class="font-label-md text-label-md text-on-surface-variant mt-space-xs">42 plies · 19 walls placed</p>
+</div>
+<!-- Card Header: Turn Limit Reached (Hidden by default) -->
+<div class="hidden flex-col text-center" id="header-draw">
+<div class="flex items-center justify-center gap-space-xs text-on-surface-variant mb-space-xs">
+<span class="material-symbols-outlined text-[20px]">hourglass_bottom</span>
+<span class="font-label-sm text-label-sm tracking-widest uppercase">Pace Terminated</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Draw · Turn limit reached</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">No pawn crossed the rim. Ranked by nearest distance to goal:</p>
+</div>
+<!-- Divider line via surface tonal change -->
+<div class="h-px bg-surface-container-highest w-full my-space-lg"></div>
+<!-- Ranked Leaderboard Container -->
+<div class="flex flex-col gap-space-sm" id="leaderboard-decisive">
+<!-- 1st Place: Winner (You) -->
+<div class="flex items-center justify-between p-space-md rounded-lg bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-primary font-bold w-4 text-center">1</span>
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md shadow-sm">
+              ●
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium text-primary flex items-center gap-space-xs">
+                You <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(South)</span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary">Reached Row 1</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-semibold uppercase tracking-wider">
+              Winner
+            </span>
+</div>
+</div>
+<!-- 2nd Place: Professor Prune -->
+<div class="flex items-center justify-between p-space-md rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-on-surface-variant w-4 text-center">2</span>
+<div class="w-7 h-7 rounded bg-tertiary-container flex items-center justify-center text-tertiary-fixed font-label-md text-label-md">
+              ■
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface flex items-center gap-space-xs">
+                Professor Prune <span class="font-label-sm text-label-sm text-on-surface-variant">(North)</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 steps to go</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">d8 · dist 2</span>
+</div>
+<!-- 3rd Place: Dash -->
+<div class="flex items-center justify-between p-space-md rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-on-surface-variant w-4 text-center">3</span>
+<div class="w-7 h-7 rounded-sm bg-secondary-fixed flex items-center justify-center text-secondary font-label-md text-label-md">
+              ▲
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface flex items-center gap-space-xs">
+                Dash <span class="font-label-sm text-label-sm text-on-surface-variant">(West)</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4 steps to go</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">b5 · dist 4</span>
+</div>
+<!-- 4th Place: Paranoid Pat -->
+<div class="flex items-center justify-between p-space-md rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-on-surface-variant w-4 text-center">4</span>
+<div class="w-7 h-7 rounded-sm bg-surface-container-high flex items-center justify-center text-outline font-label-md text-label-md">
+              ◆
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface flex items-center gap-space-xs">
+                Paranoid Pat <span class="font-label-sm text-label-sm text-on-surface-variant">(East)</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">7 steps to go</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">g5 · dist 7</span>
+</div>
+</div>
+<!-- Ranked Leaderboard Container: Turn Limit Variant (Hidden by default) -->
+<div class="hidden flex-col gap-space-sm" id="leaderboard-draw">
+<!-- 1st: Professor Prune (1 step to go) -->
+<div class="flex items-center justify-between p-space-md rounded-lg bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-primary font-bold w-4 text-center">1</span>
+<div class="w-7 h-7 rounded bg-tertiary-container flex items-center justify-center text-tertiary-fixed font-label-md text-label-md shadow-sm">
+              ■
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium text-primary flex items-center gap-space-xs">
+                Professor Prune <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(North)</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">1 step to go</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-semibold uppercase tracking-wider">
+            Nearest
+          </span>
+</div>
+<!-- 2nd: You (2 steps to go) -->
+<div class="flex items-center justify-between p-space-md rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-on-surface-variant w-4 text-center">2</span>
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md">
+              ●
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface flex items-center gap-space-xs">
+                You <span class="font-label-sm text-label-sm text-on-surface-variant">(South)</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 steps to go</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">e2 · dist 2</span>
+</div>
+<!-- 3rd: Paranoid Pat (3 steps to go) -->
+<div class="flex items-center justify-between p-space-md rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-on-surface-variant w-4 text-center">3</span>
+<div class="w-7 h-7 rounded-sm bg-surface-container-high flex items-center justify-center text-outline font-label-md text-label-md">
+              ◆
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface flex items-center gap-space-xs">
+                Paranoid Pat <span class="font-label-sm text-label-sm text-on-surface-variant">(East)</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 steps to go</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">c5 · dist 3</span>
+</div>
+<!-- 4th: Dash (5 steps to go) -->
+<div class="flex items-center justify-between p-space-md rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-on-surface-variant w-4 text-center">4</span>
+<div class="w-7 h-7 rounded-sm bg-secondary-fixed flex items-center justify-center text-secondary font-label-md text-label-md">
+              ▲
+            </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface flex items-center gap-space-xs">
+                Dash <span class="font-label-sm text-label-sm text-on-surface-variant">(West)</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5 steps to go</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">c3 · dist 5</span>
+</div>
+</div>
+<!-- Action Buttons Row -->
+<div class="flex flex-col sm:flex-row items-center gap-space-sm mt-space-xl pt-space-md">
+<!-- Solid Black Primary Rematch -->
+<button class="w-full sm:flex-1 py-space-sm px-space-md rounded bg-primary text-on-primary font-body-md text-body-md font-medium hover:bg-neutral-800 transition-colors flex items-center justify-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+          Rematch
+        </button>
+<!-- Outlined Review Match -->
+<button class="w-full sm:flex-1 py-space-sm px-space-md rounded bg-surface-container-lowest text-primary font-body-md text-body-md font-medium hover:bg-surface-container transition-colors flex items-center justify-center gap-space-xs shadow-sm">
+<span class="material-symbols-outlined text-[18px]">history</span>
+          Review match
+        </button>
+<!-- Outlined New Game -->
+<button class="w-full sm:w-auto py-space-sm px-space-md rounded bg-surface-container-lowest text-primary font-body-md text-body-md font-medium hover:bg-surface-container transition-colors flex items-center justify-center gap-space-xs shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+          New game
+        </button>
+</div>
+<!-- Footnote archival line -->
+<div class="mt-space-lg text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase">Match #4092 · Matrix Standard · Pure 9x9</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function switchVariant(variant) {
+    const headerDecisive = document.getElementById('header-decisive');
+    const headerDraw = document.getElementById('header-draw');
+    const boardDecisive = document.getElementById('leaderboard-decisive');
+    const boardDraw = document.getElementById('leaderboard-draw');
+    const tabDecisive = document.getElementById('tab-decisive');
+    const tabDraw = document.getElementById('tab-draw');
+
+    if (variant === 'draw') {
+      headerDecisive.classList.add('hidden');
+      headerDecisive.classList.remove('flex');
+      headerDraw.classList.remove('hidden');
+      headerDraw.classList.add('flex');
+
+      boardDecisive.classList.add('hidden');
+      boardDecisive.classList.remove('flex');
+      boardDraw.classList.remove('hidden');
+      boardDraw.classList.add('flex');
+
+      tabDraw.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      tabDraw.classList.remove('text-on-surface-variant');
+
+      tabDecisive.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      tabDecisive.classList.add('text-on-surface-variant');
+    } else {
+      headerDraw.classList.add('hidden');
+      headerDraw.classList.remove('flex');
+      headerDecisive.classList.remove('hidden');
+      headerDecisive.classList.add('flex');
+
+      boardDraw.classList.add('hidden');
+      boardDraw.classList.remove('flex');
+      boardDecisive.classList.remove('hidden');
+      boardDecisive.classList.add('flex');
+
+      tabDecisive.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      tabDecisive.classList.remove('text-on-surface-variant');
+
+      tabDraw.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      tabDraw.classList.add('text-on-surface-variant');
+    }
+  }
+</script></main><footer class="w-full border-t border-outline-variant bg-surface-container-low py-space-lg"><div class="w-full px-margin-desktop flex flex-col sm:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Quoridor Pure Matrix 9x9</span><span class="text-outline-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">Standard FIDE Notation Protocol</span></div><div class="font-label-sm text-label-sm text-on-surface-variant">© 2025 Quoridor Archival Project. All rights reserved.</div></div></footer></body></html>
